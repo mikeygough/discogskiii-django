@@ -18,7 +18,11 @@ Run Server:
 Create App:
 ```python manage.py startapp APP_NAME```
 
-Add firstapp to discogskiii/settings.py INSTALLED_APPS list.
+Add APP_NAME to discogskiii/settings.py INSTALLED_APPS list.
+
+Add urls.py file to discogskiii/APP_NAME
+
+Add APP_NAME to discogskiii/urls.py
 
 ---
 #### Virtual Environments
