@@ -1,70 +1,112 @@
 # discogskiii-django
 a web app and order book for vinyl records available for sale on discogs!
 
----
-### Reference:
+<br>
+
+
+## Reference:
 
 ---
-#### Django
+### Django
 Install Django:
+
 ```pip3 install Django```
 
 Create Project:
+
 ```django-admin startproject PROJECT_NAME```
 
 Run Server:
+
 ```python manage.py runserver```
 
 Create App:
+
 ```python manage.py startapp APP_NAME```
 
-Add APP_NAME to PROJECT_NAME/settings.py installed_apps list
 
-Add APP_NAME to urlpatterns in PROJECT_NAME/urls.py
+After creating a new app:
 
-Add urls.py file to PROJECT_NAME/APP_NAME
+* Add APP_NAME to _PROJECT_NAME/settings.py_ installed_apps list
+* Add APP_NAME to urlpatterns in _PROJECT_NAME/urls.py_
+* Add urls.py file to _PROJECT_NAME/APP_NAME_
 
+<br>
 Add HTML:
-Creat PROJECT_NAME/APP_NAME/templates/APP_NAME/index.html
+Create PROJECT_NAME/APP_NAME/templates/APP_NAME/index.html
+
+<br>
 
 ---
-#### Django HTML Templating
+### Django HTML Templating
 Insert Variable:
+```
 {{ VARIABLE }}
-
+```
 Add Logic:
+```
 {% if CONDITION %}
+    
     Some HTML
+    
 {% else %}
+    
     Some other HTML
-{% endif %}
 
+{% endif %}
+```
 Loop:
+```
 {% for item in items %}
+
     Some HTML with {{ task }}
+
 {% endfor %}
+```
 
 Add CSS to an HTML file:
+
+_sometimes you need to restart the server to load static files_
+```
 {% load static %}
-Then link with templating language
-<link href="{% static 'APP_NAME/styles.css' %}" rel="stylesheet">
-__sometimes you need to restart the server to load static files__
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Welcome to Discogskiii</title>
+        <link href="{% static 'firstapp/styles.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        <h1>Hello, vinyl heads!</h1>
+    </body>
+</html>
+```
+
+
+<br>
 
 ---
-#### Virtual Environments
-Create Python3 Virtual Environment: 
+### Virtual Environments
+Create Python3 Virtual Environment:
+
 ```python3 -m venv env```
 
 Activate Virtual Environment:
+
 ```source env/bin/activate```
 
 Deactivate Virtual Environment:
+
 ```deactivate```
 
 Remove Virtual Environment:
+
 ```sudo em -rf venv```
 
+<br>
+
 ---
-#### Requirements.txt
+### Requirements.txt
 Automagically create a requirements.txt file:
+
 ```pip3 freeze > requirements.txt```
