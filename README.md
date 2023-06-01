@@ -29,15 +29,29 @@ Both pressings are the same music, but collectors seek original pressings. While
 
 <br>
 
+### Project Scope and Goals
+The goal of this project is...
+
+
+---
+
+<br>
+
 ### How are Records Priced?
 While I have yet to develop an exact model, primary factors influencing secondary market vinyl prices could be:
 
 * __Scarcity__
-    * How many original pressings were ever made?
-        * Greater scarcity => higher price
+    * How many were made?
+        * Greater scarcity can command a higher price.
+    * How many of these originals even still exist?
+        * While a painting is subject to damage from sunlight, vinyl records were played! Scratched by a needle! Records are functional pieces of art. While 100 copies may have been pressed in 1957 this does not imply 100 are still available in the world. Some of those original pressings may have been damaged or lost through time.
+    * How many of these originals are available for sale?
+        * There's a good chance a rare vinyl record is sitting in your families' attic or basement, untentionally limiting the available supply on the market.
+
 * __Popularity of Artist__
     * Some of the most expensive records ever sold were original pressings by groups like Prince, The Beatles, Pink Floyd, and The Velvet Underground.
-       * However, this isn't always true. For example, several Sun Ra albums fetch multiple thousands of dollars.
+       * However, this isn't always true. For example, several Sun Ra albums fetch multiple thousands of dollars and he remains largely unknown outside of jazz circles.
+
 * __Vinyl Condition__
    * Discogs uses the [Goldmine Standard](https://support.discogs.com/hc/en-us/articles/360001566193-How-To-Grade-Items) for grading the condition of vinyl records:
       * _Mint (M)_: Absolutely perfect in every way. Certainly never been played, possibly even still sealed.
