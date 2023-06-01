@@ -85,6 +85,34 @@ _sometimes you need to restart the server to load static files_
 </html>
 ```
 
+Template Inheritance:
+
+Create templates/APP_NAME/layout.html
+```
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <title>Discogskiii</title>
+        <link href="{% static 'APP_NAME/styles.css' %}" rel="stylesheet">
+    </head>
+    <body>
+        {% block body %}
+        {% endblock %}
+    </body>
+</html>
+```
+
+Then inherit this layout in other HTML files, for example index.html
+```
+{% extends "APP_NAME/layout.html" %}
+{% block body %}
+    <body>
+        <h1>Hello, Discogskiii</h1>
+    </body>
+{% endblock %}
+```
 
 <br>
 
@@ -113,3 +141,20 @@ Remove Virtual Environment:
 Automagically create a requirements.txt file:
 
 ```pip3 freeze > requirements.txt```
+
+
+<br>
+
+---
+### Git
+Add Files
+
+```git add```
+
+Commit with Message
+
+```git commit -am "my first commit!"```
+
+Push
+
+```git push"```
