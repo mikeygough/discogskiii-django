@@ -4,6 +4,10 @@ a web app and order book for vinyl records available for sale on discogs!
 ---
 ### Reference:
 
+---
+#### Django
+
+---
 #### Virtual Environments
 Create a Python3 Virtual Environment: 
 ```python3 -m venv env```
@@ -21,9 +25,3 @@ To Remove a Virtual Environment:
 #### Requirements.txt
 Automagically create a requirements.txt file:
 ```pip3 freeze > requirements.txt```
-
-Start the Flask Server:
-```flask run```
-
-Run the Flask Server in Debug Mode:
-```flask --app app.py --debug run```
