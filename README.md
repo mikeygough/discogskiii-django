@@ -34,12 +34,17 @@ Insert Variable:
 
 Add Logic:
 {% if CONDITION %}
-    Yes
+    Some HTML
 {% else %}
-    No
+    Some other HTML
 {% endif %}
 
-Add CSS to an HTML file
+Loop:
+{% for item in items %}
+    Some HTML with {{ task }}
+{% endfor %}
+
+Add CSS to an HTML file:
 {% load static %}
 Then link with templating language
 <link href="{% static 'APP_NAME/styles.css' %}" rel="stylesheet">
