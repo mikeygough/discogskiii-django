@@ -9,21 +9,27 @@ a web app and order book for vinyl records available for sale on discogs!
 Install Django:
 ```pip3 install Django```
 
-Create Django Project:
+Create Project:
 ```django-admin startproject PROJECT_NAME```
+
+Run Server
+```python manage.py runserver```
+
+Create App
+```python manage.py startapp APP_NAME```
 
 ---
 #### Virtual Environments
-Create a Python3 Virtual Environment: 
+Create Python3 Virtual Environment: 
 ```python3 -m venv env```
 
-Activate the Virtual Environment:
+Activate Virtual Environment:
 ```source env/bin/activate```
 
-Deactivate the Virtual Environment:
+Deactivate Virtual Environment:
 ```deactivate```
 
-To Remove a Virtual Environment:
+Remove Virtual Environment:
 ```sudo em -rf venv```
 
 ---
