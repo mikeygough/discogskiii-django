@@ -12,11 +12,13 @@ Install Django:
 Create Project:
 ```django-admin startproject PROJECT_NAME```
 
-Run Server
+Run Server:
 ```python manage.py runserver```
 
-Create App
+Create App:
 ```python manage.py startapp APP_NAME```
+
+Add firstapp to discogskiii/settings.py INSTALLED_APPS list.
 
 ---
 #### Virtual Environments
