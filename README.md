@@ -40,6 +40,9 @@ Logical:
 
 Add CSS to an HTML file
 {% load static %}
+Then link with templating language
+<link href="{% static 'APP_NAME/styles.css' %}" rel="stylesheet">
+__sometimes you need to restart the server to load static files__
 
 ---
 #### Virtual Environments
