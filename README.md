@@ -1,12 +1,52 @@
 # discogskiii-django
-a web app and order book for vinyl records available for sale on discogs!
+Discogskiii is a web app and order book for vinyl records available for sale on [Discogs](https://www.discogs.com/)!
+
+### High-Level Overview
+[Discogs](https://www.discogs.com/) is a music database and marketplace.
+
+This app, Discogskiii, is an order book constructor for original pressing vinyl records publicly listed for sale on Discogs.
+
+### Low-Level Overview
+Last year, [According to the Wall Street Journal](https://www.wsj.com/articles/vinyl-records-outsell-cds-for-the-first-time-since-1987-49deeef0), vinyl records outsold CDs for the first time since 1987! After declining for years, maybe the market is back?
+
+In addition to a growing primary market (new pressings and repressings), vinyl also sells actively on the secondary market. 
+
+The market for original pressings is particularly hot for jazz. As an example, Sonny Rollins' record _Saxophone Colossus_, was first release (pressed) in 1957. 
+
+Maybe that first batch contained a few hundred copies. If the music was popular, the record company produced more.
+
+Both pressings are the same music, but collectors seek original pressings. While later pressings might cost $20, original pressings from the 1957 batch fetch as much as $300.
+
+### How are Records Priced?
+While I have yet to develop an exact model, primary factors influencing secondary market vinyl prices could be:
+
+* Scarcity
+    * How many original pressings were ever made?
+        * Greater scarcity => higher price
+* Popularity of Artist
+    * Some of the most expensive records ever sold were original pressings by groups like Prince, The Beatles, Pink Floyd, and The Velvet Underground.
+       * However, this isn't always true. For example, several Sun Ra albums fetch multiple thousands of dollars.
+* Vinyl Condition
+   * Discogs uses the [Goldmine Standard](https://support.discogs.com/hc/en-us/articles/360001566193-How-To-Grade-Items) for grading the condition of vinyl records:
+      * Mint (M): Absolutely perfect in every way. Certainly never been played, possibly even still sealed.
+      * Near Mint (NM or M-): A nearly perfect record. A NM or M- record has more than likely never been played, and the vinyl will play perfectly, with no imperfections during playback.
+      * Very Good Plus (VG+): Generally worth 50% of the Near Mint value. A Very Good Plus record will show some signs that it was played and otherwise handled by a previous owner who took good care of it. Defects should be more of a cosmetic nature, not affecting the actual playback as a whole.
+      * Very Good (VG): Generally worth 25% of Near Mint value. Many of the defects found in a VG+ record will be more pronounced in a VG disc. Surface noise will be evident upon playing, especially in soft passages and during a song's intro and fade, but will not overpower the music otherwise.
+      * Good (G), Good Plus (G+): Generally worth 10-15% of the Near Mint value. A record in Good or Good Plus condition can be played through without skipping. But it will have significant surface noise, scratches, and visible groove wear.
+      * Poor (P), Fair (F): Generally worth 0-5% of the Near Mint price. The record is cracked, badly warped, and won't play through without skipping or repeating.
 
 
-
+### Disclaimer
+This project represents my submission for a school project and is purely for learning purposes. All data for this project is taken from Discogs via their public API. I ❤️ you Discogs!
 <br>
 
-
 ## Reference:
+
+---
+### Discogs
+[Discogs API Documentation](https://www.discogs.com/developers)
+
+<br>
 
 ---
 ### Django
@@ -63,6 +103,10 @@ Loop:
 {% for item in items %}
 
     Some HTML with {{ item }}
+
+{% empty %}
+
+    Some other HTML if the iterable is empty
 
 {% endfor %}
 ```
