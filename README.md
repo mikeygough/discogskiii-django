@@ -18,20 +18,21 @@ Run Server:
 Create App:
 ```python manage.py startapp APP_NAME```
 
-Add APP_NAME to discogskiii/settings.py INSTALLED_APPS list
+Add APP_NAME to PROJECT_NAME/settings.py installed_apps list
 
-Add urls.py file to discogskiii/APP_NAME
+Add APP_NAME to urlpatterns in PROJECT_NAME/urls.py
 
-Add APP_NAME to discogskiii/urls.py
+Add urls.py file to PROJECT_NAME/APP_NAME
 
-Add discogskiii/firstapp/templates/firstapp/index.html for HTML
+Add HTML:
+Creat PROJECT_NAME/APP_NAME/templates/APP_NAME/index.html
 
 ---
 #### Django HTML Templating
-Insert a variable:
+Insert Variable:
 {{ VARIABLE }}
 
-Logical:
+Add Logic:
 {% if CONDITION %}
     Yes
 {% else %}
