@@ -1,6 +1,8 @@
 # discogskiii-django
 a web app and order book for vinyl records available for sale on discogs!
 
+
+
 <br>
 
 
@@ -33,6 +35,7 @@ After creating a new app:
 
 <br>
 Add HTML:
+
 Create PROJECT_NAME/APP_NAME/templates/APP_NAME/index.html
 
 <br>
@@ -59,7 +62,7 @@ Loop:
 ```
 {% for item in items %}
 
-    Some HTML with {{ task }}
+    Some HTML with {{ item }}
 
 {% endfor %}
 ```
@@ -74,7 +77,7 @@ _sometimes you need to restart the server to load static files_
 <html lang="en">
     <head>
         <title>Welcome to Discogskiii</title>
-        <link href="{% static 'firstapp/styles.css' %}" rel="stylesheet">
+        <link href="{% static 'APP_NAME/styles.css' %}" rel="stylesheet">
     </head>
     <body>
         <h1>Hello, vinyl heads!</h1>
