@@ -6,6 +6,12 @@ Discogskiii is a web app and order book for vinyl records available for sale on 
 
 This app, Discogskiii, is an order book constructor for original pressing vinyl records publicly listed for sale on Discogs.
 
+<br>
+
+---
+
+<br>
+
 ### Low-Level Overview
 Last year, [According to the Wall Street Journal](https://www.wsj.com/articles/vinyl-records-outsell-cds-for-the-first-time-since-1987-49deeef0), vinyl records outsold CDs for the first time since 1987! After declining for years, maybe the market is back?
 
@@ -16,6 +22,12 @@ The market for original pressings is particularly hot for jazz. As an example, S
 Maybe that first batch contained a few hundred copies. If the music was popular, the record company produced more.
 
 Both pressings are the same music, but collectors seek original pressings. While later pressings might cost $20, original pressings from the 1957 batch fetch as much as $300.
+
+<br>
+
+---
+
+<br>
 
 ### How are Records Priced?
 While I have yet to develop an exact model, primary factors influencing secondary market vinyl prices could be:
@@ -35,6 +47,11 @@ While I have yet to develop an exact model, primary factors influencing secondar
       * Good (G), Good Plus (G+): Generally worth 10-15% of the Near Mint value. A record in Good or Good Plus condition can be played through without skipping. But it will have significant surface noise, scratches, and visible groove wear.
       * Poor (P), Fair (F): Generally worth 0-5% of the Near Mint price. The record is cracked, badly warped, and won't play through without skipping or repeating.
 
+<br>
+
+---
+
+<br>
 
 ### Disclaimer
 This project represents my submission for a school project and is purely for learning purposes. All data for this project is taken from Discogs via their public API. I ❤️ you Discogs!
@@ -43,12 +60,18 @@ This project represents my submission for a school project and is purely for lea
 ## Reference:
 
 ---
+
+<br>
+
 ### Discogs
 [Discogs API Documentation](https://www.discogs.com/developers)
 
 <br>
 
 ---
+
+<br>
+
 ### Django
 Install Django:
 
@@ -81,6 +104,9 @@ Create PROJECT_NAME/APP_NAME/templates/APP_NAME/index.html
 <br>
 
 ---
+
+<br>
+
 ### Django HTML Templating
 Insert Variable:
 ```
@@ -168,6 +194,9 @@ _where URL_NAME is the name assigned to a path in urls.py and APP_NAME is the va
 <br>
 
 ---
+
+<br>
+
 ### Virtual Environments
 Create Python3 Virtual Environment:
 
@@ -188,6 +217,9 @@ Remove Virtual Environment:
 <br>
 
 ---
+
+<br>
+
 ### Requirements.txt
 Automagically create a requirements.txt file:
 
@@ -197,6 +229,9 @@ Automagically create a requirements.txt file:
 <br>
 
 ---
+
+<br>
+
 ### Git
 Add Files
 
