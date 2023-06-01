@@ -38,6 +38,9 @@ Logical:
     No
 {% endif %}
 
+Add CSS to an HTML file
+{% load static %}
+
 ---
 #### Virtual Environments
 Create Python3 Virtual Environment: 
