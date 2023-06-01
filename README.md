@@ -6,6 +6,11 @@ a web app and order book for vinyl records available for sale on discogs!
 
 ---
 #### Django
+Install Django:
+```pip3 install Django```
+
+Create Django Project:
+```django-admin startproject PROJECT_NAME```
 
 ---
 #### Virtual Environments
