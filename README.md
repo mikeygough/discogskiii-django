@@ -104,7 +104,7 @@ Create templates/APP_NAME/layout.html
 </html>
 ```
 
-Then inherit this layout in other HTML files, for example index.html
+Then inherit this layout in other HTML files, for example index.html.
 ```
 {% extends "APP_NAME/layout.html" %}
 {% block body %}
@@ -112,6 +112,13 @@ Then inherit this layout in other HTML files, for example index.html
         <h1>Hello, Discogskiii</h1>
     </body>
 {% endblock %}
+```
+
+Link to URL:
+
+_where URL_NAME is the name assigned to a path in urls.py and APP_NAME is the variable assigned in that same file._
+```
+<a href="{% url 'APP_NAME:URL_NAME' %}"> Click Me</a>
 ```
 
 <br>
