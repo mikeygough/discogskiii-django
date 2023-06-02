@@ -42,6 +42,34 @@ If there are no records of the original listing for sale then the user wasted th
 
 <br>
 
+### Features
+Features I would like to include in the project:
+* Price and Quantity order books colors by quality for every jazz original pressing. For example:
+
+        | Bid Qty |  Price  | Offer Qty |
+        | :------ | :-----: |  -------: |
+        | 0       | 500     | 1         |
+        | 0       | 400     | 0         |
+        | 0       | 300     | 2         |
+        | 3       | 200     | 0         |
+        | 2       | 100     | 0         |
+
+
+<br>
+
+---
+
+<br>
+
+### Design
+
+
+<br>
+
+---
+
+<br>
+
 ### How are Records Priced?
 While I have yet to develop an exact model, primary factors influencing secondary market vinyl prices could be:
 
