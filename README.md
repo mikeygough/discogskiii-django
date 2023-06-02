@@ -17,11 +17,7 @@ Last year, [According to the Wall Street Journal](https://www.wsj.com/articles/v
 
 In addition to a growing primary market (new pressings and repressings), vinyl also sells actively on the secondary market. 
 
-The market for original pressings is particularly hot for jazz. As an example, Sonny Rollins' record _Saxophone Colossus_, was first release (pressed) in 1957. 
-
-Maybe that first batch contained a few hundred copies. If the music was popular, the record company produced more.
-
-Both pressings are the same music, but collectors seek original pressings. While later pressings might cost $20, original pressings from the 1957 batch fetch as much as $300.
+The market for original pressings is particularly hot for jazz. As an example, Sonny Rollins' record _Saxophone Colossus_, was first release (pressed) in 1957. While a new pressing might cost you $20, an original pressing fetches as much as $300! Both pressings are the same music, but collectors seek original pressings for their rich history as functional art.
 
 <br>
 
