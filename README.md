@@ -26,8 +26,17 @@ The market for original pressings is particularly hot for jazz. As an example, S
 <br>
 
 ### Project Scope and Goals
-The goal of this project is...
+The goal of this project is... to build a a lower level trading interface for those interested in the market for original pressing vinyl records.
 
+I imagine a user being presented with a simple order book for a particular pressing. Much in the same way that stock, crypto, and derivative markets are displayed on a screen.
+
+In the current model, if a user is interested in a particular record they first have to search it. After finding that record, they need to locate the master copy. The master copy contains information about all pressings of that music. From there, the user has to find the earliest listed pressing for that record. Then, they can see if any are available for sale.
+
+If there are any for sale, they have to filter through those which are available. Each has a price, condition and seller. It's not uncommon for two listings of the same record to be priced wildly far from each other. Perhaps Seller A wanted $1,000. But Seller B has the same record, enters the market, and offers $800. This friction in the price discovery process makes it more difficult for sellers can hit a bid and buyers to determine fair value.
+
+If there are no records of the original listing for sale then the user wasted their time. Additionally, there is no way for them to know when a pressing of that record becomes available for sale other than by constantly refreshing new listings in the marketplace.
+
+<br>
 
 ---
 
