@@ -46,14 +46,14 @@ If there are no records of the original listing for sale then the user wasted th
 Features I would like to include in the project:
 * Price and Quantity order books colored by quality for every jazz original pressing. I might want to to tweak this design to better represent quality. For now I am using two rows for the same price but separate qualities. For example:
 
-        | Bid Qty |  Price  | Offer Qty / Quality |
-        | :------ | :-----: | ------------------: |
-        | 0       | 500     | 1 / M               |
-        | 0       | 400     | 1 / NM              |
-        | 0       | 300     | 1 / VG+             |
-        | 0       | 300     | 1 / VG              |
-        | 3       | 200     | 0                   |
-        | 2       | 100     | 0                   |
+    | Bid Qty. |  Price  | Offer Qty. | Offer Quality |
+    | :------- | :-----: | ---------: | :------------ |
+    |          | 500     | 1          | M             |
+    |          | 400     | 1          | NM            |
+    |          | 300     | 1          | VG +          |
+    |          | 300     | 1          | VG            |
+    | 3        | 200     |            |               |
+    | 2        | 100     |            |               |
 
 
 <br>
