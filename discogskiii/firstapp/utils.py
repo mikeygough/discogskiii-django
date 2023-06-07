@@ -1,19 +1,10 @@
 # helper functions
-from config import *
+from firstapp.config import *
 from bs4 import BeautifulSoup
 from fake_useragent import UserAgent
 import json
 import re
 import requests
-
-
-# base variables
-site_base_url = "https://www.discogs.com"
-api_base_url = "https://api.discogs.com"
-authentication_header = {
-    "Authorization": f"Discogs key={CONSUMER_KEY}, secret={CONSUMER_SECRET}",
-}
-ua = UserAgent()
 
 
 def get_master_id(artist):
@@ -29,8 +20,8 @@ def get_master_id(artist):
     "page": "1"
     }
     
-    response = requests.get(f"{api_base_url}/database/search",
-                            headers=authentication_header,
+    response = requests.get(f"{API_BASE_URL}/database/search",
+                            headers=AUTHENTICATION_HEADER,
                             params=params).text
     # turn string into json
     response_json = json.loads(response)
@@ -44,8 +35,8 @@ def get_main_release_id(master_id):
     ''' REQUIRES AUTHENTICATION
         returns release_id of the master release'''
     
-    response = requests.get(f"{api_base_url}/masters/{master_id}",
-                            headers=authentication_header).text
+    response = requests.get(f"{API_BASE_URL}/masters/{master_id}",
+                            headers=AUTHENTICATION_HEADER).text
     # turn string into json
     response_json = json.loads(response)
     # get release_id of master release
@@ -56,7 +47,9 @@ def get_main_release_id(master_id):
 def get_listing_ids(release_id):
     ''' returns list of listing_ids for a given release_id '''
     
-    response = requests.get(f"{site_base_url}/sell/release/{release_id}",
+    # create UserAgent
+    ua = UserAgent()
+    response = requests.get(f"{SITE_BASE_URL}/sell/release/{release_id}",
                             headers={"User-Agent": ua.chrome})
 
     # extract html
@@ -88,8 +81,8 @@ def get_marketplace_listing(listing_id):
     ''' REQUIRES AUTHENTICATION
         return marketplace listing json '''
     
-    response = requests.get(f"{api_base_url}/marketplace/listings/{listing_id}",
-                    headers=authentication_header).text
+    response = requests.get(f"{API_BASE_URL}/marketplace/listings/{listing_id}",
+                    headers=AUTHENTICATION_HEADER).text
 
     # turn string into pretty json
     response_json = json.loads(response)

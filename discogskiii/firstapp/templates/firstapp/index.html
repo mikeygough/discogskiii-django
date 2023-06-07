@@ -2,6 +2,8 @@
 {% block body %}
     <body>
         <h1>Hello, world!</h1>
-        <h3><a href="{% url 'firstapp:amarkets' 'Sun Ra' %}">Sun Ra</a></h3>
+        {% for artist in artist_markets %}
+            <h3><a href="{% url 'firstapp:amarkets' artist %}">{{ artist }}</a></h3>
+        {% endfor %}
     </body>
 {% endblock %}
