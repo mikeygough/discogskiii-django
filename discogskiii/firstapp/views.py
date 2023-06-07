@@ -24,88 +24,77 @@ def index(request):
 # artist markets
 def amarkets(request, artist):
 
-    # first get number of pages:
-    num_pages = json.loads(requests.get(f"{API_BASE_URL}/database/search",
-                                        headers=AUTHENTICATION_HEADER,
-                                        params = {
-                                            "artist": f"{artist}",
-                                            "type": "master",
-                                            "format": "vinyl"
-                                            }).text)["pagination"]["pages"]
-    # initialize empty list for vinyls
-    vinyls = []
+    # at this point i've stored all the Main Release items for the four artists in the artist_markets list inside the database
+    # so if there's a new artist, we need to make the discogs api calls
+    # else we'll just request from our own database
+    if artist not in artist_markets:
+        # first get number of pages:
+        num_pages = json.loads(requests.get(f"{API_BASE_URL}/database/search",
+                                            headers=AUTHENTICATION_HEADER,
+                                            params = {
+                                                "artist": f"{artist}",
+                                                "type": "master",
+                                                "format": "vinyl"
+                                                }).text)["pagination"]["pages"]
+        # initialize empty list for vinyls
+        vinyls = []
 
-    # iterate through number of pages, get data, add to list of vinyls
-    for page in range(1, num_pages + 1):
-        # get data
-        response = requests.get(f"{API_BASE_URL}/database/search",
-                         headers=AUTHENTICATION_HEADER,
-                         params = {
-                            "artist": f"{artist}",
-                            "type": "master",
-                            "format": "vinyl",
-                            "page": f"{page}"
-                         }).text
+        # iterate through number of pages, get data, add to list of vinyls
+        for page in range(1, num_pages + 1):
+            # get data
+            response = requests.get(f"{API_BASE_URL}/database/search",
+                            headers=AUTHENTICATION_HEADER,
+                            params = {
+                                "artist": f"{artist}",
+                                "type": "master",
+                                "format": "vinyl",
+                                "page": f"{page}"
+                            }).text
 
-        # turn string into json
-        response_json = json.loads(response)
+            # turn string into json
+            response_json = json.loads(response)
 
-        # get album title, uri, year, and thumbnail
-        for result in response_json["results"]:
-            try:
-                info = {
-                "artist": f"{artist}",
-                "master_id": result["master_id"],
-                "title": result["title"],
-                "uri": result["uri"],
-                "year": result["year"],
-                "thumb": result["thumb"],
-                }
-                vinyls.append(info)
-            except:
-                pass
+            # get album title, uri, year, and thumbnail
+            for result in response_json["results"]:
+                try:
+                    info = {
+                    "artist": f"{artist}",
+                    "master_id": result["master_id"],
+                    "title": result["title"],
+                    "uri": result["uri"],
+                    "year": result["year"],
+                    "thumb": result["thumb"],
+                    }
+                    vinyls.append(info)
+                except:
+                    pass
 
-    # sort by year
-    sorted_vinyls = sorted(vinyls, key=lambda d: d["year"])
-    
-    print(sorted_vinyls)
-    print(type(sorted_vinyls))
+        # sort by year
+        sorted_vinyls = sorted(vinyls, key=lambda d: d["year"])
+        
+        print(sorted_vinyls)
+        print(type(sorted_vinyls))
 
-    # try making a database entry
-    sample_release = sorted_vinyls[0]    
-    MainRelease(artist=sample_release["artist"],
-                master_id=sample_release["master_id"],
-                title=sample_release["title"],
-                uri=sample_release["uri"],
-                year=sample_release["year"],
-                thumb=sample_release["thumb"]).save()
-    
-    # remove duplicate values (is not working 100%)
-    seen = set()
-    new_l = []
-    for d in sorted_vinyls:
-        t = tuple(d.items())
-        if t not in seen:
-            seen.add(t)
-            new_l.append(d)
+        # add records to database:
+        for vinyl in sorted_vinyls:
+            MainRelease(artist=vinyl["artist"],
+                        master_id=vinyl["master_id"],
+                        title=vinyl["title"],
+                        uri=vinyl["uri"],
+                        year=vinyl["year"],
+                        thumb=vinyl["thumb"]).save()
+        
+        # remove duplicate values (is not working 100%)
+        seen = set()
+        new_l = []
+        for d in sorted_vinyls:
+            t = tuple(d.items())
+            if t not in seen:
+                seen.add(t)
+                new_l.append(d)
+    else:
+        new_l = MainRelease.objects.all().filter(artist=artist)
 
-    # get random master id
-    # master_id = get_master_id(artist)
-    # print(master_id)
-    # print("-------------------------------")
-    # # get the main release id (original pressing id) from that random master
-    # print(f"get_main_release_id({master_id})")
-    # main_release_id = get_main_release_id(master_id)
-    # print(main_release_id)
-    # print("-------------------------------")
-    # # get the listing_ids (the original pressings available for sale) based on that random master
-    # print(f"get_listing_ids({main_release_id})")
-    # listing_ids = get_listing_ids(main_release_id)
-    # print(listing_ids)
-    # print("-------------------------------")
-    # print(f"get_marketplace_listing{listing_ids[0]}")
-    # marketplace_listing = get_marketplace_listing(listing_ids[0])
-    # print(marketplace_listing)
 
     return render(request, "firstapp/artist_markets.html", {
         "artist": artist,
