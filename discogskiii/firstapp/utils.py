@@ -34,7 +34,7 @@ def get_master_id(artist):
                             params=params).text
     # turn string into json
     response_json = json.loads(response)
-    # get master_id
+    # get master_id of first result arbitrarily
     master_id = response_json["results"][0]["id"]
     
     return master_id
@@ -59,7 +59,6 @@ def get_listing_ids(release_id):
     response = requests.get(f"{site_base_url}/sell/release/{release_id}",
                             headers={"User-Agent": ua.chrome})
 
-    print(response)
     # extract html
     soup = BeautifulSoup(response.content, "html.parser")
     # extract links
@@ -70,7 +69,7 @@ def get_listing_ids(release_id):
     filter = "/sell/item/"
     listing_ids = []
     for link in links:
-        # ? removes additional query parameters (currency)
+        # '?' removes additional query parameters (currency)
         if filter in str(link) and '?' not in str(link):
             # regex the id
             listing_ids.append(re.findall(r'-?\d+\.?\d*', str(link)))
@@ -83,8 +82,6 @@ def get_listing_ids(release_id):
 
     # looks like we can get a sell history: /sell/history/7068875
     # full link: https://www.discogs.com/sell/history/7068875
-    # may require authentication
-    # ^ release_id
 
 
 def get_marketplace_listing(listing_id):
@@ -100,6 +97,7 @@ def get_marketplace_listing(listing_id):
 
     return response_json
 
+
 def main():
     # get random master from search 'sun ra'
     print("get_master_id('sun ra')")
@@ -114,11 +112,12 @@ def main():
     # get the listing_ids (the original pressings available for sale) based on that random master
     print(f"get_listing_ids({main_release_id})")
     listing_ids = get_listing_ids(main_release_id)
-    print(listing_ids)
+    print(listing_ids) # ['1267047972']... for now, this could change if this record sells (6/3/2023)
+    print("-------------------------------")
+    print(f"get_marketplace_listing{listing_ids[0]}")
+    marketplace_listing = get_marketplace_listing(listing_ids[0])
+    print(marketplace_listing)
 
-    # print("get_marketplace_listing")
-    # listing = get_marketplace_listing("2047141883")
-    # print(listing)
     
 if __name__ == '__main__':
     main()
