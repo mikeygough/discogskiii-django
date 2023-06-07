@@ -162,6 +162,16 @@ After creating a new app:
 * Add APP_NAME to urlpatterns in _PROJECT_NAME/urls.py_
 * Add urls.py file to _PROJECT_NAME/APP_NAME_
 
+After creating models:
+
+Make Migrations:
+
+```python manage.py makemigrations```
+
+Apply Migrations:
+
+```python manage.py migrate```
+
 <br>
 Add HTML:
 
