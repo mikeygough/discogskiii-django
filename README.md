@@ -67,6 +67,11 @@ Features I would like to include in the project:
 <br>
 
 ### Design
+For the first version of this design I'm imagining a home screen with labels for each of the available artist markets. These are statically defined by me and just include the artist. For example, currently the statically defined artist markets are ["Sun Ra", "John Coltrane", "Miles Davis", "Alice Coltrane"]. These are completely arbitrary and just exist to help me flesh out a more scalable design.
+
+When a use clicks on an artist market, they're taken to a page that displays all of that artists records, sorted chronologically. Currently, this is a small performance bottleneck since on each page load I'm requesting all of this data from Discogs servers. For an artist like Miles Davis, this results in a multi-second page load.
+
+Since it's very rare for these artist (all of whom are now deceased) to release new records, I'm going to create a Django model for each artist. That model will store all of the records they've produced along with the information I need to load the page. It will be much faster to load the page this way, and since these arists aren't launching new records I should be safe to only have to fetch this once from Discogs. Just in case, I can run a quick check once a month or something and compare my DB with Discogs looking at page numbers or some other metric. Miles Davis, for example had a 'new' release in 2023.
 
 
 <br>
