@@ -47,7 +47,20 @@ def amarkets(request, artist):
                 pass
 
     # sort by year
-    sorted_vinyls = sorted(vinyls, key=lambda d: d['year']) 
+    sorted_vinyls = sorted(vinyls, key=lambda d: d['year'])
+    
+    print(sorted_vinyls)
+    print(type(sorted_vinyls))
+    
+    # remove duplicate values (is not working 100%)
+    seen = set()
+    new_l = []
+    for d in sorted_vinyls:
+        t = tuple(d.items())
+        if t not in seen:
+            seen.add(t)
+            new_l.append(d)
+
     base_url = 'https://www.discogs.com'
 
     # get random master id
@@ -70,6 +83,6 @@ def amarkets(request, artist):
 
     return render(request, "firstapp/artist_markets.html", {
         "artist": artist,
-        "sorted_vinyls": sorted_vinyls,
+        "sorted_vinyls": new_l,
         "base_url": base_url
     })
