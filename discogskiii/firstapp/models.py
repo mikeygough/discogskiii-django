@@ -2,8 +2,12 @@ from django.db import models
 
 # Create your models here.
 class MainRelease(models.Model):
-    master_id = models.CharField()
-    title = models.CharField()
-    uri = models.CharField()
-    year = models.CharField()
-    thumb = models.CharField()
+    artist = models.CharField(max_length=240) 
+    master_id = models.CharField(max_length=15)
+    title = models.CharField(max_length=240)
+    uri = models.CharField(max_length=500)
+    year = models.CharField(max_length=10)
+    thumb = models.CharField(max_length=500)
+
+    def __str__(self):
+        return f"{self.title} by {self.artist}"

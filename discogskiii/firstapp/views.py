@@ -51,6 +51,7 @@ def amarkets(request, artist):
         for result in response_json["results"]:
             try:
                 info = {
+                "artist": f"{artist}",
                 "master_id": result["master_id"],
                 "title": result["title"],
                 "uri": result["uri"],
