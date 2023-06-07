@@ -3,6 +3,9 @@ from django.shortcuts import render
 from firstapp.config import *
 from firstapp.utils import *
 
+# import models
+from firstapp.models import MainRelease
+
 # statically declare supported markets
 artist_markets = [
     "Sun Ra",
@@ -67,6 +70,15 @@ def amarkets(request, artist):
     
     print(sorted_vinyls)
     print(type(sorted_vinyls))
+
+    # try making a database entry
+    sample_release = sorted_vinyls[0]    
+    MainRelease(artist=sample_release["artist"],
+                master_id=sample_release["master_id"],
+                title=sample_release["title"],
+                uri=sample_release["uri"],
+                year=sample_release["year"],
+                thumb=sample_release["thumb"]).save()
     
     # remove duplicate values (is not working 100%)
     seen = set()
