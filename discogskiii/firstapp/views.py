@@ -11,43 +11,58 @@ artist_markets = [
     "Alice Coltrane"
 ]
 
-# Create your views here.
+# index
 def index(request):
     return render(request, "firstapp/index.html", {
         "artist_markets": artist_markets
     })
 
+
+# artist markets
 def amarkets(request, artist):
 
     # first get number of pages:
-    num_pages = json.loads(requests.get('https://api.discogs.com/database/search?artist={}&type=master&format=vinyl&key={}&secret={}'.format(artist, CONSUMER_KEY, CONSUMER_SECRET)).text)['pagination']['pages']
-
+    num_pages = json.loads(requests.get(f"{API_BASE_URL}/database/search",
+                                        headers=AUTHENTICATION_HEADER,
+                                        params = {
+                                            "artist": f"{artist}",
+                                            "type": "master",
+                                            "format": "vinyl"
+                                            }).text)["pagination"]["pages"]
+    # initialize empty list for vinyls
     vinyls = []
 
-    # iterate through number of pages
+    # iterate through number of pages, get data, add to list of vinyls
     for page in range(1, num_pages + 1):
         # get data
-        r = requests.get('https://api.discogs.com/database/search?artist={}&type=master&format=vinyl&page={}&key={}&secret={}'.format(artist, page, CONSUMER_KEY, CONSUMER_SECRET)).text
+        response = requests.get(f"{API_BASE_URL}/database/search",
+                         headers=AUTHENTICATION_HEADER,
+                         params = {
+                            "artist": f"{artist}",
+                            "type": "master",
+                            "format": "vinyl",
+                            "page": f"{page}"
+                         }).text
 
         # turn string into json
-        r_json = json.loads(r)
+        response_json = json.loads(response)
 
         # get album title, uri, year, and thumbnail
-        for result in r_json['results']:
+        for result in response_json["results"]:
             try:
                 info = {
-                'master_id': result['master_id'],
-                'title': result['title'],
-                'uri': result['uri'],
-                'year': result['year'],
-                'thumb': result['thumb'],
+                "master_id": result["master_id"],
+                "title": result["title"],
+                "uri": result["uri"],
+                "year": result["year"],
+                "thumb": result["thumb"],
                 }
                 vinyls.append(info)
             except:
                 pass
 
     # sort by year
-    sorted_vinyls = sorted(vinyls, key=lambda d: d['year'])
+    sorted_vinyls = sorted(vinyls, key=lambda d: d["year"])
     
     print(sorted_vinyls)
     print(type(sorted_vinyls))
@@ -60,8 +75,6 @@ def amarkets(request, artist):
         if t not in seen:
             seen.add(t)
             new_l.append(d)
-
-    base_url = 'https://www.discogs.com'
 
     # get random master id
     # master_id = get_master_id(artist)
@@ -84,5 +97,5 @@ def amarkets(request, artist):
     return render(request, "firstapp/artist_markets.html", {
         "artist": artist,
         "sorted_vinyls": new_l,
-        "base_url": base_url
+        "base_url": SITE_BASE_URL
     })
