@@ -6,27 +6,29 @@ import json
 import re
 import requests
 
+# import models
+from firstapp.models import MainRelease
 
-def get_master_id(artist):
+
+def get_master_id(artist, page=1):
     ''' REQUIRES AUTHENTICATION
         returns master_id of first result from
         discogs database artist search with specific query parameters'''
     
-    # set query parameters
-    params = {
-    "artist": f"{artist}",
-    "type": "master",
-    "format": "vinyl",
-    "page": "1"
-    }
-    
-    response = requests.get(f"{API_BASE_URL}/database/search",
+    # get data, return as json
+    response_json = json.loads(requests.get(f"{API_BASE_URL}/database/search",
                             headers=AUTHENTICATION_HEADER,
-                            params=params).text
-    # turn string into json
-    response_json = json.loads(response)
+                            params={
+                                "artist": f"{artist}",
+                                "type": "master",
+                                "format": "vinyl",
+                                "page": f"{page}"}).text)
+    
+    return response_json
+                                
+    # FOR TESTING
     # get master_id of first result arbitrarily
-    master_id = response_json["results"][0]["id"]
+    # master_id = response_json["results"][0]["id"]
     
     return master_id
 
@@ -89,6 +91,64 @@ def get_marketplace_listing(listing_id):
     response_json = json.dumps(response_json, indent=4)
 
     return response_json
+
+
+def get_artist_markets(artist):
+    ''' REQUIRES AUTHENTICATION
+        return list of dictionary objects representing all an artists' master releases '''
+    
+    # first get number of pages:
+    num_pages = json.loads(requests.get(f"{API_BASE_URL}/database/search",
+                                        headers=AUTHENTICATION_HEADER,
+                                        params={
+                                            "artist": f"{artist}",
+                                            "type": "master",
+                                            "format": "vinyl"
+                                            }).text)["pagination"]["pages"]
+    # initialize empty list for vinyls
+    vinyls = []
+
+    # iterate through number of pages, get data, add to list of vinyls
+    for page in range(1, num_pages + 1):
+        # get data
+        response_json = get_master_id(artist, page=page)
+
+        # get album title, uri, year, and thumbnail
+        for result in response_json["results"]:
+            try:
+                info = {
+                "artist": f"{artist}",
+                "master_id": result["master_id"],
+                "title": result["title"],
+                "uri": result["uri"],
+                "year": result["year"],
+                "thumb": result["thumb"],
+                }
+                vinyls.append(info)
+            except:
+                pass
+
+    # sort by year
+    sorted_vinyls = sorted(vinyls, key=lambda d: d["year"])
+    
+    # remove duplicate values (is not working 100%)
+    seen = set()
+    new_l = []
+    for d in sorted_vinyls:
+        t = tuple(d.items())
+        if t not in seen:
+            seen.add(t)
+            new_l.append(d)
+
+    # add records to database:
+    for vinyl in new_l:
+        MainRelease(artist=vinyl["artist"],
+                    master_id=vinyl["master_id"],
+                    title=vinyl["title"],
+                    uri=vinyl["uri"],
+                    year=vinyl["year"],
+                    thumb=vinyl["thumb"]).save()
+    return new_l
 
 
 def main():
