@@ -3,10 +3,6 @@
 {% block body %}
     <body>
         <h1>{{ artist }} Markets Page</h1>
-        {% for artist in artist_markets %}
-            <h3><a href="{% url 'firstapp:amarkets' artist %}">{{ artist }}</a></h3>
-        {% endfor %}
-
         {% if sorted_vinyls %}
             <table>
                 <tr>

@@ -46,8 +46,11 @@ def amarkets(request, artist):
 
 
 def release_market(request, artist, release_id):
+
+    release = MainRelease.objects.get(master_id=release_id)
+    print(release)
     
     return render(request, "firstapp/release_market.html", {
         "artist": artist,
-        "market": market
+        "release": release
     })
