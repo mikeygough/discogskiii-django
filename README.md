@@ -172,6 +172,10 @@ Apply Migrations:
 
 ```python manage.py migrate```
 
+Activate the Django Python Shell
+
+```python manage.py shell```
+
 <br>
 Add HTML:
 
