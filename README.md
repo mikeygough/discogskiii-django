@@ -185,6 +185,7 @@ After creating an Admin:
 * Add models to admin.py
     * from .models import MODEL_NAME
     * admin.site.register(MODEL_NAME)
+* Visit BASE_URL/admin
 
 <br>
 Add HTML:
