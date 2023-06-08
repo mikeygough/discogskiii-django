@@ -176,6 +176,16 @@ Activate the Django Python Shell
 
 ```python manage.py shell```
 
+Create Admin:
+
+```python manage.py createsuperuser```
+
+After creating an Admin:
+
+* Add models to admin.py
+    * from .models import MODEL_NAME
+    * admin.site.register(MODEL_NAME)
+
 <br>
 Add HTML:
 
