@@ -12,15 +12,8 @@ artist_markets = [
     "John Coltrane",
     "Miles Davis",
     "Alice Coltrane",
-    "Lee Morgan"
-]
-
-loaded_markets = [
-    "Sun Ra",
-    "John Coltrane",
-    "Miles Davis",
-    "Alice Coltrane",
-    "Lee Morgan"
+    "Lee Morgan",
+    "Coleman Hawkins"
 ]
 
 # index
@@ -33,12 +26,15 @@ def index(request):
 # artist markets
 def amarkets(request, artist):
 
-    # at this point i've stored all the Main Release items for the four artists in the artist_markets list inside the database
-    # so if there's a new artist, we need to make the discogs api calls
-    # else we'll just request from our own database
-    if artist not in loaded_markets:        
+    # get unique artists in database (cached)
+    cached_artists = MainRelease.objects.all().values_list('artist', flat=True).distinct()
+
+    # if not cached
+    if artist not in cached_artists:
+        # request data from discogs
         new_l = get_artist_markets(artist)
     else:
+        # cached, just load from database
         new_l = MainRelease.objects.all().filter(artist=artist)
 
 
