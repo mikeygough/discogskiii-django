@@ -43,3 +43,11 @@ def amarkets(request, artist):
         "sorted_vinyls": new_l,
         "base_url": SITE_BASE_URL
     })
+
+
+def release_market(request, artist, release_id):
+    
+    return render(request, "firstapp/release_market.html", {
+        "artist": artist,
+        "market": market
+    })
