@@ -143,15 +143,6 @@ def get_artist_releases(artist):
     # sort
     sorted_unique_vinyls = sorted(vinyls, key=lambda x: x['year'])
 
-    # add records to database:
-    for vinyl in sorted_unique_vinyls:
-        MasterRelease(artist=vinyl["artist"],
-                    master_id=vinyl["master_id"],
-                    title=vinyl["title"],
-                    uri=vinyl["uri"],
-                    year=vinyl["year"],
-                    thumb=vinyl["thumb"]).save()
-    
     # return a list of sorted, unique dictionaries where
     # each dict represents an artist's master release
     return sorted_unique_vinyls

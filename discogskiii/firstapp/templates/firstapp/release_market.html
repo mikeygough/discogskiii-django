@@ -3,7 +3,7 @@
 {% block body %}
     <body>
         <h1>{{ artist }} Markets Page</h1>
-        <h1>{{ release.title }}</h1>
+        <h1>{{ master_release.title }}</h1>
 
         <table>
             <tr>
@@ -14,7 +14,7 @@
             </tr>
             {% for listing in marketplace_listings %}
             <tr>
-                <td><a href={{listing.uri}} target="_blank" rel="noopener noreferrer">{{ release.title }}</a></td>
+                <td><a href={{listing.uri}} target="_blank" rel="noopener noreferrer">{{ master_release.title }}</a></td>
                 <td id="condition">{{ listing.condition }}</td>
                 <td id="posted">{{ listing.posted }}</td>
                 <td id="price">{{ listing.price.value }}</td>
