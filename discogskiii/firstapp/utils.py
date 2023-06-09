@@ -102,25 +102,22 @@ def get_artist_markets(artist):
     ''' REQUIRES AUTHENTICATION
         return list of dictionary objects representing all an artists' master releases '''
     
-    # first get number of pages:
-    # num_pages = json.loads(requests.get(f"{API_BASE_URL}/database/search",
-    #                                     headers=AUTHENTICATION_HEADER,
-    #                                     params={
-    #                                         "artist": f"{artist}",
-    #                                         "type": "master",
-    #                                         "format": "vinyl"
-    #                                         }).text)["pagination"]["pages"]
-    
+    # get number of pages for looping
     num_pages = search_artist_database(artist, page=1, per_page=100)["pagination"]["pages"]
+    
     # initialize empty list for vinyls
     vinyls = []
 
     # iterate through number of pages, get data, add to list of vinyls
     for page in range(1, num_pages + 1):
+        
         # get data
-        response_json = search_artist_database(artist, page=page)
+        response_json = search_artist_database(artist, page=page, per_page=100)
 
-        # get album title, uri, year, and thumbnail
+        # **** ----- I WONDER IF IT'D BE FASTER JUST TO STORE THE ENTIRE RESPONSE, RATHER THAN GRAB ATTRIBUTES ----- **** #
+        # **** ----- I'D JUST NEED TO REMEMBER TO CREATE A DICT FOR EACH RESPONSE, OR REMOVE THE OUTER RESULTS DICT/LIST THING ----- **** #
+
+        # store artist, master_id, title, uri, year and thumbnail
         for result in response_json["results"]:
             try:
                 info = {
@@ -132,30 +129,31 @@ def get_artist_markets(artist):
                 "thumb": result["thumb"],
                 }
                 vinyls.append(info)
-            except:
+            except: # if error just skip this release
                 pass
-
-    # sort by year
-    sorted_vinyls = sorted(vinyls, key=lambda d: d["year"])
     
-    # remove duplicate values (is not working 100%)
-    seen = set()
-    new_l = []
-    for d in sorted_vinyls:
-        t = tuple(d.items())
-        if t not in seen:
-            seen.add(t)
-            new_l.append(d)
+    # remove duplicate dictionaries
+    # convert each dictionary to a frozenset and create a set
+    unique_set = {frozenset(d.items()) for d in vinyls}
+
+    # convert the unique frozensets back to dictionaries
+    unique_vinyls = [dict(t) for t in unique_set]
+
+    # **** ----- I MIGHT BE BETTER OFF SORTING FROM THE DB REQUEST ----- **** #
+    # sort
+    sorted_unique_vinyls = sorted(vinyls, key=lambda x: x['year'])
 
     # add records to database:
-    for vinyl in new_l:
+    for vinyl in sorted_unique_vinyls:
         MainRelease(artist=vinyl["artist"],
                     master_id=vinyl["master_id"],
                     title=vinyl["title"],
                     uri=vinyl["uri"],
                     year=vinyl["year"],
                     thumb=vinyl["thumb"]).save()
-    return new_l
+    
+    # return 
+    return sorted_unique_vinyls
 
 
 def main():
