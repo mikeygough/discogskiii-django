@@ -47,8 +47,18 @@ def amarkets(request, artist):
 
 def release_market(request, artist, release_id):
 
+    # master represents meta information about the record
     release = MainRelease.objects.get(master_id=release_id)
-    print(release)
+    master_release_id = release.master_id
+    print("master_release_id", master_release_id)
+    # main represents the original pressing
+    main_release_id = get_main_release_id(master_release_id)
+    print("main_release_id", main_release_id)
+    # listing_ids represent the original pressings availabel for sale
+    listing_ids = get_listing_ids(main_release_id)
+    
+
+    print(listing_ids)
     
     return render(request, "firstapp/release_market.html", {
         "artist": artist,

@@ -30,7 +30,7 @@ def get_master_id(artist, page=1):
     # get master_id of first result arbitrarily
     # master_id = response_json["results"][0]["id"]
     
-    return master_id
+    # return master_id
 
 
 def get_main_release_id(master_id):
