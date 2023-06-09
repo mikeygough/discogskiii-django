@@ -132,6 +132,18 @@ This project represents my submission for a school project and is purely for lea
 ### Discogs
 [Discogs API Documentation](https://www.discogs.com/developers)
 
+__Notes__
+
+There's a bit of vernacular which is helpful to understand when working with this API:
+
+* __master_id__: represents the album as an entity. there can be multiple release's from a master.
+
+* __release_id__: represents a specific pressing of the master.
+
+* __main_id__: represents the original pressing of the master.
+
+* __listing_id__: represents a marketplace listing of a release. unlike master, release, or main, these can appear and dissapear as records are bought and sold.
+
 <br>
 
 ---
