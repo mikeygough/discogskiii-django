@@ -148,6 +148,10 @@ def get_artist_releases(artist):
     return sorted_unique_vinyls
 
 
+def format_currency(value):
+    ''' format value as USD currency '''
+    return '${:,.2f}'.format(value)
+
 def main():
     master_id = "143592"
     # get the main release id (original pressing id) from that random master

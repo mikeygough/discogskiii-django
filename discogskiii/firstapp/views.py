@@ -82,6 +82,10 @@ def release_market(request, artist, release_id):
     # sort by price
     sorted_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)
 
+    for listing in sorted_listings:
+        listing["price"]["value"] = format_currency(listing["price"]["value"])
+    
+    
     # should apply some formatting here
     # round dollar amounts
     # calculate minimum tick for order book display
