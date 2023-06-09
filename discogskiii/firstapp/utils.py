@@ -98,7 +98,7 @@ def get_marketplace_listing(listing_id):
     return response_json
 
 
-def get_artist_markets(artist):
+def get_artist_releases(artist):
     ''' REQUIRES AUTHENTICATION
         return list of dictionary objects representing all an artists' master releases '''
     
@@ -152,7 +152,8 @@ def get_artist_markets(artist):
                     year=vinyl["year"],
                     thumb=vinyl["thumb"]).save()
     
-    # return 
+    # return a list of sorted, unique dictionaries where
+    # each dict represents an artist's master release
     return sorted_unique_vinyls
 
 

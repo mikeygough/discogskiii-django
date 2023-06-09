@@ -23,8 +23,8 @@ def index(request):
     })
 
 
-# artist markets
-def amarkets(request, artist):
+# all releases by an arist
+def artist_releases(request, artist):
 
     # get unique artists in database (cached)
     cached_artists = MainRelease.objects.all().values_list('artist', flat=True).distinct()
@@ -32,15 +32,15 @@ def amarkets(request, artist):
     # if not cached
     if artist not in cached_artists:
         # request data from discogs
-        new_l = get_artist_markets(artist)
+        artist_releases = get_artist_releases(artist)
     else:
         # cached, just load from database
-        new_l = MainRelease.objects.all().filter(artist=artist)
+        artist_releases = MainRelease.objects.all().filter(artist=artist)
 
 
-    return render(request, "firstapp/artist_markets.html", {
+    return render(request, "firstapp/artist_releases.html", {
         "artist": artist,
-        "sorted_vinyls": new_l,
+        "artist_releases": artist_releases,
         "base_url": SITE_BASE_URL
     })
 

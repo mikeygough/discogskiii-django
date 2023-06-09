@@ -1,0 +1,25 @@
+{% extends "firstapp/layout.html" %}
+
+{% block body %}
+    <body>
+        <h1>{{ artist }} Markets Page</h1>
+        {% if artist_releases %}
+            <table>
+                <tr>
+                    <th>Master</th>
+                    <th id="table-year">Year</th>
+                    <th id="table-album-cover">Album Cover</th>
+                    <th id="table-buy">Buy</th>
+                </tr>
+                {% for release in artist_releases %}
+                <tr>
+                    <td><a href={{base_url|add:release.uri}} target="_blank" rel="noopener noreferrer">{{ release.title }}</a></td>
+                    <td id="table-year">{{ release.year }}</td>
+                    <td id="table-album-cover"><img src="{{ release.thumb }}" alt="{{ release.title }} Album Cover" height=75 width=75/></td>
+                    <td id="table-buy"><a href="{% url 'firstapp:release_market' artist release.master_id %}">View Markets</a></td>
+                </tr>
+                {% endfor %}
+            </table>
+        {% endif %}
+    </body>
+{% endblock %}
