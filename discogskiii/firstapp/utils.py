@@ -14,7 +14,7 @@ def search_artist_database(artist, page=1, per_page=100):
     ''' REQUIRES AUTHENTICATION
         returns json response from page n of a discogs database artist search
         where type=master and format=vinyl.
-        helpful for obtaining a release's master_id'''
+        helpful for obtaining a release's master_id (record meta object). '''
 
     # get data, return as json
     response_json = json.loads(requests.get(f"{API_BASE_URL}/database/search",
@@ -26,40 +26,54 @@ def search_artist_database(artist, page=1, per_page=100):
                                 "page": f"{page}",
                                 "per_page": f"{per_page}"}).text)
     
+    # return data
     return response_json
-
 
 
 def get_main_release_id(master_id):
     ''' REQUIRES AUTHENTICATION
-        returns release_id of the master release'''
+        given a master_id (record meta object), retun the release_id
+        of the original pressing. you can think of 'main_release' as the same
+        as 'original_pressing'. '''
     
-    response = requests.get(f"{API_BASE_URL}/masters/{master_id}",
-                            headers=AUTHENTICATION_HEADER).text
-    # turn string into json
-    response_json = json.loads(response)
+    # get data as json
+    response_json = json.loads(requests.get(f"{API_BASE_URL}/masters/{master_id}",
+                            headers=AUTHENTICATION_HEADER).text)
+    
     # get release_id of master release
     main_release_id = response_json["main_release"]
+    
+    # return main_release_id (original_pressing_id)
     return main_release_id
 
 
 def get_listing_ids(release_id):
-    ''' returns list of listing_ids for a given release_id '''
+    ''' given a release_id, returns a list of listings of that release_id for sale.
+        listings are records which are available for sale.
+        helpful for obtaining original pressings which are listed for sale. '''
+
+    # **** ----- would like to improve performance here ----- **** #
     
     # create UserAgent
     ua = UserAgent()
+    
+    # get data
     response = requests.get(f"{SITE_BASE_URL}/sell/release/{release_id}",
                             headers={"User-Agent": ua.chrome})
 
     # extract html
     soup = BeautifulSoup(response.content, "html.parser")
+    
     # extract links
     links = []
     for link in soup.find_all('a'):
         links.append(link.get('href'))
     # filter for listing_ids
     filter = "/sell/item/"
+    
+    # initialize list for listing_ids (original pressings of this release for sale)
     listing_ids = []
+    # extract listing_ids
     for link in links:
         # '?' removes additional query parameters (currency)
         if filter in str(link) and '?' not in str(link):
@@ -67,26 +81,20 @@ def get_listing_ids(release_id):
             listing_ids.append(re.findall(r'-?\d+\.?\d*', str(link)))
     # flatten the list
     listing_ids = [item for sublist in listing_ids for item in sublist]
-    return listing_ids
     
-    # add to unit_test
-    # print(page.status_code)
-
-    # looks like we can get a sell history: /sell/history/7068875
-    # full link: https://www.discogs.com/sell/history/7068875
+    # return list of listing_ids
+    return listing_ids
 
 
 def get_marketplace_listing(listing_id):
     ''' REQUIRES AUTHENTICATION
-        return marketplace listing json '''
+        given a listing_id, returns marketplace listing json '''
     
-    response = requests.get(f"{API_BASE_URL}/marketplace/listings/{listing_id}",
-                    headers=AUTHENTICATION_HEADER).text
+    # get data as json
+    response_json = json.loads(requests.get(f"{API_BASE_URL}/marketplace/listings/{listing_id}",
+                    headers=AUTHENTICATION_HEADER).text)
 
-    # turn string into pretty json
-    response_json = json.loads(response)
-    # response_json = json.dumps(response_json, indent=4)
-
+    # return marketplace listing data
     return response_json
 
 
