@@ -48,13 +48,23 @@ def amarkets(request, artist):
 def release_market(request, artist, release_id):
 
     # master represents meta information about the record
+    # we get this from our internal db
     release = MainRelease.objects.get(master_id=release_id)
     master_release_id = release.master_id
     print("master_release_id", master_release_id)
+    
     # main represents the original pressing
+    # we have to obtain this from discogs
+    # -- but maybe we could store it in our db
+    # weighing the design decision of moving this up into the amarkets view
+    # we could fetch this when we write to the db to store and access later.
+    # it might slow down amarkets, but would speed up this release_market view.
     main_release_id = get_main_release_id(master_release_id)
     print("main_release_id", main_release_id)
-    # listing_ids represent the original pressings availabel for sale
+    
+    # listing_ids represent the original pressings available for sale
+    # we have to obtain this by webscraping dicogs each and every
+    # time because markets change
     listing_ids = get_listing_ids(main_release_id)
     
     # initialize list for all marketplace listings of the original pressing
@@ -66,6 +76,12 @@ def release_market(request, artist, release_id):
     print(marketplace_listings)
     # sort by price
     sorted_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)
+
+    # should apply some formatting here
+    # round dollar amounts
+    # calculate minimum tick for order book display
+    # format date (posted)
+    # maybe clean up conditions to just be codes (ie VG instead of text Very Good)
     
     return render(request, "firstapp/release_market.html", {
         "artist": artist,
