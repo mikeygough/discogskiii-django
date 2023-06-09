@@ -4,7 +4,7 @@ from firstapp.config import *
 from firstapp.utils import *
 
 # import models
-from firstapp.models import MainRelease
+from firstapp.models import MasterRelease
 
 # statically declare supported markets
 artist_markets = [
@@ -27,7 +27,7 @@ def index(request):
 def artist_releases(request, artist):
 
     # get unique artists in database (cached)
-    cached_artists = MainRelease.objects.all().values_list('artist', flat=True).distinct()
+    cached_artists = MasterRelease.objects.all().values_list('artist', flat=True).distinct()
 
     # if not cached
     if artist not in cached_artists:
@@ -35,7 +35,7 @@ def artist_releases(request, artist):
         artist_releases = get_artist_releases(artist)
     else:
         # cached, just load from database
-        artist_releases = MainRelease.objects.all().filter(artist=artist)
+        artist_releases = MasterRelease.objects.all().filter(artist=artist)
 
 
     return render(request, "firstapp/artist_releases.html", {
@@ -49,7 +49,7 @@ def release_market(request, artist, release_id):
 
     # master represents meta information about the record
     # we get this from our internal db
-    release = MainRelease.objects.get(master_id=release_id)
+    release = MasterRelease.objects.get(master_id=release_id)
     master_release_id = release.master_id
     print("master_release_id", master_release_id)
     

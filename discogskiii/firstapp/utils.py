@@ -7,7 +7,7 @@ import re
 import requests
 
 # import models
-from firstapp.models import MainRelease
+from firstapp.models import MasterRelease
 
 
 def search_artist_database(artist, page=1, per_page=100):
@@ -145,7 +145,7 @@ def get_artist_releases(artist):
 
     # add records to database:
     for vinyl in sorted_unique_vinyls:
-        MainRelease(artist=vinyl["artist"],
+        MasterRelease(artist=vinyl["artist"],
                     master_id=vinyl["master_id"],
                     title=vinyl["title"],
                     uri=vinyl["uri"],

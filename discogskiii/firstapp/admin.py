@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from firstapp.models import MainRelease
+from firstapp.models import MasterRelease
 
 # Register your models here.
-admin.site.register(MainRelease)
+admin.site.register(MasterRelease)

@@ -1,7 +1,7 @@
 from django.db import models
 
 # Create your models here.
-class MainRelease(models.Model):
+class MasterRelease(models.Model):
     artist = models.CharField(max_length=240) 
     master_id = models.CharField(max_length=15)
     title = models.CharField(max_length=240)
