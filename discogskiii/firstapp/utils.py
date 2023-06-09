@@ -5,6 +5,7 @@ from fake_useragent import UserAgent
 import json
 import re
 import requests
+from datetime import datetime
 
 # import models
 from firstapp.models import MasterRelease
@@ -151,6 +152,12 @@ def get_artist_releases(artist):
 def format_currency(value):
     ''' format value as USD currency '''
     return '${:,.2f}'.format(value)
+
+
+def format_date(date_str):
+    dt = datetime.fromisoformat(date_str)
+    formatted_date = dt.strftime('%B %d, %Y')  # format according to your preference
+    return formatted_date
 
 def main():
     master_id = "143592"

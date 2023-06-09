@@ -82,9 +82,12 @@ def release_market(request, artist, release_id):
     # sort by price
     sorted_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)
 
+    # clean up
     for listing in sorted_listings:
+        # currency
         listing["price"]["value"] = format_currency(listing["price"]["value"])
-    
+        # date
+        listing["posted"] = format_date(listing["posted"])
     
     # should apply some formatting here
     # round dollar amounts
