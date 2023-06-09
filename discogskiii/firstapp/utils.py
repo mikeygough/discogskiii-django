@@ -88,7 +88,7 @@ def get_marketplace_listing(listing_id):
 
     # turn string into pretty json
     response_json = json.loads(response)
-    response_json = json.dumps(response_json, indent=4)
+    # response_json = json.dumps(response_json, indent=4)
 
     return response_json
 

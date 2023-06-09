@@ -57,10 +57,14 @@ def release_market(request, artist, release_id):
     # listing_ids represent the original pressings availabel for sale
     listing_ids = get_listing_ids(main_release_id)
     
+    # initialize list for all marketplace listings of the original pressing
+    marketplace_listings = []
 
-    print(listing_ids)
+    for listing in listing_ids:
+        marketplace_listings.append(get_marketplace_listing(listing))
     
     return render(request, "firstapp/release_market.html", {
         "artist": artist,
-        "release": release
+        "release": release,
+        "marketplace_listings": marketplace_listings
     })
