@@ -10,11 +10,12 @@ import requests
 from firstapp.models import MainRelease
 
 
-def get_master_id(artist, page=1):
+def search_artist_database(artist, page=1, per_page=100):
     ''' REQUIRES AUTHENTICATION
-        returns master_id of first result from
-        discogs database artist search with specific query parameters'''
-    
+        returns json response from page n of a discogs database artist search
+        where type=master and format=vinyl.
+        helpful for obtaining a release's master_id'''
+
     # get data, return as json
     response_json = json.loads(requests.get(f"{API_BASE_URL}/database/search",
                             headers=AUTHENTICATION_HEADER,
@@ -22,15 +23,11 @@ def get_master_id(artist, page=1):
                                 "artist": f"{artist}",
                                 "type": "master",
                                 "format": "vinyl",
-                                "page": f"{page}"}).text)
+                                "page": f"{page}",
+                                "per_page": f"{per_page}"}).text)
     
     return response_json
-                                
-    # FOR TESTING
-    # get master_id of first result arbitrarily
-    # master_id = response_json["results"][0]["id"]
-    
-    # return master_id
+
 
 
 def get_main_release_id(master_id):
@@ -98,20 +95,22 @@ def get_artist_markets(artist):
         return list of dictionary objects representing all an artists' master releases '''
     
     # first get number of pages:
-    num_pages = json.loads(requests.get(f"{API_BASE_URL}/database/search",
-                                        headers=AUTHENTICATION_HEADER,
-                                        params={
-                                            "artist": f"{artist}",
-                                            "type": "master",
-                                            "format": "vinyl"
-                                            }).text)["pagination"]["pages"]
+    # num_pages = json.loads(requests.get(f"{API_BASE_URL}/database/search",
+    #                                     headers=AUTHENTICATION_HEADER,
+    #                                     params={
+    #                                         "artist": f"{artist}",
+    #                                         "type": "master",
+    #                                         "format": "vinyl"
+    #                                         }).text)["pagination"]["pages"]
+    
+    num_pages = search_artist_database(artist, page=1, per_page=100)["pagination"]["pages"]
     # initialize empty list for vinyls
     vinyls = []
 
     # iterate through number of pages, get data, add to list of vinyls
     for page in range(1, num_pages + 1):
         # get data
-        response_json = get_master_id(artist, page=page)
+        response_json = search_artist_database(artist, page=page)
 
         # get album title, uri, year, and thumbnail
         for result in response_json["results"]:
@@ -152,11 +151,7 @@ def get_artist_markets(artist):
 
 
 def main():
-    # get random master from search 'sun ra'
-    print("get_master_id('sun ra')")
-    master_id = get_master_id("sun ra")
-    print(master_id) # 143592
-    print("-------------------------------")
+    master_id = "143592"
     # get the main release id (original pressing id) from that random master
     print(f"get_main_release_id({master_id})")
     main_release_id = get_main_release_id(master_id)
