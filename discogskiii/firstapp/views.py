@@ -63,8 +63,12 @@ def release_market(request, artist, release_id):
     for listing in listing_ids:
         marketplace_listings.append(get_marketplace_listing(listing))
     
+    print(marketplace_listings)
+    # sort by price
+    sorted_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)
+    
     return render(request, "firstapp/release_market.html", {
         "artist": artist,
         "release": release,
-        "marketplace_listings": marketplace_listings
+        "marketplace_listings": sorted_listings
     })

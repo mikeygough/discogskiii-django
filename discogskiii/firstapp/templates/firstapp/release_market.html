@@ -21,6 +21,23 @@
             </tr>
             {% endfor %}
         </table>
+
+        <h3>Order Book</h3>
+        <table>
+            <tr>
+                <th id="price">Price</th>
+                <th id="offer-qty">Offer Qty.</th>
+                <th id="offer-quality">Offer Quality</th>
+            </tr>
+            {% for listing in marketplace_listings %}
+            <tr>
+                <td id="price">{{ listing.price.value }}</td>
+                <td id="offer-qty">1</td>
+                <td id="offer-quality">{{ listing.condition }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+
             
     </body>
 {% endblock %}
