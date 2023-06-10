@@ -1,11 +1,25 @@
 {% extends "firstapp/layout.html" %}
 {% block body %}
     <body>
+        
         <div class="bg-gradient-to-b from-sky-600 via-cfeBlue-100 to-cfe flex h-screen justify-center items-center text-white">
             <h1 class="text-4xl font-bold break-after-auto">Hello, world!</h1>
             {% for artist in artist_markets %}
-                <h3><a href="{% url 'firstapp:artist_releases' artist %}">{{ artist }}</a></h3>
+                <h3 class="hover:text-white hover:bg-black"><a href="{% url 'firstapp:artist_releases' artist %}">{{ artist }}</a></h3>
             {% endfor %}
         </div>
+
+        <div class="bg-gradient-to-b from-slate-600 flex h-screen justify-center items-center text-white">
+            {% for artist in artist_markets %}
+                <div class="py-8 px-8 max-w-sm mx-auto bg-white rounded-xl shadow-lg space-y-2 sm:py-4 sm:flex sm:items-center sm:space-y-0 sm:space-x-6 hover:bg-amber-100">
+                    <h3 class="text-black"><a href="{% url 'firstapp:artist_releases' artist %}">{{ artist }}</a></h3>
+                </div>
+            {% endfor %}
+            
+        </div>
+
+        
+
+
     </body>
 {% endblock %}
