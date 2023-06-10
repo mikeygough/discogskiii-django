@@ -4,9 +4,11 @@
 <html lang="en">
     <head>
         <title>Discogskiii</title>
-        <!-- <link href="{% static 'firstapp/styles.css' %}" rel="stylesheet"> -->
-        <link rel="stylesheet" href="{% static 'css/output.css' %}"
-        {% include 'head/css.html' %}
+        <link rel="stylesheet" href="{% static 'css/output.css' %}">
+        <link href="{% static 'firstapp/styles.css' %}" rel="stylesheet">
+        
+        <!-- Add the Google Fonts link -->
+        <link href="https://fonts.googleapis.com/css2?family=Circular:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     </head>
     <body>
         {% block body %}
