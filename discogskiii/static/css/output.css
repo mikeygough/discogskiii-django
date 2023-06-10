@@ -542,12 +542,23 @@ video {
   height: 100vh;
 }
 
+.break-after-auto {
+  -moz-column-break-after: auto;
+       break-after: auto;
+}
+
 .items-center {
   align-items: center;
 }
 
 .justify-center {
   justify-content: center;
+}
+
+.space-y-4 > :not([hidden]) ~ :not([hidden]) {
+  --tw-space-y-reverse: 0;
+  margin-top: calc(1rem * calc(1 - var(--tw-space-y-reverse)));
+  margin-bottom: calc(1rem * var(--tw-space-y-reverse));
 }
 
 .bg-gradient-to-b {
