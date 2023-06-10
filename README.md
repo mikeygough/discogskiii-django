@@ -300,6 +300,17 @@ _where URL_NAME is the name assigned to a path in urls.py and APP_NAME is the va
 
 <br>
 
+### Tailwind CSS
+
+This was kind of a pain to setup 😅 But I've been wanting to try [Tailwind CSS](https://tailwindcss.com/) for a while now! I followed along with [this tutorial](https://www.youtube.com/watch?v=lsQVukhwpqQ) and got everything up and running in my main project. Now I want to get it specifically working within _firstapp_ which is my poorly named app within the discogskiii project.
+
+
+<br>
+
+---
+
+<br>
+
 ### Virtual Environments
 Create Python3 Virtual Environment:
 
