@@ -89,10 +89,7 @@ def release_market(request, artist, release_id):
         # date
         listing["posted"] = format_date(listing["posted"])
     
-    # should apply some formatting here
-    # round dollar amounts
     # calculate minimum tick for order book display
-    # format date (posted)
     # maybe clean up conditions to just be codes (ie VG instead of text Very Good)
     
     return render(request, "firstapp/release_market.html", {
