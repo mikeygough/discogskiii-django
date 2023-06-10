@@ -1,6 +1,8 @@
 config.py
 env/
 **/.DS_Store
+local-cdn/
+node_modules/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
