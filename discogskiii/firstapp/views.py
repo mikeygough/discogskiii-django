@@ -18,9 +18,17 @@ artist_markets = [
 
 # index
 def index(request):
-    
+
+    colors = [
+        'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald',
+        'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose'
+        ]
+
+    colors = ['from-' + color + '-600' for color in colors]
+     
     return render(request, "firstapp/index.html", {
-        "artist_markets": artist_markets
+        "artist_markets": artist_markets,
+        "colors": colors
     })
 
 
