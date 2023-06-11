@@ -3,29 +3,29 @@
 {% block body %}
     <body>
         <h1 class="text-slate-900 font-extrabold text-4xl sm:text-5xl lg:text-6xl tracking-tight text-center text-black">{{ artist }}</h1>
-        <p class="mt-6 text-lg text-slate-600 text-center max-w-3xl mx-auto dark:text-slate-400">Original Pressings of {{ master_release.title}} for Sale</p>
+        <p class="mt-6 text-lg text-slate-950 text-center max-w-3xl mx-auto">Original Pressings of {{ master_release.title}} for Sale</p>
 
         <div class="overflow-x-auto">
             <div class="min-w-full">
                 <table class="min-w-full divide-y divide-gray-200">
                     <thead>
-                    <tr>
-                        <th class="px-6 py-3 text-left bg-gradient-to-r from-orange-500 to-orange-600 text-white">Price</th>
-                        <th class="px-6 py-3 text-left bg-gradient-to-r from-orange-500 to-orange-600 text-white">Quantity</th>
-                        <th class="px-6 py-3 text-left bg-gradient-to-r from-orange-500 to-orange-600 text-white">Quality</th>
-                        <th class="px-6 py-3 text-left bg-gradient-to-r from-orange-500 to-orange-600 text-white">Listed</th>
+                    <tr class="bg-gradient-to-r from-purple-600 to-fuchsia-500 text-white">
+                        <th class="px-6 py-3 text-right text-lg font-medium uppercase tracking-wider">Price</th>
+                        <th class="px-6 py-3 text-left text-lg font-medium uppercase tracking-wider">Quantity</th>
+                        <th class="px-6 py-3 text-left text-lg font-medium uppercase tracking-wider">Quality</th>
+                        <th class="px-6 py-3 text-center text-lg font-medium uppercase tracking-wider">Listed</th>
                     </tr>
                     </thead>
                     <tbody>
                     {% for listing in marketplace_listings %}
-                        <tr class="hover:bg-gray-100">
-                            <td class="px-6 py-4 whitespace-nowrap">{{ listing.price.value }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">1</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ listing.condition }}</td>
-                            <td class="px-6 py-4 whitespace-nowrap">{{ listing.posted }}</td>
+                        <tr class="odd:bg-gray-100 even:bg-gray-200">
+                            <td class="px-4 py-2 text-gray-800 whitespace-nowrap text-right text-base font-medium">{{ listing.price.value }}</td>
+                            <td class="px-4 py-2 text-gray-800 whitespace-nowrap text-left text-base font-medium">1</td>
+                            <td class="px-4 py-2 text-gray-800 whitespace-nowrap text-left text-base font-medium">{{ listing.condition }}</td>
+                            <td class="px-4 py-2 text-gray-800 whitespace-nowrap text-center text-base font-medium">{{ listing.posted }}</td>
                         </tr>
-                        </tbody>
                     {% endfor %}
+                    </tbody>
                 </table>
             </div>
         </div>

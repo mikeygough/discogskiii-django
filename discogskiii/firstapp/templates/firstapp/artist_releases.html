@@ -4,24 +4,25 @@
     <body>
         <h1 class="text-slate-900 font-extrabold text-4xl sm:text-5xl lg:text-6xl tracking-tight text-center text-black">{{ artist }}</h1>
         <p class="mt-6 text-lg text-slate-950 text-center max-w-3xl mx-auto">Vinyl releases by {{ artist }}</p>
+        
         {% if artist_releases %}
             <div class="overflow-x-auto">
                 <div class="min-w-full">
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
-                        <tr>
-                            <th class="px-6 py-3 text-left text-lg font-medium bg-gradient-to-r from-blue-600 to-indigo-500 text-white uppercase tracking-wider">Album Title</th>
-                            <th id="table-year" class="px-6 py-3 text-left text-lg font-medium bg-gradient-to-r from-blue-600 to-indigo-500 text-white uppercase tracking-wider">Year</th>
-                            <th id="table-album-cover" class="px-6 py-3 text-left text-xs font-medium bg-gradient-to-r from-blue-600 to-indigo-500 text-white uppercase tracking-wider">Album Cover</th>
-                            <th id="table-view-markets" class="px-6 py-3 text-left text-xs font-medium bg-gradient-to-r from-blue-600 to-indigo-500 text-white uppercase tracking-wider">View Markets</th>
+                        <tr class="bg-gradient-to-r from-blue-600 to-indigo-500 text-white">
+                            <th class="px-6 py-3 text-left text-lg font-medium uppercase tracking-wider">Album Title</th>
+                            <th id="table-year" class="px-6 py-3 text-left text-lg font-medium uppercase tracking-wider">Year</th>
+                            <th id="table-album-cover" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">Album Cover</th>
+                            <th id="table-view-markets" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">View Markets</th>
                         </tr>
                         </thead>
                         <tbody>
                             {% for release in artist_releases %}
                             <tr class="odd:bg-gray-100 even:bg-white">
                                 <td class="px-6 py-4 whitespace-wrap">
-                                    <a href={{base_url|add:release.uri}} class="text-left text-base font-medium"target="_blank" rel="noopener noreferrer">{{ release.title }}</a></td>
-                                <td id="table-year" class="px-6 py-4 whitespace-nowrap text-base text-center">{{ release.year }}</td>
+                                    <a href={{base_url|add:release.uri}} class="text-left text-base font-medium" target="_blank" rel="noopener noreferrer">{{ release.title }}</a></td>
+                                <td id="table-year" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">{{ release.year }}</td>
                                 <td id="table-album-cover" class="px-6 py-4 whitespace-nowrap">
                                     <img src="{{ release.thumb }}" alt="Album Cover" class="h-16 w-16 mx-auto">
                                 </td>
