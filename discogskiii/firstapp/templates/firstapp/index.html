@@ -9,6 +9,15 @@
             {% endfor %}
         </div>
 
+        <div class="flex h-screen justify-center items-center flex flex-col mx-2 space-x-1 text-center overflow-x-auto">
+            {% for color in colors %}
+                <div class="h-full w-full bg-gradient-to-b {{ color }} to-neutral-50 flex justify-center items-center text-black">
+                    <h1 class="text-4xl font-bold">Hello, {{ color }}!</h1>
+                </div>
+            {% endfor %}
+        </div>
+
+
         {% for color in colors %}
             <div class="bg-gradient-to-b {{ color }} to-neutral-50 flex h-screen justify-center items-center text-black">
                 <h1 class="text-4xl font-bold break-after-auto">Hello, {{ color }}!</h1>
