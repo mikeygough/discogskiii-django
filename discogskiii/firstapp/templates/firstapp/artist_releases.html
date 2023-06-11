@@ -10,22 +10,23 @@
                     <table class="min-w-full divide-y divide-gray-200">
                         <thead>
                         <tr>
-                            <th class="px-6 py-3 text-left bg-gradient-to-r from-sky-500 text-black">Album Title</th>
-                            <th id="table-year" class="px-6 py-3 text-left bg-gradient-to-r from-sky-500 text-black">Year</th>
-                            <th id="table-album-cover" class="px-6 py-3 text-left bg-gradient-to-r from-sky-500 text-black">Album Cover</th>
-                            <th id="table-view-markets" class="px-6 py-3 text-left bg-gradient-to-r from-sky-500 text-black">View Markets</th>
+                            <th class="px-6 py-3 text-left text-lg font-medium bg-gradient-to-r from-blue-600 to-indigo-500 text-white uppercase tracking-wider">Album Title</th>
+                            <th id="table-year" class="px-6 py-3 text-left text-lg font-medium bg-gradient-to-r from-blue-600 to-indigo-500 text-white uppercase tracking-wider">Year</th>
+                            <th id="table-album-cover" class="px-6 py-3 text-left text-xs font-medium bg-gradient-to-r from-blue-600 to-indigo-500 text-white uppercase tracking-wider">Album Cover</th>
+                            <th id="table-view-markets" class="px-6 py-3 text-left text-xs font-medium bg-gradient-to-r from-blue-600 to-indigo-500 text-white uppercase tracking-wider">View Markets</th>
                         </tr>
                         </thead>
                         <tbody>
                             {% for release in artist_releases %}
                             <tr class="odd:bg-gray-100 even:bg-white">
-                                <td class="px-6 py-4 whitespace-wrap"><a href={{base_url|add:release.uri}} target="_blank" rel="noopener noreferrer">{{ release.title }}</a></td>
-                                <td id="table-year" class="px-6 py-4 whitespace-nowrap">{{ release.year }}</td>
+                                <td class="px-6 py-4 whitespace-wrap">
+                                    <a href={{base_url|add:release.uri}} class="text-left text-base font-medium"target="_blank" rel="noopener noreferrer">{{ release.title }}</a></td>
+                                <td id="table-year" class="px-6 py-4 whitespace-nowrap text-base text-center">{{ release.year }}</td>
                                 <td id="table-album-cover" class="px-6 py-4 whitespace-nowrap">
                                     <img src="{{ release.thumb }}" alt="Album Cover" class="h-16 w-16 mx-auto">
                                 </td>
                                 <td id="table-view-markets" class="px-6 py-4 whitespace-nowrap">
-                                    <a href="{% url 'firstapp:release_market' artist release.master_id %}" class="inline-block px-4 py-2 bg-gradient-to-r from-sky-500 text-black rounded hover:from-sky-500 hover:to-sky-600">View Markets</a>
+                                    <a href="{% url 'firstapp:release_market' artist release.master_id %}" class="inline-block px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-500 text-white font-medium rounded-lg hover:bg-blue-700 hover:text-white">View Markets</a>
                                 </td>
                             </tr>
                             {% endfor %}
