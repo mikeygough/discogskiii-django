@@ -13,7 +13,8 @@ artist_markets = [
     "Miles Davis",
     "Alice Coltrane",
     "Lee Morgan",
-    "Coleman Hawkins"
+    "Coleman Hawkins",
+    "Art Blakey"
 ]
 
 # index
