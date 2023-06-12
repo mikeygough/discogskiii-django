@@ -2,10 +2,9 @@
 {% block body %}
     <body>
         
-        <div class="bg-gradient-to-b from-sky-600 flex h-screen justify-center items-center text-white space-x-2">
-            <h1 class="text-4xl font-bold break-after-auto">Hello, world!</h1>
+        <div class="bg-gradient-to-b from-yellow-600 flex h-screen justify-center items-center text-white space-x-2">
             {% for artist in artist_markets %}
-                <h3 class="hover:text-white hover:bg-black"><a href="{% url 'firstapp:artist_releases' artist %}">{{ artist }}</a></h3>
+                <h3 class="text-xl hover:text-white hover:bg-black"><a href="{% url 'firstapp:artist_releases' artist %}">{{ artist }}</a></h3>
             {% endfor %}
         </div>
 

@@ -77,6 +77,19 @@ Since I'll be fetching page information from my own Database, this means I can a
 
 Clicking into a market will then reveal the orderbook. Back on the artist markets page I'd like to add support for data filtering and sorting. Currently records are sorted chronologically but this doesn't do much for a trader. It'd be better to choose markets with more than 1 offer, or highest price, etc.
 
+#### Color Palette
+Primary Color:
+* __bg-gradient-to-r from-yellow-400 to-yellow-600__: This gradient will serve as the primary color, providing a warm and inviting tone.
+
+
+Secondary Colors:
+* __bg-gradient-to-r from-gray-100 to-gray-300__: This gradient will serve as a light secondary color, providing a subtle contrast and a clean aesthetic.
+* __bg-gradient-to-r from-gray-700 to-gray-900__: This gradient will serve as a dark secondary color, offering depth and sophistication.
+
+
+Neutral Color:
+* __bg-white__: This light color will be used as a neutral background, creating a sense of openness and simplicity.
+
 
 <br>
 
