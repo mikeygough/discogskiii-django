@@ -9,7 +9,7 @@
                   <h3 class="font-semibold text-xl text-gray-800">Discogskiii is an order book for jazz original pressings:</h3>
                 </div>
                 {% for artist in artist_markets %}
-                  <h3 class="text-xl hover:text-white hover:bg-black break-all text-center">
+                  <h3 class="text-xl text-gray-800 hover:text-white hover:bg-black break-all text-center">
                     <a href="{% url 'firstapp:artist_releases' artist %}">{{ artist }}</a>
                   </h3>
                 {% endfor %}
