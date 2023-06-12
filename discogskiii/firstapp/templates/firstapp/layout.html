@@ -32,8 +32,17 @@
               </div>
             </div>
           </nav>
+          
+        <div class="main-content">
+            {% block body %}
 
-        {% block body %}
-        {% endblock %}
+            {% endblock %}
+        </div>
+
+        <footer class="w-full bg-gradient-to-r from-gray-700 to-gray-900 text-gray-300 text-center py-4">
+            <span>Data provided by <a href="https://www.discogs.com/">Discogs</a> ❤️</span>
+            <span><a target="_blank" href="https://icons8.com/icon/63803/music-record">Music Record</a> icon by <a target="_blank" href="https://icons8.com">Icons8</a></span>
+        </footer>
+          
     </body>
 </html>

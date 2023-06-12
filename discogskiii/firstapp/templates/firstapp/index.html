@@ -2,24 +2,21 @@
 {% block body %}
     <body>
         
-        <div class="bg-gradient-to-b from-yellow-600 flex flex-wrap h-screen justify-center items-center text-white space-x-2">
-            <div class="grid justify-center items-center">
-                <div>
-                    <h3 class="font-semibold text-xl text-gray-800 mb-5">Discogskiii is an order book for jazz original pressings:</h3>
+        <div class="flex flex-col min-h-screen">
+            <div class="flex-grow bg-gradient-to-b from-yellow-600 flex flex-col justify-center items-center text-white space-x-2">
+              <div class="flex flex-col justify-center items-center">
+                <div class="mb-5">
+                  <h3 class="font-semibold text-xl text-gray-800">Discogskiii is an order book for jazz original pressings:</h3>
                 </div>
                 {% for artist in artist_markets %}
-                    <h3 class="text-xl hover:text-white hover:bg-black break-all text-center">
-                        <a href="{% url 'firstapp:artist_releases' artist %}">{{ artist }}</a>
-                    </h3>
+                  <h3 class="text-xl hover:text-white hover:bg-black break-all text-center">
+                    <a href="{% url 'firstapp:artist_releases' artist %}">{{ artist }}</a>
+                  </h3>
                 {% endfor %}
+              </div>
             </div>
-        </div>
-
-        <div class="bg-gradient-to-b from-white to-gray-300 flex flex-wrap h-screen justify-center items-center text-white space-x-2">
-            <div>
-                <h3 class="font-semibold text-xl text-gray-800">Discogskiii is an order book for jazz original pressings</h3>
-            </div>
-        </div>
+            
+          </div>
 
     </body>
 {% endblock %}
