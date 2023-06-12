@@ -12,6 +12,26 @@
 
     </head>
     <body>
+        
+        <nav class="bg-gradient-to-r from-gray-700 to-gray-900">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+              <div class="flex justify-between items-center h-16">
+                <div class="flex-shrink-0">
+                  <a href="{% url 'firstapp:index' %}" class="flex items-center">
+                    <img class="h-8 w-8 mr-2" src="/static/firstapp/icons8-music-record-96.png" alt="Logo">
+                    <span class="text-white text-lg font-semibold">Discogskiii</span>
+                  </a>
+                </div>
+                <!-- Add your navigation links here -->
+                <div class="flex">
+                  <a href="#" class="text-white px-3 py-2 hover:bg-blue-700">Link 1</a>
+                  <a href="#" class="text-white px-3 py-2 hover:bg-blue-700">Link 2</a>
+                  <a href="#" class="text-white px-3 py-2 hover:bg-blue-700">Link 3</a>
+                </div>
+              </div>
+            </div>
+          </nav>
+
         {% block body %}
         {% endblock %}
     </body>
