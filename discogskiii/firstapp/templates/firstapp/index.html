@@ -2,10 +2,14 @@
 {% block body %}
     <body>
         
-        <div class="bg-gradient-to-b from-yellow-600 flex h-screen justify-center items-center text-white space-x-2">
-            {% for artist in artist_markets %}
-                <h3 class="text-xl hover:text-white hover:bg-black"><a href="{% url 'firstapp:artist_releases' artist %}">{{ artist }}</a></h3>
-            {% endfor %}
+        <div class="bg-gradient-to-b from-yellow-600 flex flex-wrap h-screen justify-center items-center text-white space-x-2">
+            <div class="grid grid-cols-5 gap-2 justify-center items-center">
+                {% for artist in artist_markets %}
+                    <h3 class="text-xl hover:text-white hover:bg-black break-all text-center">
+                        <a href="{% url 'firstapp:artist_releases' artist %}">{{ artist }}</a>
+                    </h3>
+                {% endfor %}
+            </div>
         </div>
 
         <div class="flex h-screen justify-center items-center flex flex-col mx-2 space-x-1 text-center overflow-x-auto">
