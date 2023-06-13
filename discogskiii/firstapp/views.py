@@ -74,6 +74,7 @@ def artist_releases(request, artist):
             except:
                 release_stats.append(0)
 
+        # zip artist_releases data and release_stats for django templating support
         zipped_data = zip(page_obj, release_stats)
 
     return render(request, "firstapp/artist_releases.html", {
