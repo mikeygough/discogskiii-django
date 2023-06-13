@@ -6,24 +6,35 @@ from fake_useragent import UserAgent
 import json
 import re
 from datetime import datetime
+import requests
 
 # async libs
 import asyncio
 import aiohttp
 
+# testing imports
+import os
+import time
 
-def async_get_main_release_id(master_id):
-    ''' REQUIRES AUTHENTICATION
-        given a master_id (record meta object), retun the release_id
-        of the original pressing. you can think of 'main_release' as the same
-        as 'original_pressing'. '''
+# ----- testing -----
+# GET MAIN RELEASE ID
+# ----- testing -----
+
+# sample master_ids list
+masters = ["143593", "84391", "143592", "1456111", "842283"]
+results = []
+
+for master_id in masters:
+
+    print(f"Working on master{master_id}")
     
     # get data as json
-    response_json = json.loads(requests.get(f"{API_BASE_URL}/masters/{master_id}",
-                            headers=AUTHENTICATION_HEADER).text)
-    
-    # get release_id of master release
-    main_release_id = response_json["main_release"]
-    
-    # return main_release_id (original_pressing_id)
-    return main_release_id
+    response = requests.get(f"{API_BASE_URL}/masters/{master_id}",
+                            headers=AUTHENTICATION_HEADER)
+
+    print(response.json()["main_release"])
+
+# start = time.time()
+# end = time.time()
+# total_time = end - start
+# print(f"It took {} seconds".format(total_time))
