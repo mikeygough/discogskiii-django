@@ -66,6 +66,7 @@ def artist_releases(request, artist):
         "artist_releases": artist_releases,
         "base_url": SITE_BASE_URL,
         "page_obj": page_obj,
+        "paginator": paginator,
     })
 
 
