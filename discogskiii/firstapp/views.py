@@ -1,5 +1,6 @@
 # imports
 from django.shortcuts import render
+from django.core.paginator import Paginator
 from firstapp.config import *
 from firstapp.utils import *
 
@@ -54,11 +55,17 @@ def artist_releases(request, artist):
     else:
         # cached, load from database
         artist_releases = MasterRelease.objects.all().filter(artist=artist)
+        # pagination
+        # instantiate Paginator, 10 records
+        paginator = Paginator(artist_releases, 10)
+        page_number = request.GET.get('page')
+        page_obj = paginator.get_page(page_number)
 
     return render(request, "firstapp/artist_releases.html", {
         "artist": artist,
         "artist_releases": artist_releases,
-        "base_url": SITE_BASE_URL
+        "base_url": SITE_BASE_URL,
+        "page_obj": page_obj,
     })
 
 
