@@ -20,17 +20,9 @@ artist_markets = [
 
 # index
 def index(request):
-
-    colors = [
-        'slate', 'gray', 'zinc', 'neutral', 'stone', 'red', 'orange', 'amber', 'yellow', 'lime', 'green', 'emerald',
-        'teal', 'cyan', 'sky', 'blue', 'indigo', 'violet', 'purple', 'fuchsia', 'pink', 'rose'
-        ]
-
-    colors = ['from-' + color + '-600' for color in colors]
      
     return render(request, "firstapp/index.html", {
-        "artist_markets": artist_markets,
-        "colors": colors
+        "artist_markets": artist_markets
     })
 
 
@@ -64,10 +56,8 @@ def artist_releases(request, artist):
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
 
-        # print(page_obj.object_list)
-
         # get release statistics (num_for_sale, lowest_price)
-        # No this also relies on having the main_release_id mapped to the master_release_id cached
+        # **** ----- I REALLY DON'T LIKE THAT THIS RELIES ON HAVING THE MAIN_RELEASE_ID RELATIONSHIP MAPPED TO THE MASTER_RELEASE_ID CACHED----- **** #
         release_stats = []
         for release in page_obj.object_list:        
             try:
@@ -82,9 +72,9 @@ def artist_releases(request, artist):
                     MainRelease(master=release, main_id=main_release_id).save()
                     release_stats.append(get_release_statistics(main_release_id))
             except:
-                pass
-        
-        print(release_stats)
+                release_stats.append(0)
+
+        zipped_data = zip(page_obj, release_stats)
 
     return render(request, "firstapp/artist_releases.html", {
         "artist": artist,
@@ -92,6 +82,7 @@ def artist_releases(request, artist):
         "base_url": SITE_BASE_URL,
         "page_obj": page_obj,
         "paginator": paginator,
+        "zipped_data": zipped_data
     })
 
 

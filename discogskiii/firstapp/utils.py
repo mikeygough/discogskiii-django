@@ -66,7 +66,7 @@ def get_release_statistics(release_id):
     # print(number_for_sale)
     # print(lowest_price)
 
-    return number_for_sale, lowest_price
+    return number_for_sale
 
 
 def get_listing_ids(release_id):
