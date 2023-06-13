@@ -55,11 +55,36 @@ def artist_releases(request, artist):
     else:
         # cached, load from database
         artist_releases = MasterRelease.objects.all().filter(artist=artist)
+        
+        # **** ----- I REALLY DON'T LIKE THAT PAGINATION SUPPORT IS CONTINGENT ON ACTIVE CACHING ----- **** #
+
         # pagination
         # instantiate Paginator, 10 records
         paginator = Paginator(artist_releases, 10)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
+
+        # print(page_obj.object_list)
+
+        # get release statistics (num_for_sale, lowest_price)
+        # No this also relies on having the main_release_id mapped to the master_release_id cached
+        release_stats = []
+        for release in page_obj.object_list:        
+            try:
+                # if cached, load from db
+                if MainRelease.objects.filter(master=release).exists():
+                    main_release_id = MainRelease.objects.get(master=release).main_id
+                    release_stats.append(get_release_statistics(main_release_id))
+                else:
+                    # request data from discogs
+                    main_release_id = get_main_release_id(release.master_id)
+                    # add to cache
+                    MainRelease(master=release, main_id=main_release_id).save()
+                    release_stats.append(get_release_statistics(main_release_id))
+            except:
+                pass
+        
+        print(release_stats)
 
     return render(request, "firstapp/artist_releases.html", {
         "artist": artist,

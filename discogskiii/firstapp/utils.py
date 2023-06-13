@@ -48,6 +48,27 @@ def get_main_release_id(master_id):
     return main_release_id
 
 
+def get_release_statistics(release_id):
+    ''' REQUIRES AUTHENTICATION
+        given a release_id, retun the number of releases
+        available for sale and the lowest price as a tuple. '''
+
+    # get data as json
+    response_json = json.loads(requests.get(f"{API_BASE_URL}/marketplace/stats/{release_id}",
+                            headers=AUTHENTICATION_HEADER,
+                            params={
+                                "curr_abbr": "USD"}).text)
+    
+    number_for_sale = response_json["num_for_sale"]
+    lowest_price = response_json["lowest_price"]["value"]
+
+    # print(response_json)
+    # print(number_for_sale)
+    # print(lowest_price)
+
+    return number_for_sale, lowest_price
+
+
 def get_listing_ids(release_id):
     ''' given a release_id, returns a list of listings of that release_id for sale.
         listings are records which are available for sale.
