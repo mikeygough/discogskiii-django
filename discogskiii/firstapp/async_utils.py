@@ -25,33 +25,6 @@ import aiohttp
 masters = ["143593", "84391", "143592", "1456111", "842283"]
 
 
-# ---- ASYNC WAY ----
-async_results = []
-
-async def get_main_releases():
-    async with aiohttp.ClientSession() as session:
-        for master_id in masters:
-            print(f"Working on master{master_id}")
-            
-            # get
-            response = await session.get(f"{API_BASE_URL}/masters/{master_id}",
-                                    headers=AUTHENTICATION_HEADER,
-                                    ssl=False)
-            # append
-            results = await response.json()
-
-            async_results.append(results["main_release"])
-
-start = time.time()
-
-asyncio.run(get_main_releases())
-
-end = time.time()
-total_time = end - start
-print("ASYNC RESULTS", async_results)
-print(f"It took {total_time} seconds asynchronously")
-
-
 # ---- SYNC WAY ----
 sync_results = []
 
@@ -68,9 +41,61 @@ for master_id in masters:
 end = time.time()
 total_time = end - start
 print("SYNC RESULTS", sync_results)
-print(f"It took {total_time} seconds synchronously")
+print(f"It took {total_time} seconds synchronously", '\n')
 
+
+# ---- ASYNC WAY 1 ----
+async_results_1 = []
+
+async def get_main_releases_1():
+    start = time.time()
+    async with aiohttp.ClientSession() as session:
+        for master_id in masters:
+            print(f"Working on master{master_id}")
+            
+            # get
+            response = await session.get(f"{API_BASE_URL}/masters/{master_id}",
+                                    headers=AUTHENTICATION_HEADER,
+                                    ssl=False)
+            # append
+            results = await response.json()
+
+            async_results_1.append(results["main_release"])
+    end = time.time()
+    total_time = end - start
+    print("ASYNC_1 RESULTS", async_results_1)
+    print(f"It took {total_time} seconds asynchronously", '\n')
+
+asyncio.run(get_main_releases_1())
+
+
+# ---- ASYNC WAY 2 (tasks) ----
+async_results_2 = []
+
+def get_tasks(session):
+    tasks = []
+    for master_id in masters:
+        tasks.append(session.get(f"{API_BASE_URL}/masters/{master_id}",
+                                    headers=AUTHENTICATION_HEADER,
+                                    ssl=False))
+    return tasks
+
+async def get_main_releases_2():
+    start = time.time()
+    async with aiohttp.ClientSession() as session:
+        tasks = get_tasks(session)
+        responses = await asyncio.gather(*tasks)
+        for response in responses:
+            results = await response.json()
+            async_results_2.append(results["main_release"])
+    end = time.time()
+    total_time = end - start
+    print("ASYNC_2 RESULTS", async_results_2)
+    print(f"It took {total_time} seconds asynchronously (with tasks)")
+
+asyncio.run(get_main_releases_2())
 
 # ---- RESULTS ----
-# It took 1.3902409076690674 seconds asynchronously
-# It took 1.6589751243591309 seconds synchronously
+# It took 1.3869702816009521 seconds synchronously
+# It took 1.0460200309753418 seconds asynchronously
+# It took 0.3535647392272949 seconds asynchronously
