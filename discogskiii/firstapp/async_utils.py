@@ -18,7 +18,7 @@ import aiohttp
 # X get_main_release_id
 # X get_release_statistics
 # get_listing_ids
-# # get_marketplace_listing
+# X get_marketplace_listing - and applied to views
 
 # -
 # get_main_release_ids_async

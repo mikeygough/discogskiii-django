@@ -55,26 +55,13 @@ def artist_releases(request, artist):
         paginator = Paginator(artist_releases, 10)
         page_number = request.GET.get('page')
         page_obj = paginator.get_page(page_number)
-
-        # get release statistics (num_for_sale, lowest_price)
-        # **** ----- I REALLY DON'T LIKE THAT THIS RELIES ON HAVING THE MAIN_RELEASE_ID RELATIONSHIP MAPPED TO THE MASTER_RELEASE_ID CACHED----- **** #
-        release_stats = []
-        for release in page_obj.object_list:
-            try:
-                # if cached, load from db
-                if MainRelease.objects.filter(master=release).exists():
-                    main_release_id = MainRelease.objects.get(master=release).main_id
-                    release_stats.append(get_release_statistics(main_release_id))
-                    print(main_release_id)
-                else:
-                    # request data from discogs
-                    main_release_id = get_main_release_id(release.master_id)
-                    # add to cache
-                    MainRelease(master=release, main_id=main_release_id).save()
-                    release_stats.append(get_release_statistics(main_release_id))
-                    print(main_release_id)
-            except:
-                release_stats.append(0)
+    
+        # get master ids
+        master_ids = list(page_obj.object_list.values_list('master_id', flat=True))
+        # get release ids
+        release_ids = asyncio.run(get_main_release_ids_async(master_ids=master_ids))
+        # get release_statistics
+        release_stats = asyncio.run(get_release_statistics_async(release_ids=release_ids))
 
         # zip artist_releases data and release_stats for django templating support
         zipped_data = zip(page_obj, release_stats)

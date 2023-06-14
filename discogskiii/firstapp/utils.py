@@ -52,7 +52,7 @@ def get_main_release_id(master_id):
     return main_release_id
 
 
-async def get_main_release_ids_async(master_ids=master_ids):
+async def get_main_release_ids_async(master_ids):
     ''' REQUIRES AUTHENTICATION
         given a list of master_ids, return list of main_release_ids (original pressing ids) '''
 
@@ -95,11 +95,38 @@ def get_release_statistics(release_id):
     number_for_sale = response_json["num_for_sale"]
     lowest_price = response_json["lowest_price"]["value"]
 
-    # print(response_json)
-    # print(number_for_sale)
-    # print(lowest_price)
-
     return number_for_sale
+
+
+async def get_release_statistics_async(release_ids):
+    ''' REQUIRES AUTHENTICATION
+        given a list of release_ids, retun a list of the number
+        of each release available for sale. '''
+
+    # initialize results list
+    release_statistic_results = []
+
+    async with aiohttp.ClientSession() as session:
+        # initialize list of tasks
+        tasks = []
+        for release_id in release_ids:
+            # create and append tasks (API request)
+            tasks.append(session.get(f"{API_BASE_URL}/marketplace/stats/{release_id}",
+                        headers=AUTHENTICATION_HEADER,
+                        params={
+                            "curr_abbr": "USD"},
+                        ssl=False))
+
+        # request
+        responses = await asyncio.gather(*tasks)
+
+        # append results
+        for response in responses:
+            result = await response.json()
+            release_statistic_results.append(result["num_for_sale"])
+
+        # return list of release statistics
+        return release_statistic_results
 
 
 def get_listing_ids(release_id):
