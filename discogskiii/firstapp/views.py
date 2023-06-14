@@ -124,6 +124,8 @@ def release_market(request, artist, release_id):
         listing["price"]["value"] = format_currency(listing["price"]["value"])
         # date
         listing["posted"] = format_date(listing["posted"])
+
+    print(listing_ids)
     
     # calculate minimum tick for order book display
     # maybe clean up conditions to just be codes (ie VG instead of text Very Good)
