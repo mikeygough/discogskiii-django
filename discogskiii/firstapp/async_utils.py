@@ -206,7 +206,7 @@ print(f"It took {total_time} seconds synchronously", '\n')
 # ---- ASYNC WAY (tasks) ---- 
 marketplace_results_async = []
 
-def get_marketplace_listing_tasks(session):
+def get_marketplace_listing_tasks(session, marketplace_listing_ids):
     tasks = []
     for marketplace_listing in marketplace_listing_ids:
         tasks.append(session.get(f"{API_BASE_URL}/marketplace/listings/{marketplace_listing}",
@@ -217,7 +217,7 @@ def get_marketplace_listing_tasks(session):
 async def get_marketplace_listings_async():
     start = time.time()
     async with aiohttp.ClientSession() as session:
-        tasks = get_marketplace_listing_tasks(session)
+        tasks = get_marketplace_listing_tasks(session, marketplace_listing_ids=marketplace_listing_ids)
         responses = await asyncio.gather(*tasks)
         for response in responses:
             results = await response.json()
@@ -229,3 +229,27 @@ async def get_marketplace_listings_async():
 
 print("GET_MARKETPLACE_LISTING_ASYNC RESULTS")
 asyncio.run(get_marketplace_listings_async())
+
+
+# Try combining
+
+async def combined_get_marketplace_listings_async(marketplace_listing_ids=marketplace_listing_ids):
+    start = time.time()
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for marketplace_listing in marketplace_listing_ids:
+            tasks.append(session.get(f"{API_BASE_URL}/marketplace/listings/{marketplace_listing}",
+                                   headers=AUTHENTICATION_HEADER,
+                                   ssl=False))
+        
+        responses = await asyncio.gather(*tasks)
+        for response in responses:
+            results = await response.json()
+            marketplace_results_async.append(results)
+        end = time.time()
+        total_time = end - start
+        # print("GET_MARKETPLACE_LISTING_ASYNC RESULTS", marketplace_results_async)
+        print(f"It took {total_time} seconds asynchronously (with tasks combined)")
+
+print("COMBINED_GET_MARKETPLACE_LISTING_ASYNC RESULTS")
+asyncio.run(combined_get_marketplace_listings_async(marketplace_listing_ids=marketplace_listing_ids))

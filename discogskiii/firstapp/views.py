@@ -110,10 +110,12 @@ def release_market(request, artist, release_id):
     listing_ids = get_listing_ids(main_release_id)
     
     # initialize list for all marketplace listings of the original pressing
-    marketplace_listings = []
+    # marketplace_listings = []
 
-    for listing in listing_ids:
-        marketplace_listings.append(get_marketplace_listing(listing))
+    # for listing in listing_ids:
+    #     marketplace_listings.append(get_marketplace_listing(listing))
+    
+    marketplace_listings = asyncio.run(get_marketplace_listings_async(marketplace_listing_ids=listing_ids))
     
     # sort by price
     sorted_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)

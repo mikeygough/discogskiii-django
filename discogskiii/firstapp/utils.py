@@ -7,6 +7,10 @@ import re
 import requests
 from datetime import datetime
 
+# async libs
+import asyncio
+import aiohttp
+
 # import models
 from firstapp.models import MasterRelease
 
@@ -118,6 +122,22 @@ def get_marketplace_listing(listing_id):
 
     # return marketplace listing data
     return response_json
+
+
+async def get_marketplace_listings_async(marketplace_listing_ids):
+    marketplace_listing_results = []
+    async with aiohttp.ClientSession() as session:
+        tasks = []
+        for marketplace_listing in marketplace_listing_ids:
+            tasks.append(session.get(f"{API_BASE_URL}/marketplace/listings/{marketplace_listing}",
+                                   headers=AUTHENTICATION_HEADER,
+                                   ssl=False))
+        
+        responses = await asyncio.gather(*tasks)
+        for response in responses:
+            results = await response.json()
+            marketplace_listing_results.append(results)
+        return marketplace_listing_results
 
 
 def get_artist_releases(artist):
