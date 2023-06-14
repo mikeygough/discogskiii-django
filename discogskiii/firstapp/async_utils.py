@@ -16,6 +16,8 @@ import asyncio
 import aiohttp
 
 
+'''
+
 # ----- testing -----
 # GET MAIN RELEASE ID
 # ----- testing -----
@@ -99,3 +101,61 @@ asyncio.run(get_main_releases_2())
 # It took 1.3869702816009521 seconds synchronously
 # It took 1.0460200309753418 seconds asynchronously
 # It took 0.3535647392272949 seconds asynchronously
+
+'''
+
+# ----- testing -----
+# GET RELEASE STATS
+# ----- testing -----
+
+
+# sample release_ids list
+release_ids = ["1885283", "2173436", "1034602", "385862", "498022", "549847", "3794919", "872608", "533862"]
+
+
+# ---- SYNC WAY ----
+release_stats_results = []
+
+start = time.time()
+for release_id in release_ids:    
+    # get
+    response = requests.get(f"{API_BASE_URL}/marketplace/stats/{release_id}",
+                            headers=AUTHENTICATION_HEADER,
+                            params={
+                                "curr_abbr": "USD"})
+    # append
+    release_stats_results.append(response.json()["num_for_sale"])
+
+end = time.time()
+total_time = end - start
+print("GET_RELEASE_STATISTICS SYNC RESULTS", release_stats_results)
+print(f"It took {total_time} seconds synchronously", '\n')
+
+
+# ---- ASYNC WAY (tasks) ----
+release_stats_results_async = []
+
+def get_release_statistic_tasks(session):
+    tasks = []
+    for release_id in release_ids:
+        tasks.append(session.get(f"{API_BASE_URL}/marketplace/stats/{release_id}",
+                            headers=AUTHENTICATION_HEADER,
+                            params={
+                                "curr_abbr": "USD"},
+                            ssl=False))
+    return tasks
+
+async def get_release_statistics_async():
+    start = time.time()
+    async with aiohttp.ClientSession() as session:
+        tasks = get_release_statistic_tasks(session)
+        responses = await asyncio.gather(*tasks)
+        for response in responses:
+            results = await response.json()
+            release_stats_results_async.append(results["num_for_sale"])
+        end = time.time()
+        total_time = end - start
+        print("GET_RELEASE_STATISTICS_ASYNC RESULTS", release_stats_results_async)
+        print(f"It took {total_time} seconds asynchronously (with tasks)")
+
+asyncio.run(get_release_statistics_async())

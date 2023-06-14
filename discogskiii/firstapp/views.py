@@ -59,18 +59,20 @@ def artist_releases(request, artist):
         # get release statistics (num_for_sale, lowest_price)
         # **** ----- I REALLY DON'T LIKE THAT THIS RELIES ON HAVING THE MAIN_RELEASE_ID RELATIONSHIP MAPPED TO THE MASTER_RELEASE_ID CACHED----- **** #
         release_stats = []
-        for release in page_obj.object_list:        
+        for release in page_obj.object_list:
             try:
                 # if cached, load from db
                 if MainRelease.objects.filter(master=release).exists():
                     main_release_id = MainRelease.objects.get(master=release).main_id
                     release_stats.append(get_release_statistics(main_release_id))
+                    print(main_release_id)
                 else:
                     # request data from discogs
                     main_release_id = get_main_release_id(release.master_id)
                     # add to cache
                     MainRelease(master=release, main_id=main_release_id).save()
                     release_stats.append(get_release_statistics(main_release_id))
+                    print(main_release_id)
             except:
                 release_stats.append(0)
 
