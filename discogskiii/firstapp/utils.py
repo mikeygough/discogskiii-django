@@ -74,8 +74,9 @@ async def get_main_release_ids_async(master_ids):
         # append results
         for response in responses:
             result = await response.json()
-            main_release_id_results.append(result["main_release"])
+            main_release_id_results.append(result)
 
+        main_release_id_results = [d["main_release"] for d in main_release_id_results]
         # return list of main_release ids
         return main_release_id_results
 
@@ -122,8 +123,11 @@ async def get_release_statistics_async(release_ids):
         # append results
         for response in responses:
             result = await response.json()
-            release_statistic_results.append(result["num_for_sale"])
+            release_statistic_results.append(result)
 
+        # print("RELEASE_STATISTIC_RESULTS", release_statistic_results)
+
+        release_statistic_results = [d["num_for_sale"] for d in release_statistic_results]
         # return list of release statistics
         return release_statistic_results
 
@@ -131,7 +135,9 @@ async def get_release_statistics_async(release_ids):
 def get_listing_ids(release_id):
     ''' given a release_id, returns a list of listings of that release_id for sale.
         listings are records which are available for sale.
-        helpful for obtaining original pressings which are listed for sale. '''
+        helpful for obtaining original pressings which are listed for sale.
+        
+        BEWARE this is only capable of returning the first page of results (25 listings) '''
 
     # **** ----- would like to improve performance here ----- **** #
     
@@ -140,7 +146,9 @@ def get_listing_ids(release_id):
     
     # get data
     response = requests.get(f"{SITE_BASE_URL}/sell/release/{release_id}",
-                            headers={"User-Agent": ua.chrome})
+                            headers={"User-Agent": ua.chrome},
+                            params={
+                            "limit": "100"},)
 
     # extract html
     soup = BeautifulSoup(response.content, "html.parser")

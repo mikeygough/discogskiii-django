@@ -21,10 +21,12 @@ artist_markets = [
 # index
 def index(request):
 
+    # right now this is checking all or none...
+    # there's no reason to redownload everything if one artist is missing
     # get unique artists in database (cached)
     try:
         cached_artists = list(MasterRelease.objects.all().values_list('artist', flat=True).distinct())
-    except:
+    except: # database not initialized
         cached_artists = []
 
     # if not cached
@@ -52,9 +54,6 @@ def index(request):
 def artist_releases(request, artist):
     # cached, load from database
     artist_releases = MasterRelease.objects.all().filter(artist=artist).order_by("year")
-    print(artist_releases)
-    
-    # **** ----- I REALLY DON'T LIKE THAT PAGINATION SUPPORT IS CONTINGENT ON ACTIVE CACHING ----- **** #
 
     # pagination
     # instantiate Paginator, 10 records
@@ -62,15 +61,24 @@ def artist_releases(request, artist):
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
 
+    page_obj_list = page_obj.object_list
+    print(page_obj_list)
     # get master ids
-    master_ids = list(page_obj.object_list.values_list('master_id', flat=True))
+    master_ids = list(page_obj_list.values_list('master_id', flat=True))
+    print("master_ids", master_ids)
     # get release ids
     release_ids = asyncio.run(get_main_release_ids_async(master_ids=master_ids))
     # get release_statistics
     release_stats = asyncio.run(get_release_statistics_async(release_ids=release_ids))
 
+    print("master_ids", master_ids)
+    print("release_ids", release_ids)
+    print("release_stats", release_stats)
+
     # zip artist_releases data and release_stats for django templating support
-    zipped_data = zip(page_obj, release_stats)
+    zipped_data = zip(page_obj_list, release_stats)
+
+    print(zipped_data)
 
     return render(request, "firstapp/artist_releases.html", {
         "artist": artist,
