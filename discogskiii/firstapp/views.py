@@ -21,18 +21,26 @@ artist_markets = [
 # index
 def index(request):
 
-    # initialize database
-    for artist in artist_markets:
-    # request data from discogs
-        artist_releases = get_artist_releases(artist)
-        # add to cache
-        for release in artist_releases:
-            MasterRelease(artist=release["artist"],
-                            master_id=release["master_id"],
-                            title=release["title"],
-                            uri=release["uri"],
-                            year=release["year"],
-                            thumb=release["thumb"]).save()
+    # get unique artists in database (cached)
+    try:
+        cached_artists = list(MasterRelease.objects.all().values_list('artist', flat=True).distinct())
+    except:
+        cached_artists = []
+
+    # if not cached
+    if not all(elem in cached_artists for elem in artist_markets):
+        # initialize database, get all artist markets
+        for artist in artist_markets:
+        # request data from discogs
+            artist_releases = get_artist_releases(artist)
+            # add to cache
+            for release in artist_releases:
+                MasterRelease(artist=release["artist"],
+                                master_id=release["master_id"],
+                                title=release["title"],
+                                uri=release["uri"],
+                                year=release["year"],
+                                thumb=release["thumb"]).save()
 
      
     return render(request, "firstapp/index.html", {
@@ -42,33 +50,9 @@ def index(request):
 
 # all releases by an arist
 def artist_releases(request, artist):
-
-    # # get unique artists in database (cached)
-    # cached_artists = MasterRelease.objects.all().values_list('artist', flat=True).distinct()
-
-    # # if not cached
-    # if artist not in cached_artists:
-    #     # request data from discogs
-    #     artist_releases = get_artist_releases(artist)
-    #     # add to cache
-    #     for release in artist_releases:
-    #         MasterRelease(artist=release["artist"],
-    #                       master_id=release["master_id"],
-    #                       title=release["title"],
-    #                       uri=release["uri"],
-    #                       year=release["year"],
-    #                       thumb=release["thumb"]).save()
-        
-    #     return render(request, "firstapp/artist_releases.html", {
-    #     "artist": artist,
-    #     "artist_releases": artist_releases,
-    #     "base_url": SITE_BASE_URL,
-    #     "zipped_data": zipped_data
-    #     })
-
-    # else:
     # cached, load from database
-    artist_releases = MasterRelease.objects.all().filter(artist=artist)
+    artist_releases = MasterRelease.objects.all().filter(artist=artist).order_by("year")
+    print(artist_releases)
     
     # **** ----- I REALLY DON'T LIKE THAT PAGINATION SUPPORT IS CONTINGENT ON ACTIVE CACHING ----- **** #
 
@@ -122,16 +106,22 @@ def release_market(request, artist, release_id):
     
     # sort by price
     try:
-        sorted_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)
+        marketplace_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)
     except:
         pass
 
     # clean up
-    for listing in sorted_listings:
+    for listing in marketplace_listings:
         # currency
-        listing["price"]["value"] = format_currency(listing["price"]["value"])
+        try:
+            listing["price"]["value"] = format_currency(listing["price"]["value"])
+        except KeyError:
+            pass
         # date
-        listing["posted"] = format_date(listing["posted"])
+        try:
+            listing["posted"] = format_date(listing["posted"])
+        except KeyError:
+            pass
     
     # calculate minimum tick for order book display
     # maybe clean up conditions to just be codes (ie VG instead of text Very Good)
@@ -139,5 +129,5 @@ def release_market(request, artist, release_id):
     return render(request, "firstapp/release_market.html", {
         "artist": artist,
         "master_release": master_release,
-        "marketplace_listings": sorted_listings
+        "marketplace_listings": marketplace_listings
     })
