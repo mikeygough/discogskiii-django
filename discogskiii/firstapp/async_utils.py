@@ -1,4 +1,5 @@
 # trying to convert utils.py into async functions
+# this is a testing file..
 
 # imports
 from config import *
@@ -15,10 +16,10 @@ import time
 import asyncio
 import aiohttp
 
-# X get_main_release_id
-# X get_release_statistics
+# X get_main_release_id - and applied to utils.py & views
+# X get_release_statistics - and applied to utils.py & views
+# X get_marketplace_listing - and applied to utils.py & views
 # get_listing_ids
-# X get_marketplace_listing - and applied to views
 
 # -
 # get_main_release_ids_async

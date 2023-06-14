@@ -20,6 +20,20 @@ artist_markets = [
 
 # index
 def index(request):
+
+    # initialize database
+    for artist in artist_markets:
+    # request data from discogs
+        artist_releases = get_artist_releases(artist)
+        # add to cache
+        for release in artist_releases:
+            MasterRelease(artist=release["artist"],
+                            master_id=release["master_id"],
+                            title=release["title"],
+                            uri=release["uri"],
+                            year=release["year"],
+                            thumb=release["thumb"]).save()
+
      
     return render(request, "firstapp/index.html", {
         "artist_markets": artist_markets
@@ -29,42 +43,50 @@ def index(request):
 # all releases by an arist
 def artist_releases(request, artist):
 
-    # get unique artists in database (cached)
-    cached_artists = MasterRelease.objects.all().values_list('artist', flat=True).distinct()
+    # # get unique artists in database (cached)
+    # cached_artists = MasterRelease.objects.all().values_list('artist', flat=True).distinct()
 
-    # if not cached
-    if artist not in cached_artists:
-        # request data from discogs
-        artist_releases = get_artist_releases(artist)
-        # add to cache
-        for release in artist_releases:
-            MasterRelease(artist=release["artist"],
-                          master_id=release["master_id"],
-                          title=release["title"],
-                          uri=release["uri"],
-                          year=release["year"],
-                          thumb=release["thumb"]).save()
-    else:
-        # cached, load from database
-        artist_releases = MasterRelease.objects.all().filter(artist=artist)
+    # # if not cached
+    # if artist not in cached_artists:
+    #     # request data from discogs
+    #     artist_releases = get_artist_releases(artist)
+    #     # add to cache
+    #     for release in artist_releases:
+    #         MasterRelease(artist=release["artist"],
+    #                       master_id=release["master_id"],
+    #                       title=release["title"],
+    #                       uri=release["uri"],
+    #                       year=release["year"],
+    #                       thumb=release["thumb"]).save()
         
-        # **** ----- I REALLY DON'T LIKE THAT PAGINATION SUPPORT IS CONTINGENT ON ACTIVE CACHING ----- **** #
+    #     return render(request, "firstapp/artist_releases.html", {
+    #     "artist": artist,
+    #     "artist_releases": artist_releases,
+    #     "base_url": SITE_BASE_URL,
+    #     "zipped_data": zipped_data
+    #     })
 
-        # pagination
-        # instantiate Paginator, 10 records
-        paginator = Paginator(artist_releases, 10)
-        page_number = request.GET.get('page')
-        page_obj = paginator.get_page(page_number)
+    # else:
+    # cached, load from database
+    artist_releases = MasterRelease.objects.all().filter(artist=artist)
     
-        # get master ids
-        master_ids = list(page_obj.object_list.values_list('master_id', flat=True))
-        # get release ids
-        release_ids = asyncio.run(get_main_release_ids_async(master_ids=master_ids))
-        # get release_statistics
-        release_stats = asyncio.run(get_release_statistics_async(release_ids=release_ids))
+    # **** ----- I REALLY DON'T LIKE THAT PAGINATION SUPPORT IS CONTINGENT ON ACTIVE CACHING ----- **** #
 
-        # zip artist_releases data and release_stats for django templating support
-        zipped_data = zip(page_obj, release_stats)
+    # pagination
+    # instantiate Paginator, 10 records
+    paginator = Paginator(artist_releases, 10)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+
+    # get master ids
+    master_ids = list(page_obj.object_list.values_list('master_id', flat=True))
+    # get release ids
+    release_ids = asyncio.run(get_main_release_ids_async(master_ids=master_ids))
+    # get release_statistics
+    release_stats = asyncio.run(get_release_statistics_async(release_ids=release_ids))
+
+    # zip artist_releases data and release_stats for django templating support
+    zipped_data = zip(page_obj, release_stats)
 
     return render(request, "firstapp/artist_releases.html", {
         "artist": artist,
@@ -99,7 +121,10 @@ def release_market(request, artist, release_id):
     marketplace_listings = asyncio.run(get_marketplace_listings_async(marketplace_listing_ids=marketplace_listing_ids))
     
     # sort by price
-    sorted_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)
+    try:
+        sorted_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)
+    except:
+        pass
 
     # clean up
     for listing in sorted_listings:

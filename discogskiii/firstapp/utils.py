@@ -80,7 +80,6 @@ async def get_main_release_ids_async(master_ids):
         return main_release_id_results
 
 
-
 def get_release_statistics(release_id):
     ''' REQUIRES AUTHENTICATION
         given a release_id, retun the number of releases
@@ -255,6 +254,7 @@ def format_date(date_str):
     dt = datetime.fromisoformat(date_str)
     formatted_date = dt.strftime('%B %d, %Y')  # format according to your preference
     return formatted_date
+
 
 def main():
     master_id = "143592"
