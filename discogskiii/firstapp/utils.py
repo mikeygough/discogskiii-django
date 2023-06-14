@@ -52,6 +52,35 @@ def get_main_release_id(master_id):
     return main_release_id
 
 
+async def get_main_release_ids_async(master_ids=master_ids):
+    ''' REQUIRES AUTHENTICATION
+        given a list of master_ids, return list of main_release_ids (original pressing ids) '''
+
+    # initialize results list
+    main_release_id_results = []
+
+    async with aiohttp.ClientSession() as session:
+        # initialize list of tasks
+        tasks = []
+        for master_id in master_ids:
+            # create and append tasks (API requests)
+            tasks.append(session.get(f"{API_BASE_URL}/masters/{master_id}",
+                                    headers=AUTHENTICATION_HEADER,
+                                    ssl=False))
+        
+        # request
+        responses = await asyncio.gather(*tasks)
+
+        # append results
+        for response in responses:
+            result = await response.json()
+            main_release_id_results.append(result["main_release"])
+
+        # return list of main_release ids
+        return main_release_id_results
+
+
+
 def get_release_statistics(release_id):
     ''' REQUIRES AUTHENTICATION
         given a release_id, retun the number of releases
