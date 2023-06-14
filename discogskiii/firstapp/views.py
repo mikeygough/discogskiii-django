@@ -105,17 +105,11 @@ def release_market(request, artist, release_id):
         # add to cache
         MainRelease(master=master_release, main_id=main_release_id).save()
     
-    # listing_ids represent the original pressings available for sale
+    # marketplace_listing_ids represent the original pressings available for sale
     # we obtain this by webscraping discogs each time because markets change
-    listing_ids = get_listing_ids(main_release_id)
+    marketplace_listing_ids = get_listing_ids(main_release_id)
     
-    # initialize list for all marketplace listings of the original pressing
-    # marketplace_listings = []
-
-    # for listing in listing_ids:
-    #     marketplace_listings.append(get_marketplace_listing(listing))
-    
-    marketplace_listings = asyncio.run(get_marketplace_listings_async(marketplace_listing_ids=listing_ids))
+    marketplace_listings = asyncio.run(get_marketplace_listings_async(marketplace_listing_ids=marketplace_listing_ids))
     
     # sort by price
     sorted_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)
@@ -126,8 +120,6 @@ def release_market(request, artist, release_id):
         listing["price"]["value"] = format_currency(listing["price"]["value"])
         # date
         listing["posted"] = format_date(listing["posted"])
-
-    print(listing_ids)
     
     # calculate minimum tick for order book display
     # maybe clean up conditions to just be codes (ie VG instead of text Very Good)

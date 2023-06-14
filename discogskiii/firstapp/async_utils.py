@@ -18,27 +18,20 @@ import aiohttp
 # X get_main_release_id
 # X get_release_statistics
 # get_listing_ids
-# get_marketplace_listing
-
-
-'''
+# # get_marketplace_listing
 
 # ----- testing -----
 # GET MAIN RELEASE ID
 # ----- testing -----
 
-
 # sample master_ids list
-masters = ["143593", "84391", "143592", "1456111", "842283"]
-
+master_ids = ["143593", "84391", "143592", "1456111", "842283"]
 
 # ---- SYNC WAY ----
 sync_results = []
 
 start = time.time()
-for master_id in masters:
-    print(f"Working on master{master_id}")
-    
+for master_id in master_ids:
     # get
     response = requests.get(f"{API_BASE_URL}/masters/{master_id}",
                             headers=AUTHENTICATION_HEADER)
@@ -51,63 +44,42 @@ print("SYNC RESULTS", sync_results)
 print(f"It took {total_time} seconds synchronously", '\n')
 
 
-# ---- ASYNC WAY 1 ----
-async_results_1 = []
-
-async def get_main_releases_1():
-    start = time.time()
-    async with aiohttp.ClientSession() as session:
-        for master_id in masters:
-            print(f"Working on master{master_id}")
-            
-            # get
-            response = await session.get(f"{API_BASE_URL}/masters/{master_id}",
-                                    headers=AUTHENTICATION_HEADER,
-                                    ssl=False)
-            # append
-            results = await response.json()
-
-            async_results_1.append(results["main_release"])
-    end = time.time()
-    total_time = end - start
-    print("ASYNC_1 RESULTS", async_results_1)
-    print(f"It took {total_time} seconds asynchronously", '\n')
-
-asyncio.run(get_main_releases_1())
-
-
 # ---- ASYNC WAY 2 (tasks) ----
-async_results_2 = []
+async def get_main_release_ids_async(master_ids=master_ids):
+    ''' REQUIRES AUTHENTICATION
+        given a list of master_ids, return list of main_release_ids (original pressing ids) '''
 
-def get_tasks(session):
-    tasks = []
-    for master_id in masters:
-        tasks.append(session.get(f"{API_BASE_URL}/masters/{master_id}",
+    # initialize results list
+    main_release_id_results = []
+
+    async with aiohttp.ClientSession() as session:
+        # initialize list of tasks
+        tasks = []
+        for master_id in master_ids:
+            # create and append tasks (API request)
+            tasks.append(session.get(f"{API_BASE_URL}/masters/{master_id}",
                                     headers=AUTHENTICATION_HEADER,
                                     ssl=False))
-    return tasks
-
-async def get_main_releases_2():
-    start = time.time()
-    async with aiohttp.ClientSession() as session:
-        tasks = get_tasks(session)
+        
+        # request
         responses = await asyncio.gather(*tasks)
+
+        # append results
         for response in responses:
-            results = await response.json()
-            async_results_2.append(results["main_release"])
-    end = time.time()
-    total_time = end - start
-    print("ASYNC_2 RESULTS", async_results_2)
-    print(f"It took {total_time} seconds asynchronously (with tasks)")
+            result = await response.json()
+            main_release_id_results.append(result["main_release"])
 
-asyncio.run(get_main_releases_2())
+        # return list of main_release ids
+        return main_release_id_results
 
-# ---- RESULTS ----
-# It took 1.3869702816009521 seconds synchronously
-# It took 1.0460200309753418 seconds asynchronously
-# It took 0.3535647392272949 seconds asynchronously
+print("GET_MAIN_RELEASE_IDS_ASYNC RESULTS")
+start = time.time()
+main_release_ids = asyncio.run(get_main_release_ids_async(master_ids=master_ids))
+end = time.time()
+total_time = end - start
+print("ASYNC RESULTS", main_release_ids)
+print(f"It took {total_time} seconds asynchronously (with tasks combined)")
 
-'''
 
 '''
 
@@ -179,77 +151,61 @@ asyncio.run(get_release_statistics_async())
 
 
 # sample marketplace_listing_ids list
-marketplace_listing_ids = ["2512127975", "2147701925", "2144595464", "2523264396", "2494120061", "2494326032"]
+# marketplace_listing_ids = ["2512127975", "2147701925", "2144595464", "2523264396", "2494120061", "2494326032"]
 
 
-# ---- SYNC WAY ----
-marketplace_results = []
+# # ---- SYNC WAY ----
+# marketplace_results = []
 
-print("GET_MARKETPLACE_LISTING SYNC RESULTS")
+# print("GET_MARKETPLACE_LISTING SYNC RESULTS")
 
-start = time.time()
-for marketplace_listing in marketplace_listing_ids:
-    # get
-    response = requests.get(f"{API_BASE_URL}/marketplace/listings/{marketplace_listing}",
-                    headers=AUTHENTICATION_HEADER)
+# start = time.time()
+# for marketplace_listing in marketplace_listing_ids:
+#     # get
+#     response = requests.get(f"{API_BASE_URL}/marketplace/listings/{marketplace_listing}",
+#                     headers=AUTHENTICATION_HEADER)
     
-    # append
-    marketplace_results.append(response.json())
+#     # append
+#     marketplace_results.append(response.json())
 
-end = time.time()
-total_time = end - start
+# end = time.time()
+# total_time = end - start
 
-# print("GET_MARKETPLACE_LISTING SYNC RESULTS", marketplace_results)
-print(f"It took {total_time} seconds synchronously", '\n')
-
-
-# ---- ASYNC WAY (tasks) ---- 
-marketplace_results_async = []
-
-def get_marketplace_listing_tasks(session, marketplace_listing_ids):
-    tasks = []
-    for marketplace_listing in marketplace_listing_ids:
-        tasks.append(session.get(f"{API_BASE_URL}/marketplace/listings/{marketplace_listing}",
-                            headers=AUTHENTICATION_HEADER,
-                            ssl=False))
-    return tasks
-
-async def get_marketplace_listings_async():
-    start = time.time()
-    async with aiohttp.ClientSession() as session:
-        tasks = get_marketplace_listing_tasks(session, marketplace_listing_ids=marketplace_listing_ids)
-        responses = await asyncio.gather(*tasks)
-        for response in responses:
-            results = await response.json()
-            marketplace_results_async.append(results)
-        end = time.time()
-        total_time = end - start
-        # print("GET_MARKETPLACE_LISTING_ASYNC RESULTS", marketplace_results_async)
-        print(f"It took {total_time} seconds asynchronously (with tasks)")
-
-print("GET_MARKETPLACE_LISTING_ASYNC RESULTS")
-asyncio.run(get_marketplace_listings_async())
+# # print("GET_MARKETPLACE_LISTING SYNC RESULTS", marketplace_results)
+# print(f"It took {total_time} seconds synchronously", '\n')
 
 
-# Try combining
+# # ---- ASYNC WAY (tasks) ---- 
+# async def get_marketplace_listings_async(marketplace_listing_ids):
+#     ''' REQUIRES AUTHENTICATION
+#         given a list of listing_ids, return list of API responses (marketplace listing json) '''
+    
+#     # initialize results list
+#     marketplace_listing_results = []
 
-async def combined_get_marketplace_listings_async(marketplace_listing_ids=marketplace_listing_ids):
-    start = time.time()
-    async with aiohttp.ClientSession() as session:
-        tasks = []
-        for marketplace_listing in marketplace_listing_ids:
-            tasks.append(session.get(f"{API_BASE_URL}/marketplace/listings/{marketplace_listing}",
-                                   headers=AUTHENTICATION_HEADER,
-                                   ssl=False))
+#     async with aiohttp.ClientSession() as session:
+#         # initialize list of tasks
+#         tasks = []
+#         for marketplace_listing in marketplace_listing_ids:
+#             # create and append tasks (API requests)
+#             tasks.append(session.get(f"{API_BASE_URL}/marketplace/listings/{marketplace_listing}",
+#                                    headers=AUTHENTICATION_HEADER,
+#                                    ssl=False))
         
-        responses = await asyncio.gather(*tasks)
-        for response in responses:
-            results = await response.json()
-            marketplace_results_async.append(results)
-        end = time.time()
-        total_time = end - start
-        # print("GET_MARKETPLACE_LISTING_ASYNC RESULTS", marketplace_results_async)
-        print(f"It took {total_time} seconds asynchronously (with tasks combined)")
+#         # request
+#         responses = await asyncio.gather(*tasks)
+        
+#         # append results
+#         for response in responses:
+#             results = await response.json()
+#             marketplace_listing_results.append(results)
 
-print("COMBINED_GET_MARKETPLACE_LISTING_ASYNC RESULTS")
-asyncio.run(combined_get_marketplace_listings_async(marketplace_listing_ids=marketplace_listing_ids))
+#         # return list of marketplace responses
+#         return marketplace_listing_results
+
+# print("GET_MARKETPLACE_LISTING_ASYNC RESULTS")
+# start = time.time()
+# marketplace_listings = asyncio.run(get_marketplace_listings_async(marketplace_listing_ids=marketplace_listing_ids))
+# end = time.time()
+# total_time = end - start
+# print(f"It took {total_time} seconds asynchronously (with tasks combined)")

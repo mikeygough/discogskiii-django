@@ -112,31 +112,31 @@ def get_listing_ids(release_id):
     return listing_ids
 
 
-def get_marketplace_listing(listing_id):
-    ''' REQUIRES AUTHENTICATION
-        given a listing_id, returns marketplace listing json '''
-    
-    # get data as json
-    response_json = json.loads(requests.get(f"{API_BASE_URL}/marketplace/listings/{listing_id}",
-                    headers=AUTHENTICATION_HEADER).text)
-
-    # return marketplace listing data
-    return response_json
-
-
 async def get_marketplace_listings_async(marketplace_listing_ids):
+    ''' REQUIRES AUTHENTICATION
+        given a list of listing_ids, return list of API responses (marketplace listing json) '''
+    
+    # initialize results list
     marketplace_listing_results = []
+
     async with aiohttp.ClientSession() as session:
+        # initialize list of tasks
         tasks = []
         for marketplace_listing in marketplace_listing_ids:
+            # create and append tasks (API requests)
             tasks.append(session.get(f"{API_BASE_URL}/marketplace/listings/{marketplace_listing}",
                                    headers=AUTHENTICATION_HEADER,
                                    ssl=False))
         
+        # request
         responses = await asyncio.gather(*tasks)
+        
+        # append results
         for response in responses:
             results = await response.json()
             marketplace_listing_results.append(results)
+
+        # return list of marketplace responses
         return marketplace_listing_results
 
 
