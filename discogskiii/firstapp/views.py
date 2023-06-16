@@ -37,12 +37,12 @@ def index(request):
             artist_releases = get_artist_releases(artist)
             # add to cache
             for release in artist_releases:
-                MasterRelease(artist=release["artist"],
-                                master_id=release["master_id"],
-                                title=release["title"],
-                                uri=release["uri"],
-                                year=release["year"],
-                                thumb=release["thumb"]).save()
+                MasterRelease.objects.create(artist=release["artist"],
+                                            master_id=release["master_id"],
+                                            title=release["title"],
+                                            uri=release["uri"],
+                                            year=release["year"],
+                                            thumb=release["thumb"])
 
      
     return render(request, "firstapp/index.html", {
@@ -104,7 +104,7 @@ def release_market(request, artist, release_id):
         # request data from discogs
         main_release_id = get_main_release_id(master_release_id)
         # add to cache
-        MainRelease(master=master_release, main_id=main_release_id).save()
+        MainRelease.objects.create(master=master_release, main_id=main_release_id)
     
     # marketplace_listing_ids represent the original pressings available for sale
     # we obtain this by webscraping discogs each time because markets change
