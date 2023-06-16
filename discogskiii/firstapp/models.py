@@ -8,6 +8,7 @@ class MasterRelease(models.Model):
     master_id = models.CharField(max_length=15)
     title = models.CharField(max_length=240)
     uri = models.CharField(max_length=500)
+    # think about changing this to models.DateField() since we order by it
     year = models.CharField(max_length=10)
     thumb = models.CharField(max_length=500)
 
