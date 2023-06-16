@@ -53,7 +53,7 @@ def index(request):
 # all releases by an arist
 def artist_releases(request, artist):
     # cached, load from database
-    artist_releases = MasterRelease.objects.all().filter(artist=artist).order_by("year")
+    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
 
     # pagination
     # instantiate Paginator, 10 records
