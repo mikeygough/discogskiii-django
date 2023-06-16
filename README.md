@@ -77,6 +77,15 @@ Since I'll be fetching page information from my own Database, this means I can a
 
 Clicking into a market will then reveal the orderbook. Back on the artist markets page I'd like to add support for data filtering and sorting. Currently records are sorted chronologically but this doesn't do much for a trader. It'd be better to choose markets with more than 1 offer, or highest price, etc.
 
+#### Design Limitations
+I'm running into some small hurdles in regards to performance... I've moved most of my requests code into asynchronous functions using the async and aiohttp libraries. This was a great improvement but eventually made my code _too_ fast. The Discogs API uses request throttling which is limited to 60 in a rolling 60 second window. My code is too fast now that I can surprass this limit with just a few clicks around the site.
+
+The main reason for the limit breaching is that when a user clicks on an artist, the app requests the first ten releases from that artist then at the same time makes another ten requests for releases statistics on those ten albums.
+
+Previously I had the releases cached which sped things up significantly. But then I went to implement the release statistics feature which required me to rework some code so I temporarily removed caching. I think what I can do next is move that artist release stuff back into a cache and just request the number of releases per second. This would result in just ten requests per page load.
+
+<br>
+
 #### Color Palette
 Primary Color:
 * __bg-gradient-to-r from-yellow-400 to-yellow-600__: This gradient will serve as the primary color, providing a warm and inviting tone.
