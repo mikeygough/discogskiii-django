@@ -25,7 +25,7 @@ def index(request):
     # there's no reason to redownload everything if one artist is missing
     # get unique artists in database (cached)
     try:
-        cached_artists = list(MasterRelease.objects.all().values_list('artist', flat=True).distinct())
+        cached_artists = list(MasterRelease.objects.values_list('artist', flat=True).distinct())
     except: # database not initialized
         cached_artists = []
 
