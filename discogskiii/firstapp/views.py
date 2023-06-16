@@ -60,12 +60,10 @@ def artist_releases(request, artist):
     paginator = Paginator(artist_releases, 10)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
-
+    # get page objects as list
     page_obj_list = page_obj.object_list
-    print(page_obj_list)
     # get master ids
     master_ids = list(page_obj_list.values_list('master_id', flat=True))
-    print("master_ids", master_ids)
     # get release ids
     release_ids = asyncio.run(get_main_release_ids_async(master_ids=master_ids))
     # get release_statistics
@@ -77,8 +75,6 @@ def artist_releases(request, artist):
 
     # zip artist_releases data and release_stats for django templating support
     zipped_data = zip(page_obj_list, release_stats)
-
-    print(zipped_data)
 
     return render(request, "firstapp/artist_releases.html", {
         "artist": artist,

@@ -1481,6 +1481,10 @@ video {
     padding-right: 1.5rem;
   }
 
+  .sm\:text-left {
+    text-align: left;
+  }
+
   .sm\:text-center {
     text-align: center;
   }
