@@ -58,6 +58,9 @@ Features I would like to include in the project:
 * Artist catalogue search. If a user is interested in Sun Ra, they should be able to search for him and see all original pressings. They should be able to quickly discern which original pressings have 'active markets' (at least one offer). Maybe this is implemented with a simple green dot or flag.
 * Create watchlist. User's should be able to save a market to their watchlist to quickly reference it later.
 * Subscribe to market... I see this as a kind of challenge feature because I'm really not sure how to build it. I'd like a user to be able to subscribe to a market and receive updates when that market changes. I.E. a new offer is placed in the market.
+* STATUS...
+    * X Price and quantity order books are implemented
+    * Artist Catalogue Search... Not search, but a user can see all of an artists' pressings!
 
 
 <br>
