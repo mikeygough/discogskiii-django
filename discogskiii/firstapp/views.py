@@ -27,7 +27,7 @@ def index(request):
     # there's no reason to redownload everything if one artist is missing
     # get unique artists in database (cached)
     try:
-        cached_artists = list(MasterRelease.objects.values_list('artist', flat=True).distinct())
+        cached_artists = list(MasterRelease.objects.values_list("artist", flat=True).distinct())
     except: # database not initialized
         cached_artists = []
 
@@ -39,7 +39,7 @@ def index(request):
             print(f"Getting Artist {artist}")
             artist_releases = get_artist_releases(artist)
             for release in artist_releases:
-                print(artist, release['title'])
+                print(artist, release["title"])
                 # add MasterRelease
                 MasterRelease.objects.create(artist=release["artist"],
                                              master_id=release["master_id"],
@@ -67,13 +67,13 @@ def artist_releases(request, artist):
     # pagination
     # instantiate Paginator, 10 records
     paginator = Paginator(artist_releases, 10)
-    page_number = request.GET.get('page')
+    page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     # get page objects as list
     page_obj_list = page_obj.object_list
     
     # get master ids
-    master_ids = list(page_obj_list.values_list('master_id', flat=True))
+    master_ids = list(page_obj_list.values_list("master_id", flat=True))
     
     # get main_release ids
     main_release_ids = asyncio.run(get_main_release_ids_async(master_ids=master_ids))
@@ -81,11 +81,11 @@ def artist_releases(request, artist):
     # cache main_release_ids if don't already exist
     for x, p in enumerate(page_obj_list):
         if not MainRelease.objects.filter(master=p).exists():
-            print(f"does not exist! caching {p}!")
+            print(f"Does Not Exist! Caching {p}!")
             # add to cache
             MainRelease.objects.create(master=p, main_id=main_release_ids[x])
         else:
-            print(f"{p} exists!")
+            print(f"Exists!")
 
     # get release_statistics
     release_stats = asyncio.run(get_release_statistics_async(release_ids=main_release_ids))
@@ -120,7 +120,7 @@ def release_market(request, artist, release_id):
         main_release_id = MainRelease.objects.get(master=master_release).main_id
     else:
         # request data from discogs
-        print(f"{master_release} does not exists")
+        print(f"Does Not Exist! Caching {master_release}")
         main_release_id = get_main_release_id(master_release_id)
         # add to cache
         MainRelease.objects.create(master=master_release, main_id=main_release_id)
