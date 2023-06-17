@@ -3,6 +3,8 @@ from django.shortcuts import render
 from django.core.paginator import Paginator
 from firstapp.config import *
 from firstapp.utils import *
+import time
+from itertools import chain
 
 # import models
 from firstapp.models import MasterRelease, MainRelease
@@ -34,17 +36,25 @@ def index(request):
         # initialize database, get all artist markets
         for artist in artist_markets:
         # request data from discogs
+            print(f"Getting Artist {artist}")
             artist_releases = get_artist_releases(artist)
-            # add to cache
             for release in artist_releases:
+                print(artist, release['title'])
+                # add MasterRelease
                 MasterRelease.objects.create(artist=release["artist"],
-                                            master_id=release["master_id"],
-                                            title=release["title"],
-                                            uri=release["uri"],
-                                            year=release["year"],
-                                            thumb=release["thumb"])
-
+                                             master_id=release["master_id"],
+                                             title=release["title"],
+                                             uri=release["uri"],
+                                             year=release["year"],
+                                             thumb=release["thumb"])
+            
+            print("sleeping for 5")
+            time.sleep(5)
      
+        print("Done Fetching Artist Releases!")
+    
+    print("Database Initialized!")
+
     return render(request, "firstapp/index.html", {
         "artist_markets": artist_markets
     })
@@ -54,7 +64,6 @@ def index(request):
 def artist_releases(request, artist):
     # cached, load from database
     artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
-
     # pagination
     # instantiate Paginator, 10 records
     paginator = Paginator(artist_releases, 10)
@@ -62,15 +71,27 @@ def artist_releases(request, artist):
     page_obj = paginator.get_page(page_number)
     # get page objects as list
     page_obj_list = page_obj.object_list
+    
     # get master ids
     master_ids = list(page_obj_list.values_list('master_id', flat=True))
-    # get release ids
-    release_ids = asyncio.run(get_main_release_ids_async(master_ids=master_ids))
+    
+    # get main_release ids
+    main_release_ids = asyncio.run(get_main_release_ids_async(master_ids=master_ids))
+
+    # cache main_release_ids if don't already exist
+    for x, p in enumerate(page_obj_list):
+        if not MainRelease.objects.filter(master=p).exists():
+            print(f"does not exist! caching {p}!")
+            # add to cache
+            MainRelease.objects.create(master=p, main_id=main_release_ids[x])
+        else:
+            print(f"{p} exists!")
+
     # get release_statistics
-    release_stats = asyncio.run(get_release_statistics_async(release_ids=release_ids))
+    release_stats = asyncio.run(get_release_statistics_async(release_ids=main_release_ids))
 
     print("master_ids", master_ids)
-    print("release_ids", release_ids)
+    print("release_ids", main_release_ids)
     print("release_stats", release_stats)
 
     # zip artist_releases data and release_stats for django templating support
@@ -95,9 +116,11 @@ def release_market(request, artist, release_id):
     # get main_release_id (original pressing)
     # if cached, load from db
     if MainRelease.objects.filter(master=master_release).exists():
+        print(f"{master_release} exists!")
         main_release_id = MainRelease.objects.get(master=master_release).main_id
     else:
         # request data from discogs
+        print(f"{master_release} does not exists")
         main_release_id = get_main_release_id(master_release_id)
         # add to cache
         MainRelease.objects.create(master=master_release, main_id=main_release_id)
