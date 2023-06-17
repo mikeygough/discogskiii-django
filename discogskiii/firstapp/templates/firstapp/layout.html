@@ -26,9 +26,14 @@
         </div>
         <!-- Add your navigation links here -->
         <div class="flex">
-          <a href="#" class="text-gray-300 px-3 py-2 hover:bg-blue-700">Link 1</a>
-          <a href="#" class="text-gray-300 px-3 py-2 hover:bg-blue-700">Link 2</a>
-          <a href="#" class="text-gray-300 px-3 py-2 hover:bg-blue-700">Link 3</a>
+          <a href="{% url 'firstapp:index' %}" class="text-gray-300 px-3 py-2 hover:bg-blue-700">Home</a>
+          {% if user.is_authenticated %}
+            <a href="#" class="text-gray-300 px-3 py-2 hover:bg-blue-700">{{ user.username }}</a>  
+            <a href="{% url 'firstapp:logout' %}" class="text-gray-300 px-3 py-2 hover:bg-blue-700">Logout</a>
+          {% else %}
+            <a href="{% url 'firstapp:login' %}" class="text-gray-300 px-3 py-2 hover:bg-blue-700">Login</a>
+            <a href="{% url 'firstapp:register' %}" class="text-gray-300 px-3 py-2 hover:bg-blue-700">Register</a>
+          {% endif %}
         </div>
       </div>
     </div>
