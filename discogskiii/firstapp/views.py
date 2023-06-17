@@ -1,4 +1,6 @@
 # imports
+from django.contrib.auth import authenticate, login, logout
+from django.db import IntegrityError
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
@@ -8,7 +10,7 @@ from firstapp.utils import *
 import time
 
 # import models
-from firstapp.models import MasterRelease, MainRelease
+from firstapp.models import User, MasterRelease, MainRelease
 
 # statically declare supported markets
 artist_markets = [
@@ -56,8 +58,8 @@ def index(request):
     
     print("Database Initialized, Enjoy!")
 
-    # if not request.user.is_authenticated:
-    #     return HttpResponseRedirect(reverse("firstapp:login"))
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("firstapp:login"))
 
     return render(request, "firstapp/index.html", {
         "artist_markets": artist_markets
@@ -65,11 +67,55 @@ def index(request):
 
 
 def login_view(request):
-    return render(request, "firstapp/login.html")
+    if request.method == "POST":
+
+        # attempt to sign user in
+        username = request.POST["username"]
+        password = request.POST["password"]
+        user = authenticate(request, username=username, password=password)
+
+        # check if authentication successful
+        if user is not None:
+            login(request, user)
+            return HttpResponseRedirect(reverse("firstapp:index"))
+        else:
+            return render(request, "firstapp/login.html", {
+                "message": "Invalid username and/or password."
+            })
+    else:
+        return render(request, "firstapp/login.html")
 
 
 def logout_view(request):
-    pass
+    logout(request)
+    return HttpResponseRedirect(reverse("firstapp:index"))
+
+
+def register(request):
+    if request.method == "POST":
+        username = request.POST["username"]
+        email = request.POST["email"]
+
+        # ensure password matched confirmation
+        password = request.POST["password"]
+        confirmation = request.POST["confirmation"]
+        if password != confirmation:
+            return render(request, "firstapp/register.html", {
+                "message": "Passwords must match."
+            })
+
+        # attempt to create new user
+        try:
+            user = User.objects.create_user(username, email, password)
+            user.save()
+        except IntegrityError:
+            return render(request, "firstapp/register.html", {
+                "message": "Username already taken."
+            })
+        login(request, user)
+        return HttpResponseRedirect(reverse("firstapp:index"))
+    else:
+        return render(request, "firstapp/register.html")
 
 
 # all releases by an arist
