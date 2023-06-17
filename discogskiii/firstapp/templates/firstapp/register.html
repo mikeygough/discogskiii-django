@@ -1,29 +1,27 @@
 {% extends "firstapp/layout.html" %} {% block body %}
 
-<h2>Register</h2>
-
-
 {% if message %}
-    <div>{{ message }}</div>
+    <div class="text-red-500 text-center mb-4">{{ message }}</div>
 {% endif %}
 
-<form action="{% url 'firstapp:register' %}" method="post">
-    {% csrf_token %}
-    <div>
-        <input autofocus type="text" name="username" placeholder="Username">
-    </div>
-    <div>
-        <input type="email" name="email" placeholder="Email Address">
-    </div>
-    <div>
-        <input type="password" name="password" placeholder="Password">
-    </div>
-    <div>
-        <input type="password" name="confirmation" placeholder="Confirm Password">
-    </div>
-    <input type="submit" value="Register">
-</form>
 
-Already have an account? <a href="{% url 'firstapp:login' %}">Log In here.</a>
+<form action="{% url 'firstapp:register' %}" method="post" class="max-w-md mx-auto bg-white shadow-md rounded-lg px-8 py-6">
+    {% csrf_token %}
+    <h2 class="text-2xl font-bold mb-6 text-center">Register</h2>
+    <div class="mb-4">
+        <input autofocus type="text" name="username" placeholder="Username" class="border border-gray-300 bg-gray-100 rounded-lg py-2 px-4 w-full focus:outline-none focus:border-yellow-400">
+    </div>
+    <div class="mb-4">
+        <input type="email" name="email" placeholder="Email Address" class="border border-gray-300 bg-gray-100 rounded-lg py-2 px-4 w-full focus:outline-none focus:border-yellow-400">
+    </div>
+    <div class="mb-4">
+        <input type="password" name="password" placeholder="Password" class="border border-gray-300 bg-gray-100 rounded-lg py-2 px-4 w-full focus:outline-none focus:border-yellow-400">
+    </div>
+    <div class="mb-4">
+        <input type="password" name="confirmation" placeholder="Confirm Password" class="border border-gray-300 bg-gray-100 rounded-lg py-2 px-4 w-full focus:outline-none focus:border-yellow-400">
+    </div>
+    <input type="submit" value="Register" class="bg-yellow-400 text-white font-bold py-2 px-4 rounded-lg w-full hover:bg-yellow-500">
+    <p class="text-center mt-4">Already have an account? <a href="{% url 'firstapp:login' %}" class="text-yellow-400 font-bold hover:underline">Login here</a>.</p>
+</form>
 
 {% endblock %}

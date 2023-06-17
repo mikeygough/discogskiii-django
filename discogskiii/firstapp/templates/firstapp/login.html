@@ -1,8 +1,9 @@
 {% extends "firstapp/layout.html" %} {% block body %}
 
 {% if message %}
-    <div>{{ message }}</div>
+    <div class="text-red-500 text-center mb-4">{{ message }}</div>
 {% endif %}
+
 
 <form action="{% url 'firstapp:login' %}" method="post" class="max-w-md mx-auto bg-white shadow-md rounded-lg px-8 py-6">
     {% csrf_token %}
