@@ -224,6 +224,25 @@ After creating an Admin:
     * admin.site.register(MODEL_NAME)
 * Visit BASE_URL/admin
 
+Create User:
+
+For most applications a simple user model will do. This can be extended later. For example, in models.py:
+
+```
+from django.contrib.auth.models import AbstractUser
+
+class User(AbstractUser):
+    pass
+```
+
+Then be sure to add this model to _PROJECT_NAME/settings.py_ like this:
+
+```
+AUTH_USER_MODEL = "APP_NAME.User"
+```
+
+
+
 <br>
 Add HTML:
 
