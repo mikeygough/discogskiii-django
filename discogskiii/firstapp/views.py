@@ -56,16 +56,20 @@ def index(request):
     
     print("Database Initialized, Enjoy!")
 
-    if not request.user.is_authenticated:
-        return HttpResponseRedirect(reverse("login"))
+    # if not request.user.is_authenticated:
+    #     return HttpResponseRedirect(reverse("firstapp:login"))
 
     return render(request, "firstapp/index.html", {
         "artist_markets": artist_markets
     })
 
 
-def login_request(request):
-    return render(request, "users/login.html")
+def login_view(request):
+    return render(request, "firstapp/login.html")
+
+
+def logout_view(request):
+    pass
 
 
 # all releases by an arist
