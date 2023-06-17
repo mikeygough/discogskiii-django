@@ -1,10 +1,11 @@
 # imports
 from django.shortcuts import render
 from django.core.paginator import Paginator
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 from firstapp.config import *
 from firstapp.utils import *
 import time
-from itertools import chain
 
 # import models
 from firstapp.models import MasterRelease, MainRelease
@@ -53,11 +54,18 @@ def index(request):
      
         print("Done Fetching Artist Releases!")
     
-    print("Database Initialized!")
+    print("Database Initialized, Enjoy!")
+
+    if not request.user.is_authenticated:
+        return HttpResponseRedirect(reverse("login"))
 
     return render(request, "firstapp/index.html", {
         "artist_markets": artist_markets
     })
+
+
+def login_request(request):
+    return render(request, "users/login.html")
 
 
 # all releases by an arist
@@ -107,6 +115,7 @@ def artist_releases(request, artist):
     })
 
 
+# view original pressings of release available for sale
 def release_market(request, artist, release_id):
 
     # master represents the album as an entity. fetch from db
@@ -115,8 +124,9 @@ def release_market(request, artist, release_id):
     
     # get main_release_id (original pressing)
     # if cached, load from db
+    # this is a redundant cache check, should have already been cached on the artist_releases page load
     if MainRelease.objects.filter(master=master_release).exists():
-        print(f"{master_release} exists!")
+        print(f"Exists!")
         main_release_id = MainRelease.objects.get(master=master_release).main_id
     else:
         # request data from discogs
@@ -158,3 +168,5 @@ def release_market(request, artist, release_id):
         "master_release": master_release,
         "marketplace_listings": marketplace_listings
     })
+
+
