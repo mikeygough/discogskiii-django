@@ -212,11 +212,28 @@ def release_market(request, artist, release_id):
     
     # calculate minimum tick for order book display
     # maybe clean up conditions to just be codes (ie VG instead of text Very Good)
-    
-    return render(request, "firstapp/release_market.html", {
+
+    if request.method == "POST":
+        saved = request.POST["savebtn"]
+        print(request.POST)
+        print(saved)
+        
+        return render(request, "firstapp/release_market.html", {
         "artist": artist,
         "master_release": master_release,
-        "marketplace_listings": marketplace_listings
-    })
+        "master_release_id": master_release_id,
+        "main_release_id": main_release_id,
+        "marketplace_listings": marketplace_listings,
+        "saved": saved
+        })
+    else:
+        return render(request, "firstapp/release_market.html", {
+            "artist": artist,
+            "master_release": master_release,
+            "master_release_id": master_release_id,
+            "main_release_id": main_release_id,
+            "marketplace_listings": marketplace_listings,
+            "saved": saved
+        })
 
 

@@ -50,5 +50,17 @@
       </tbody>
     </table>
   </div>
+  {% if saved %}
+  <form action="{% url 'firstapp:release_market' artist master_release_id %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Unsave Market" name="savebtn">
+  </form>
+  {% else %}
+  <form action="{% url 'firstapp:release_market' artist master_release_id %}" method="post">
+    {% csrf_token %}
+    <input type="submit" value="Save Market" name="savebtn">
+  </form>
+  {% endif %}
 </div>
+
 {% endblock %}

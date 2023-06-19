@@ -32,4 +32,4 @@ class MainRelease(models.Model):
 class SavedMarkets(models.Model):
     ''' represents a users saved markets (MainRelease) '''
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    market = models.ForeignKey(MainRelease, on_delete=models.CASCASE)
+    market = models.ForeignKey(MainRelease, on_delete=models.CASCADE)
