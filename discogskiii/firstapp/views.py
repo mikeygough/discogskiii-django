@@ -116,6 +116,12 @@ def register(request):
         return HttpResponseRedirect(reverse("firstapp:index"))
     else:
         return render(request, "firstapp/register.html")
+    
+
+def saved_markets(request):
+    return render(request, "firstapp/saved_markets.html", {
+        
+    })
 
 
 # all releases by an arist
