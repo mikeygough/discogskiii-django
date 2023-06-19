@@ -118,6 +118,7 @@ def register(request):
         return render(request, "firstapp/register.html")
     
 
+# displays info on all markets saved by user
 def saved_markets(request):
     return render(request, "firstapp/saved_markets.html", {
         
