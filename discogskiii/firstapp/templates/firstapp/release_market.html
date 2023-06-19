@@ -50,6 +50,7 @@
       </tbody>
     </table>
   </div>
+  {{ saved }}
   {% if saved %}
   <form action="{% url 'firstapp:release_market' artist master_release_id %}" method="post">
     {% csrf_token %}

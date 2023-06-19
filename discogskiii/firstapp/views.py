@@ -213,11 +213,15 @@ def release_market(request, artist, release_id):
     # calculate minimum tick for order book display
     # maybe clean up conditions to just be codes (ie VG instead of text Very Good)
 
+    saved = None
+
     if request.method == "POST":
-        saved = request.POST["savebtn"]
-        print(request.POST)
-        print(saved)
-        
+        saved_response = request.POST["savebtn"]
+        if saved_response == "Unsave Market":
+            saved = False
+        elif saved_response == "Save Market":
+            saved = True
+        print(saved_response)
         return render(request, "firstapp/release_market.html", {
         "artist": artist,
         "master_release": master_release,
