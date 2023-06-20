@@ -8,5 +8,8 @@
         userrrrrr
       </p>
     </div>
+    {% for saved_market in saved_markets %}
+        <p>{{ saved_market.market }}</p>
+    {% endfor %}
   </div>
 {% endblock %}
