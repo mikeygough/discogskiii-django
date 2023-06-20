@@ -27,3 +27,9 @@ class MainRelease(models.Model):
 
     def __str__(self):
         return f"{self.main_id} is the original pressing of..."
+    
+
+class SavedMarkets(models.Model):
+    ''' represents a users saved markets (MainRelease) '''
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    market = models.ForeignKey(MainRelease, on_delete=models.CASCADE)

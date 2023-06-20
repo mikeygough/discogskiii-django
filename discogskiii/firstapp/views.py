@@ -10,7 +10,7 @@ from firstapp.utils import *
 import time
 
 # import models
-from firstapp.models import User, MasterRelease, MainRelease
+from firstapp.models import User, MasterRelease, MainRelease, SavedMarkets
 
 # statically declare supported markets
 artist_markets = [
@@ -116,6 +116,26 @@ def register(request):
         return HttpResponseRedirect(reverse("firstapp:index"))
     else:
         return render(request, "firstapp/register.html")
+    
+
+# displays info on all markets saved by user
+def saved_markets(request):
+
+    # get saved markets
+    saved_markets = SavedMarkets.objects.filter(user=request.user)
+    print("saved_markets", saved_markets)
+    # get main releases
+    main_releases_reference = list(saved_markets.values_list("market", flat=True))
+    print("main_releases_reference", main_releases_reference)
+    master_release_ids = list(MainRelease.objects.filter(pk__in=main_releases_reference).values_list("master", flat=True))
+    print(master_release_ids)
+    artist_releases = MasterRelease.objects.filter(pk__in=master_release_ids)
+    print(artist_releases)
+
+    return render(request, "firstapp/saved_markets.html", {
+        "saved_markets": saved_markets,
+        "artist_releases": artist_releases
+    })
 
 
 # all releases by an arist
@@ -177,13 +197,15 @@ def release_market(request, artist, release_id):
     # this is a redundant cache check, should have already been cached on the artist_releases page load
     if MainRelease.objects.filter(master=master_release).exists():
         print(f"Exists!")
-        main_release_id = MainRelease.objects.get(master=master_release).main_id
+        main_release = MainRelease.objects.get(master=master_release)
+        main_release_id = main_release.main_id
     else:
         # request data from discogs
         print(f"Does Not Exist! Caching {master_release}")
         main_release_id = get_main_release_id(master_release_id)
         # add to cache
-        MainRelease.objects.create(master=master_release, main_id=main_release_id)
+        main_release = MainRelease(master=master_release, main_id=main_release_id)
+        main_release.save()
     
     # marketplace_listing_ids represent the original pressings available for sale
     # we obtain this by webscraping discogs each time because markets change
@@ -210,13 +232,38 @@ def release_market(request, artist, release_id):
         except KeyError:
             pass
     
-    # calculate minimum tick for order book display
-    # maybe clean up conditions to just be codes (ie VG instead of text Very Good)
-    
-    return render(request, "firstapp/release_market.html", {
+    saved = SavedMarkets.objects.filter(user=request.user,
+                                        market=main_release).exists()
+
+    if request.method == "POST":
+        saved_response = request.POST["savebtn"]
+        if saved_response == "Unsave Market":
+            # remove saved market from database
+            SavedMarkets.objects.get(user=request.user,
+                                     market=main_release).delete()
+            saved = False
+        elif saved_response == "Save Market":
+            # add saved market to database
+            SavedMarkets.objects.create(user=request.user,
+                                        market=main_release)
+            saved = True
+        
+        return render(request, "firstapp/release_market.html", {
         "artist": artist,
         "master_release": master_release,
-        "marketplace_listings": marketplace_listings
-    })
+        "master_release_id": master_release_id,
+        "main_release_id": main_release_id,
+        "marketplace_listings": marketplace_listings,
+        "saved": saved
+        })
+    else:
+        return render(request, "firstapp/release_market.html", {
+            "artist": artist,
+            "master_release": master_release,
+            "master_release_id": master_release_id,
+            "main_release_id": main_release_id,
+            "marketplace_listings": marketplace_listings,
+            "saved": saved
+        })
 
 
