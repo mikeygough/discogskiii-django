@@ -121,8 +121,20 @@ def register(request):
 # displays info on all markets saved by user
 def saved_markets(request):
 
+    # get saved markets
     saved_markets = SavedMarkets.objects.filter(user=request.user)
-    print(saved_markets)
+    print("saved_markets", saved_markets)
+    # get main releases
+    main_releases_reference = list(saved_markets.values_list("market", flat=True))
+    print("main_releases_reference", main_releases_reference)
+    master_release_ids = list(MainRelease.objects.filter(pk__in=main_releases_reference).values_list("master", flat=True))
+    print(master_release_ids)
+    master_releases = MasterRelease.objects.filter(pk__in=master_release_ids)
+    print(master_releases)
+
+
+
+    
 
     return render(request, "firstapp/saved_markets.html", {
         "saved_markets": saved_markets
@@ -239,7 +251,6 @@ def release_market(request, artist, release_id):
                                         market=main_release)
             saved = True
         
-        print(saved_response)
         return render(request, "firstapp/release_market.html", {
         "artist": artist,
         "master_release": master_release,
