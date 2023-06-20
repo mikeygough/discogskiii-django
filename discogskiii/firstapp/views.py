@@ -129,15 +129,12 @@ def saved_markets(request):
     print("main_releases_reference", main_releases_reference)
     master_release_ids = list(MainRelease.objects.filter(pk__in=main_releases_reference).values_list("master", flat=True))
     print(master_release_ids)
-    master_releases = MasterRelease.objects.filter(pk__in=master_release_ids)
-    print(master_releases)
-
-
-
-    
+    artist_releases = MasterRelease.objects.filter(pk__in=master_release_ids)
+    print(artist_releases)
 
     return render(request, "firstapp/saved_markets.html", {
-        "saved_markets": saved_markets
+        "saved_markets": saved_markets,
+        "artist_releases": artist_releases
     })
 
 
