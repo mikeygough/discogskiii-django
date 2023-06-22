@@ -368,7 +368,6 @@ document.addEventListener('DOMContentLoaded', function() {
 ```
 
 Arrow Notation (Same as Above)
-
 ```
 document.addEventListener('DOMContentLoaded', () => {
 
@@ -394,7 +393,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else {
             document.querySelector('#submit').disabled = true;    
         }
-        
+
     }
 
     document.querySelector('form').onsubmit = () => {
@@ -415,6 +414,13 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 })
 ```
+
+Local Storage
+```
+localStorage.getItem(key)
+localStorage.setItem(key, value)
+```
+
 
 
 <br>
