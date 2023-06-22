@@ -421,7 +421,19 @@ localStorage.getItem(key)
 localStorage.setItem(key, value)
 ```
 
+AJAX: Asynchronous requests without a page load
+```
+document.addEventListener('DOMContentLoaded', function() {
 
+    // fetch returns a promise... something will come back but maybe not immediately
+    fetch('EXAMPLE_URL')
+    .then(response => return response.json())
+    .then(data => {
+        console.log(data);
+    });
+
+});
+```
 
 <br>
 
