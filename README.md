@@ -60,6 +60,7 @@ Features I would like to include in the project:
 * __DONE__ - Tailwind CSS Styling
 * __Subscribe to Market__ - I see this as a kind of challenge feature because I'm really not sure how to build it. I'd like a user to be able to subscribe to a market and receive updates when that market changes. I.E. a new offer is placed in the market. I think that [Django has their own email service](https://docs.djangoproject.com/en/4.2/topics/email/).
 * __Market Statistics__ - See new listings, order books with the highest price, lowest price, most orders, etc.
+* __Order Book Sorting__ - Enable sorting by price or condition through the table headers.
 * __React Components__ - Implement at least one React component! But I might kick this down the road since it may be more beneficial to finish my React course before I start slinging around sloppy code.
 
 
@@ -74,18 +75,9 @@ For the first version of this design I'm imagining a home screen with labels for
 
 When a use clicks on an artist market, they're taken to a page that displays all of that artists records, sorted chronologically. Currently, this is a small performance bottleneck since on each page load I'm requesting all of this data from Discogs servers. For an artist like Miles Davis who has hundreds of records, this results in a multi-second page load. -- This bottleneck has been (partially) addressed. Now I'm doing the entire db initialization feature on the /index page load. Thus, it takes several minutes to request all the data if a user is running the app for the first time. But, it results in quicker page loads of the /artist-releases route. Additionally, I've implemented pagination and caching to help reduce the request count. Still, if a user clicks around too quickly on the site then they may run into an error with the request limit being breached (the Discogs API only permits 60 requests for rolling 60 second window for authenticated users). This is because the a single pageload of an /artist-releases page makes 20 requests (10 to get information on 10 master releases [title, release date, album cover, etc.] + 10 to get information on the main release [number for sale]).
 
-Since it's very rare for these artist (all of whom are now deceased) to release new records, I'm going to create a Django model for each artist. That model will store all of the records they've produced along with the information I need to load the page. It will be much faster to load the page this way, and since these arists aren't launching new records I should be safe to only have to fetch this once from Discogs. Just in case, I can run a quick check once a month or something and compare my DB with Discogs looking at page numbers or some other metric. Miles Davis, for example had a 'new' release in 2023.
+Since it's very rare for these artist (all of whom are now deceased) to release new records, I'm going to create a Django model for each artist. That model will store all of the records they've produced along with the information I need to load the page. It will be much faster to load the page this way, and since these arists aren't launching new records I should be safe to only have to fetch this once from Discogs. Just in case, I can run a quick check once a month or something and compare my DB with Discogs looking at page numbers or some other metric. Miles Davis, for example had a 'new' release in 2023. -- I've implemented caching as best I can... But I'm still running into bottle necks and intend on spending more time with this over the coming days.
 
-Since I'll be fetching page information from my own Database, this means I can add a column to this massive markets table for how many of the original pressing are available for sale. That's achieved with this simple Get request /marketplace/stats/{release_id}{?curr_abbr} which returns the number of that specific release available for sale along with some other information.
-
-Clicking into a market will then reveal the orderbook. Back on the artist markets page I'd like to add support for data filtering and sorting. Currently records are sorted chronologically but this doesn't do much for a trader. It'd be better to choose markets with more than 1 offer, or highest price, etc.
-
-#### Design Limitations
-I'm running into some small hurdles in regards to performance... I've moved most of my requests code into asynchronous functions using the async and aiohttp libraries. This was a great improvement but eventually made my code _too_ fast. The Discogs API uses request throttling which is limited to 60 in a rolling 60 second window. My code is too fast now that I can surprass this limit with just a few clicks around the site.
-
-The main reason for the limit breaching is that when a user clicks on an artist, the app requests the first ten releases from that artist then at the same time makes another ten requests for releases statistics on those ten albums.
-
-Previously I had the releases cached which sped things up significantly. But then I went to implement the release statistics feature which required me to rework some code so I temporarily removed caching. I think what I can do next is move that artist release stuff back into a cache and just request the number of releases per second. This would result in just ten requests per page load.
+Clicking into a market will then reveal the orderbook, more accurately the number and prices of original pressings available for sale.
 
 <br>
 
