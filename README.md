@@ -350,6 +350,27 @@ Run the NPM Dev Server (to auto-load css)
 
 <br>
 
+### JavsScript
+
+Helpful JavsScript Snippets
+
+```
+document.addEventListener('DOMContentLoaded', function() {
+    
+    document.querySelectorAll('button').forEach(function(button) {
+        button.onclick = function() {
+            document.querySelector('#hello').style.color = button.datasest.color;
+        }
+    })
+})
+```
+
+<br>
+
+---
+
+<br>
+
 ### Virtual Environments
 Create Python3 Virtual Environment:
 
