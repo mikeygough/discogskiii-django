@@ -421,7 +421,7 @@ localStorage.getItem(key)
 localStorage.setItem(key, value)
 ```
 
-AJAX: Asynchronous requests without a page load
+AJAX: Asynchronous requests without a page load (just tie to a form submit)
 ```
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -430,6 +430,10 @@ document.addEventListener('DOMContentLoaded', function() {
     .then(response => return response.json())
     .then(data => {
         console.log(data);
+    })
+    // if something goes wrong, catch error
+    .catch(error => {
+        consol.log('Error:', error);
     });
 
 });
