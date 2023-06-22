@@ -354,6 +354,8 @@ Run the NPM Dev Server (to auto-load css)
 
 Helpful JavsScript Snippets
 
+Presented with a bunch of buttons that have data-color attributes (data-color="red", for example),
+upon clicking change the style of the h1 tag who's id is #hello to that button's particular data-color.
 ```
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -378,6 +380,41 @@ document.addEventListener('DOMContentLoaded', () => {
 })
 ```
 
+Given a form submit, create a list item and append it to the unordered list with id of #tasks. We select elements by their IDs
+```
+document.addEventListener('DOMContentLoaded', () => {
+
+    // by default, disable submit button
+    document.querySelector('#submit').disabled = true;
+
+    // enable it when the user types something into the input field.
+    document.querySelector('#tasks').onkeyup = () => {
+        if (document.querySelector('#task').value.length > 0) {
+            document.querySelector('#submit').disabled = false;
+        } else {
+            document.querySelector('#submit').disabled = true;    
+        }
+        
+    }
+
+    document.querySelector('form').onsubmit = () => {
+        const task = document.querySelector('#task').value;
+
+        const li = document.createElement('li');
+        li .innerHTML = task;
+
+        document.querySelector('#tasks').append(li);
+
+        // clear out the value of the input field
+        document.querySelector('#task').value = '';
+        // disable submit button again
+        document.querySelector('#submit').disabled = true;
+
+        // stop form from submitting
+        return false;
+    }
+})
+```
 
 
 <br>
