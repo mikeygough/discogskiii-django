@@ -44,23 +44,20 @@ If there are no records of the original listing for sale then the user wasted th
 
 ### Features
 Features I would like to include in the project:
-* Price and Quantity order books colored by quality for every jazz original pressing. I might want to to tweak this design to better represent quality. For now I am using two rows for the same price but separate qualities. This table representation is also using an additional column for the quality rating, this may be expressed more clearly with colors. For example:
+* DONE - Price and Quantity Order Books, for example:
 
-    | Bid Qty. |  Price  | Offer Qty. | Offer Quality |
-    | :------- | :-----: | ---------: | :------------ |
-    |          | 500     | 1          | M             |
-    |          | 400     | 1          | NM            |
-    |          | 300     | 1          | VG +          |
-    |          | 300     | 1          | VG            |
-    | 3        | 200     |            |               |
-    | 2        | 100     |            |               |
+    |  Price  | Offer Qty. | Offer Quality |
+    | :-----: | ---------: | :------------ |
+    | 500     | 1          | M             |
+    | 400     | 1          | NM            |
+    | 300     | 1          | VG +          |
+    | 300     | 1          | VG            |
+    | 200     | 1          |               |
+    | 100     | 1          |               |
 
-* Artist catalogue search. If a user is interested in Sun Ra, they should be able to search for him and see all original pressings. They should be able to quickly discern which original pressings have 'active markets' (at least one offer). Maybe this is implemented with a simple green dot or flag.
-* Create watchlist. User's should be able to save a market to their watchlist to quickly reference it later.
+* DONE - Artist Releases Dashboard
+* DONE - User Watchlist
 * Subscribe to market... I see this as a kind of challenge feature because I'm really not sure how to build it. I'd like a user to be able to subscribe to a market and receive updates when that market changes. I.E. a new offer is placed in the market.
-* STATUS...
-    * X Price and quantity order books are implemented
-    * Artist Catalogue Search... Not search, but a user can see all of an artists' pressings!
 
 
 <br>
