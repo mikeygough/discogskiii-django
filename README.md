@@ -356,7 +356,7 @@ Helpful JavsScript Snippets
 
 ```
 document.addEventListener('DOMContentLoaded', function() {
-    
+
     document.querySelectorAll('button').forEach(function(button) {
         button.onclick = function() {
             document.querySelector('#hello').style.color = button.datasest.color;
@@ -364,6 +364,21 @@ document.addEventListener('DOMContentLoaded', function() {
     })
 })
 ```
+
+Arrow Notation (Same as Above)
+
+```
+document.addEventListener('DOMContentLoaded', () => {
+
+    document.querySelectorAll('button').forEach(button => {
+        button.onclick = function() {
+            document.querySelector('#hello').style.color = button.datasest.color;
+        }
+    })
+})
+```
+
+
 
 <br>
 
