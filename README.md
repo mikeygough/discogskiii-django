@@ -44,7 +44,7 @@ If there are no records of the original listing for sale then the user wasted th
 
 ### Features
 Features I would like to include in the project:
-* DONE - Price and Quantity Order Books, for example:
+* __DONE__ - Price and Quantity Order Books, for example:
 
     |  Price  | Offer Qty. | Offer Quality |
     | :-----: | ---------: | :------------ |
@@ -55,9 +55,12 @@ Features I would like to include in the project:
     | 200     | 1          |               |
     | 100     | 1          |               |
 
-* DONE - Artist Releases Dashboard
-* DONE - User Watchlist
-* Subscribe to market... I see this as a kind of challenge feature because I'm really not sure how to build it. I'd like a user to be able to subscribe to a market and receive updates when that market changes. I.E. a new offer is placed in the market.
+* __DONE__ - Artist Releases Dashboard
+* __DONE__ - User Watchlist
+* __DONE__ - Tailwind CSS Styling
+* __Subscribe to Market__ - I see this as a kind of challenge feature because I'm really not sure how to build it. I'd like a user to be able to subscribe to a market and receive updates when that market changes. I.E. a new offer is placed in the market. I think that [Django has their own email service](https://docs.djangoproject.com/en/4.2/topics/email/).
+* __Market Statistics__ - See new listings, order books with the highest price, lowest price, most orders, etc.
+* __React Components__ - Implement at least one React component! But I might kick this down the road since it may be more beneficial to finish my React course before I start slinging around sloppy code.
 
 
 <br>
