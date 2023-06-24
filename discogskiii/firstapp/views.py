@@ -187,7 +187,7 @@ def artist_releases(request, artist):
 
 # artist release statistics
 def artist_release_statistics(request, artist):
-    return render(request, "firstapp/artist_release_statistics", {
+    return render(request, "firstapp/artist_release_statistics.html", {
         "artist": artist,
     })
 
