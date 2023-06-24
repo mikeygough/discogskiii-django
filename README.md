@@ -60,6 +60,11 @@ Features I would like to include in the project:
 * __DONE__ - Tailwind CSS Styling
 * __Subscribe to Market__ - I see this as a kind of challenge feature because I'm really not sure how to build it. I'd like a user to be able to subscribe to a market and receive updates when that market changes. I.E. a new offer is placed in the market. I think that [Django has their own email service](https://docs.djangoproject.com/en/4.2/topics/email/).
 * __Market Statistics__ - See new listings, order books with the highest price, lowest price, most orders, etc.
+Thinking through the implementation of this feature... How am I going to get all the data I'll need? It's probably too many requests to try and get all release statistics for every release by an artist... Even if I were to cache them all, it would probably take too long to spin up. What are my other options? I guess the stats I can reliable get are ones available via the API (as opposed to scraping). These include:
+    
+    * release stats: num_have, num_want
+    * marketplace release stats: lowest_price, num_for_sale
+
 * __Order Book Sorting__ - Enable sorting by price or condition through the table headers.
 * __React Components__ - Implement at least one React component! But I might kick this down the road since it may be more beneficial to finish my React course before I start slinging around sloppy code.
 
