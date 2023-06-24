@@ -1,0 +1,14 @@
+{% extends "firstapp/layout.html" %} {% block body %}
+
+<div class="bg-gradient-to-b from-yellow-400 to-yellow-600 text-gray-700 py-6">
+  <div class="container mx-auto px-4">
+    <h1 class="text-3xl font-bold text-left sm:text-center ml-6 sm:ml-0">
+      {{ artist }}
+    </h1>
+    <p class="text-left sm:text-center ml-6 sm:ml-0">
+      <span class="text-2xl font-bold italic">{{ artist }} Release Statistics</span>
+     </p>
+  </div>
+</div>
+
+{% endblock %}
