@@ -185,6 +185,13 @@ def artist_releases(request, artist):
     })
 
 
+# artist release statistics
+def artist_release_statistics(request, artist):
+    return render(request, "firstapp/artist_release_statistics", {
+        "artist": artist,
+    })
+
+
 # view original pressings of release available for sale
 def release_market(request, artist, release_id):
 

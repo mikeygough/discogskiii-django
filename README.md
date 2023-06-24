@@ -65,6 +65,8 @@ Thinking through the implementation of this feature... How am I going to get all
     * release stats: num_have, num_want
     * marketplace release stats: lowest_price, num_for_sale
 
+    One sample statistic I could use is getting the lowest_price for each of the records available for sale by an artist. It wouldn't include anything about the quality of the records but I could at least link to the marketplace page for that record from there.
+
 * __Order Book Sorting__ - Enable sorting by price or condition through the table headers.
 * __React Components__ - Implement at least one React component! But I might kick this down the road since it may be more beneficial to finish my React course before I start slinging around sloppy code.
 
