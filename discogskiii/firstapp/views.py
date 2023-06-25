@@ -8,6 +8,7 @@ from django.urls import reverse
 from firstapp.config import *
 from firstapp.utils import *
 import time
+import math
 
 # import models
 from firstapp.models import User, MasterRelease, MainRelease, SavedMarkets
@@ -187,6 +188,36 @@ def artist_releases(request, artist):
 
 # artist release statistics
 def artist_release_statistics(request, artist):
+    # get artist releases
+    # cached, load from database
+    print("getting artist_releases, from DB")
+    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
+    print(artist_releases)
+    
+    print("getting master_ids, from DB")
+    # get master ids
+    master_ids = list(artist_releases.values_list("master_id", flat=True))
+    print(master_ids)
+
+    print("getting main_release_ids")
+    # get main_release ids
+
+    # calculate optimal chunk size given list length and api limits
+    # Optimal Chunk Size = Total Number of Items / Maximum Requests per Minute
+    chunk_size = math.ceil(len(master_ids) / 60)
+    main_release_ids = []
+    for i in range(0, len(master_ids), chunk_size):
+        chunk = master_ids[i:i+chunk_size]
+        print(f"Getting chunk {chunk}")
+        results = asyncio.run(get_main_release_ids_async(master_ids=chunk))
+        print("Appending to main_release_ids list")
+        main_release_ids.append(results)
+        print("Sleeping for 5 seconds")
+        time.sleep(5)
+        # print(main_release_ids)
+    print(f"main_release_ids {main_release_ids}")
+
+
     return render(request, "firstapp/artist_release_statistics.html", {
         "artist": artist,
     })

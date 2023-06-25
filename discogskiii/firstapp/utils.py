@@ -155,6 +155,7 @@ async def get_wantlist_release_statistics_async(release_ids):
         # append results
         for response in responses:
             result = await response.json()
+            print(result)
             release_wantlist_statistic_results.append(result)
 
         # return list of release wantlist statistics
