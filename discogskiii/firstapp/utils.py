@@ -130,6 +130,35 @@ async def get_release_statistics_async(release_ids):
         release_statistic_results = [d["num_for_sale"] for d in release_statistic_results]
         # return list of release statistics
         return release_statistic_results
+    
+
+async def get_wantlist_release_statistics_async(release_ids):
+    ''' REQUIRES AUTHENTICATION
+        given a list of release_ids, return a list of dics with the
+        num_have and num_want numbers. '''
+    
+    # initialize results list
+    release_wantlist_statistic_results = []
+
+    async with aiohttp.ClientSession() as session:
+        # initialize list of tasks
+        tasks = []
+        for release_id in release_ids:
+            # create and append tasks (API request)
+            tasks.append(session.get(f"{API_BASE_URL}/releases/{release_id}/stats",
+                         headers=AUTHENTICATION_HEADER,
+                         ssl=False))
+        
+        # request
+        responses = await asyncio.gather(*tasks)
+
+        # append results
+        for response in responses:
+            result = await response.json()
+            release_wantlist_statistic_results.append(result)
+
+        # return list of release wantlist statistics
+        return release_wantlist_statistic_results
 
 
 def get_listing_ids(release_id):
