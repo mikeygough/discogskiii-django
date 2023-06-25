@@ -74,9 +74,15 @@ async def get_main_release_ids_async(master_ids):
         # append results
         for response in responses:
             result = await response.json()
+            # oh wow, i can get the master_id from this response as well.
+            # using that + the new main_id i'll be able to implement some slick caching!
+            print(result)
             main_release_id_results.append(result)
 
-        main_release_id_results = [d["main_release"] for d in main_release_id_results]
+                # this one only grabs the main_release_ids
+        # main_release_id_results = [d["main_release"] for d in main_release_id_results]
+                # this one grabs the main_release_id and the master_id
+        main_release_id_results = [(d["id"], d["main_release"]) for d in main_release_id_results]
         # return list of main_release ids
         return main_release_id_results
 

@@ -158,11 +158,13 @@ def artist_releases(request, artist):
     # get main_release ids
     main_release_ids = asyncio.run(get_main_release_ids_async(master_ids=master_ids))
 
+    ##### I NEED TO REWRITE THIS LOGIC NOW THAT I'M RETURNING BOTH THE MASTER_ID AND MAIN_RELEASE_ID FROM THIS FUNCTION #####
     # cache main_release_ids if don't already exist
     for x, p in enumerate(page_obj_list):
         if not MainRelease.objects.filter(master=p).exists():
             print(f"Does Not Exist! Caching {p}!")
             # add to cache
+            # ! this may not be wholly reliable since asynchronous functions don't maintain order ! #
             MainRelease.objects.create(master=p, main_id=main_release_ids[x])
         else:
             print(f"Exists!")
@@ -205,6 +207,11 @@ def artist_release_statistics(request, artist):
 
     # calculate optimal chunk size given list length and api limits
     # Optimal Chunk Size = Total Number of Items / Maximum Requests per Minute
+    
+    # SHORTER LIST FOR TESTING
+    master_ids = master_ids[:10].copy()
+
+
     chunk_size = math.ceil(len(master_ids) / 60)
     main_release_ids = []
     for i in range(0, len(master_ids), chunk_size):
@@ -213,15 +220,20 @@ def artist_release_statistics(request, artist):
         results = asyncio.run(get_main_release_ids_async(master_ids=chunk))
         print("Appending to main_release_ids list")
         main_release_ids.append(results)
-        # 5 seconds seems to work for example artist, sun ra
-        print("Sleeping for 5 seconds")
-        time.sleep(5)
-        # print(main_release_ids)
-    print(f"main_release_ids {main_release_ids}")
+        
+        # DISABLE SLEEP FOR TESTING
 
-    # hm... a sucky thing about this situation is that my async function doesn't
-    # maintain order... so I can't just zip master_ids and main_release_ids and cache them as a MainRelease
+        # print("Sleeping for 5 seconds")
+        # time.sleep(5)
+        # print(main_release_ids)
+
+    # this is a list of tuples.
+    # each tuple represents an original pressing
+    # the first item in the tuple is the master_id
+    # the second item in the tuple is the main_id
     main_release_ids = list(itertools.chain.from_iterable(main_release_ids))
+
+    print(main_release_ids)
 
 
 
