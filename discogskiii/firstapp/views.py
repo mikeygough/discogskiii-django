@@ -9,6 +9,7 @@ from firstapp.config import *
 from firstapp.utils import *
 import time
 import math
+import itertools
 
 # import models
 from firstapp.models import User, MasterRelease, MainRelease, SavedMarkets
@@ -212,10 +213,16 @@ def artist_release_statistics(request, artist):
         results = asyncio.run(get_main_release_ids_async(master_ids=chunk))
         print("Appending to main_release_ids list")
         main_release_ids.append(results)
+        # 5 seconds seems to work for example artist, sun ra
         print("Sleeping for 5 seconds")
         time.sleep(5)
         # print(main_release_ids)
     print(f"main_release_ids {main_release_ids}")
+
+    # hm... a sucky thing about this situation is that my async function doesn't
+    # maintain order... so I can't just zip master_ids and main_release_ids and cache them as a MainRelease
+    main_release_ids = list(itertools.chain.from_iterable(main_release_ids))
+
 
 
     return render(request, "firstapp/artist_release_statistics.html", {
