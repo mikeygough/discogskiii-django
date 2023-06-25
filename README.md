@@ -505,4 +505,18 @@ Commit with Message
 
 Push
 
-```git push"```
+```git push```
+
+Branching
+
+See Branches
+```git branch```
+
+Create New Branch & Checkout
+```git checkout -b BRANCH_NAME```
+
+While on Main, Merge in New Branch
+```git merge BRANCH_NAME```
+
+Delete Branch
+```git branch -d BRANCH_NAME```
