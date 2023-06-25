@@ -54,7 +54,8 @@ def get_main_release_id(master_id):
 
 async def get_main_release_ids_async(master_ids):
     ''' REQUIRES AUTHENTICATION
-        given a list of master_ids, return list of main_release_ids (original pressing ids) '''
+        given a list of master_ids, return list of tuples. each tuple represents an original pressing.
+        the first item is the master_id, the second item is the main_id (original pressing id) '''
 
     # initialize results list
     main_release_id_results = []
@@ -76,7 +77,7 @@ async def get_main_release_ids_async(master_ids):
             result = await response.json()
             # oh wow, i can get the master_id from this response as well.
             # using that + the new main_id i'll be able to implement some slick caching!
-            print(result)
+            # print(result)
             main_release_id_results.append(result)
 
                 # this one only grabs the main_release_ids

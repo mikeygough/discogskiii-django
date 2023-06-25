@@ -156,25 +156,31 @@ def artist_releases(request, artist):
     master_ids = list(page_obj_list.values_list("master_id", flat=True))
     
     # get main_release ids
+    # this is actually a list of tuples with both master_id and main_id
+    # i should rename it
     main_release_ids = asyncio.run(get_main_release_ids_async(master_ids=master_ids))
+    # each tuple represents an original pressing.
+    # the first item is the master_id, the second item is the main_id (original pressing id)
+    print("main_release_ids", main_release_ids)
 
-    ##### I NEED TO REWRITE THIS LOGIC NOW THAT I'M RETURNING BOTH THE MASTER_ID AND MAIN_RELEASE_ID FROM THIS FUNCTION #####
-    # cache main_release_ids if don't already exist
-    for x, p in enumerate(page_obj_list):
-        if not MainRelease.objects.filter(master=p).exists():
-            print(f"Does Not Exist! Caching {p}!")
+    for id in main_release_ids:
+        if not MainRelease.objects.filter(main_id=id[1]).exists():
+            print(f"Does Not Exist! Caching {id[1]}!")
+            mr = MasterRelease.objects.get(master_id=id[0])
+            print(mr)
             # add to cache
-            # ! this may not be wholly reliable since asynchronous functions don't maintain order ! #
-            MainRelease.objects.create(master=p, main_id=main_release_ids[x])
+            print("Does not exist!")
+            MainRelease.objects.create(master=mr, main_id=id[1])
         else:
-            print(f"Exists!")
+            print("Exists!")
 
+    main_release_ids = [x[1] for x in main_release_ids]
     # get release_statistics
     release_stats = asyncio.run(get_release_statistics_async(release_ids=main_release_ids))
 
-    print("master_ids", master_ids)
-    print("release_ids", main_release_ids)
-    print("release_stats", release_stats)
+    # print("master_ids", master_ids)
+    # print("release_ids", main_release_ids)
+    # print("release_stats", release_stats)
 
     # zip artist_releases data and release_stats for django templating support
     zipped_data = zip(page_obj_list, release_stats)
