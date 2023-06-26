@@ -196,7 +196,8 @@ def artist_releases(request, artist):
 def artist_release_statistics(request, artist):
     # get artist releases (From DB)
     # SHORTER LIST FOR TESTING (10)
-    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")[:10]
+    # artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")[:10]
+    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
     # get master_ids (From DB)
     master_ids = list(artist_releases.values_list("master_id", flat=True))
 
@@ -216,9 +217,9 @@ def artist_release_statistics(request, artist):
         master_main_release_ids.append(results)
         
         # DISABLE SLEEP FOR TESTING
-
-        # print("Sleeping for 5 seconds")
-        # time.sleep(5)
+        print(f"{len(master_ids) - (len(master_main_release_ids)*chunk_size)} Remaining")
+        print("Sleeping for 2.5 seconds")
+        time.sleep(2.5)
     
     # master_main_release_ids is a list of tuples, each tuple represents an original pressing
     # Before Itertools [[(84360, 517197)], [(283549, 3922959)],...]
@@ -249,9 +250,9 @@ def artist_release_statistics(request, artist):
         wantlist_release_statistics.append(results)
 
         # DISABLE SLEEP FOR TESTING
-
-        # print("Sleeping for 5 seconds")
-        # time.sleep(5)
+        print(f"{len(main_release_ids) - (len(wantlist_release_statistics)*chunk_size)} Remaining")
+        print("Sleeping for 2.5 seconds")
+        time.sleep(2.5)
         
     # wantlist_release_statistics is a list of tuples, each tuple represents an original pressing's wantlist statistics
     # Before Itertools [[(123, 1257)], [(48, 1289)],...]
