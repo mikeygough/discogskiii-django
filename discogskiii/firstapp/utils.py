@@ -52,7 +52,7 @@ def get_main_release_id(master_id):
     return main_release_id
 
 
-async def get_main_release_ids_async(master_ids):
+async def get_master_main_release_ids_async(master_ids):
     ''' REQUIRES AUTHENTICATION
         given a list of master_ids, return list of tuples. each tuple represents an original pressing.
         the first item is the master_id, the second item is the main_id (original pressing id) '''
