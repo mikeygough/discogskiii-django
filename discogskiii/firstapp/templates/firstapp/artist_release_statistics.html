@@ -32,23 +32,23 @@
         </tr>
       </thead>
       <tbody>
-        {% for release, wantlist_stat in zipped_data %}
+        {% for release in data %}
         <tr class="odd:bg-gray-100 even:bg-white">
           <td class="px-6 py-4 whitespace-wrap">
             <a href="{{base_url|add:release.uri}}" class="text-left text-base font-medium" target="_blank"
               rel="noopener noreferrer">{{ release.title }}</a>
           </td>
           <td id="table-year" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
-            {{ release.year }}
+            {{ release.released }}
           </td>
           <td id="table-album-cover" class="px-6 py-4 whitespace-nowrap">
             <img src="{{ release.thumb }}" alt="Album Cover" class="h-20 w-20 rounded-full mx-auto object-contain" />
           </td>
           <td id="table-community-have" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
-            {{ wantlist_stat.0 }}
+            {{ release.community.have }}
           </td>
           <td id="table-community-want" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
-            {{ wantlist_stat.1 }}
+            {{ release.community.want }}
           </td>
         </tr>
         {% endfor %}

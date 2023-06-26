@@ -200,8 +200,8 @@ def artist_releases(request, artist):
 def artist_release_statistics(request, artist):
     # get artist releases (From DB)
     # SHORTER LIST FOR TESTING (10)
-    # artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")[:10]
-    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
+    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")[:5]
+    # artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
     # get master_ids (From DB)
     master_ids = list(artist_releases.values_list("master_id", flat=True))
 
@@ -213,6 +213,7 @@ def artist_release_statistics(request, artist):
     # initialize list
     master_main_release_ids = []
     # loop through in chunks
+    print("Getting Main Release IDS")
     for i in range(0, len(master_ids), chunk_size):
         chunk = master_ids[i:i+chunk_size]
         # get results from chunk
@@ -238,43 +239,31 @@ def artist_release_statistics(request, artist):
     # grab main_release_ids
     main_release_ids = [x[1] for x in master_main_release_ids]
 
-    # get 'have' and 'want' main_release statistics
-    # calculate optimal chunk size given list length and api limits...
-        # Optimal Chunk Size = Total Number of Items / Maximum Requests per Minute
-    # set chunk size
+    # TESTING
     chunk_size = math.ceil(len(main_release_ids) / 60)
     # initialize list
-    wantlist_release_statistics = []
-    # loop through in chunks
+    data = []
     for i in range(0, len(main_release_ids), chunk_size):
         chunk = main_release_ids[i:i+chunk_size]
         # get results from chunk
-        results = asyncio.run(get_wantlist_release_statistics_async(release_ids=chunk))
+        results = asyncio.run(get_main_release_data_async(release_ids=chunk))
         # append
-        wantlist_release_statistics.append(results)
-
+        data.append(results)
+        
         # DISABLE SLEEP FOR TESTING
-        print(f"{len(main_release_ids) - (len(wantlist_release_statistics)*chunk_size)} Remaining")
         print("Sleeping for 2.5 seconds")
         time.sleep(2.5)
-        
-    # wantlist_release_statistics is a list of tuples, each tuple represents an original pressing's wantlist statistics
-    # Before Itertools [[(123, 1257)], [(48, 1289)],...]
-    wantlist_release_statistics = list(itertools.chain.from_iterable(wantlist_release_statistics))
-    # After Itertools [(123, 1257), (48, 1289),...]
-    # the first item in the tuple is the community 'have'
-    # the second item in the tuple is the community 'want'
 
-    print("master_main_release_ids", master_main_release_ids)
-    print("main_release_ids", main_release_ids)
-    print("wantlist_release_statistics", wantlist_release_statistics)
+    print("BEFORE ITERTOOLS data:", data)
+    print("STOP")
 
-    # zip artist_releases data and release_stats for django templating support
-    zipped_data = zip(artist_releases, wantlist_release_statistics)
+    data = list(itertools.chain.from_iterable(data))
+
+    print("AFTER ITERTOOLS data:", data)
 
     return render(request, "firstapp/artist_release_statistics.html", {
         "artist": artist,
-        "zipped_data": zipped_data
+        "data": data
     })
 
 

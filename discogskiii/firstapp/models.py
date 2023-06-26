@@ -22,12 +22,15 @@ class MasterRelease(models.Model):
 
 class MainRelease(models.Model):
     ''' represents the main release (original pressing) '''
-    artist = models.CharField(max_length=240)
-    title = models.CharField(max_length=240)
-    uri = models.CharField(max_length=500)
     main_id = models.CharField(max_length=15)
+    uri = models.CharField(max_length=500)
+    community_have = models.IntegerField()
+    community_want = models.IntegerField()
     num_for_sale = models.IntegerField()
-    lowest_price = models.CharField(max_length=10)
+    lowest_price = models.CharField(max_length=15)
+    title = models.CharField(max_length=240)
+    released = models.CharField(max_length=10)
+    thumb = models.CharField(max_length=500)
     master = models.ForeignKey(MasterRelease, on_delete=models.CASCADE)
 
     def __str__(self):

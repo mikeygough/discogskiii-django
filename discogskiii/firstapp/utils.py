@@ -75,9 +75,6 @@ async def get_master_main_release_ids_async(master_ids):
         # append results
         for response in responses:
             result = await response.json()
-            # oh wow, i can get the master_id from this response as well.
-            # using that + the new main_id i'll be able to implement some slick caching!
-            # print(result)
             main_release_id_results.append(result)
 
                 # this one only grabs the main_release_ids
@@ -86,6 +83,67 @@ async def get_master_main_release_ids_async(master_ids):
         main_release_id_results = [(d["id"], d["main_release"]) for d in main_release_id_results]
         # return list of main_release ids
         return main_release_id_results
+
+
+async def get_main_release_data_async(release_ids):
+    ''' REQUIRES AUTHENTICATION
+        given a list of release_ids, return a list of ____ with all the data needed to construct
+        a new MainRelease model: artist, title, uri, main_id, num_for_sale, lowest_price, master. 
+        and ideally [community][want] and [community][have]'''
+
+    # initialize results list
+    main_release_results = []
+
+    async with aiohttp.ClientSession() as session:
+        # initialize list of tasks
+        tasks = []
+        for release_id in release_ids:
+            # create and append tasks (API requests)
+            tasks.append(session.get(f"{API_BASE_URL}/releases/{release_id}",
+                         headers=AUTHENTICATION_HEADER,
+                         ssl=False))
+            
+        # request
+        responses = await asyncio.gather(*tasks)
+
+        # append results
+        for response in responses:
+            result = await response.json()
+            main_release_results.append(result)
+
+        # loop through response dict and grab certain keys/values (some are nested)
+        keys_to_keep = ["id", "uri", "community.have", "community.want",
+                        "num_for_sale", "lowest_price", "master_id", "title", "released", "thumb"]
+        
+        list_of_dicts = []
+        # loop through the list of dictionaries
+        for item in main_release_results:
+            # initialize an empty dictionary to store the extracted key-value pairs
+            extracted_data = {}
+
+            # loop through the keys
+            for key in keys_to_keep:
+                # split the key into nested levels
+                nested_keys = key.split(".")
+
+                # Traverse the nested keys to access the corresponding value in the dictionary
+                value = item
+                for nested_key in nested_keys:
+                    if isinstance(value, dict) and nested_key in value:
+                        value = value[nested_key]
+                    else:
+                        # If any nested key is not found, break the loop
+                        value = None
+                        break
+
+                # Add the extracted key-value pair to the extracted_data dictionary
+                extracted_data[key] = value
+
+            # Print the extracted data for the current item
+            print(extracted_data)
+            list_of_dicts.append(extracted_data)
+            # return list of release statistics
+        return list_of_dicts
 
 
 def get_release_statistics(release_id):
