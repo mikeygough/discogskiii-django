@@ -239,16 +239,23 @@ def artist_release_statistics(request, artist):
     # the second item in the tuple is the main_id
     main_release_ids = list(itertools.chain.from_iterable(main_release_ids))
 
-
     # SHOULD DO SOME SORT OF CACHING HERE? OR JUST MOVE THE CACHING OF MAIN_RELEASE_ID ENTIRELY
     # OUT OF THE ARTIST_RELEASE_STATISTICS AND ARTIST_RELEASE VIEWS... TBD
     
     # just grab the main_release_id
-    main_release_ids = [x[0] for x in main_release_ids]
+    main_release_ids = [x[1] for x in main_release_ids]
 
     # get statistics
     # PROBABLY GOING TO NEED TO CHUNK THIS AS WELL... 
-    wantlist_release_statistics = asyncio.run(get_wantlist_release_statistics_async(release_ids=main_release_ids))
+    chunk_size = math.ceil(len(main_release_ids) / 60)
+    wantlist_release_statistics = []
+    for i in range(0, len(main_release_ids), chunk_size):
+        chunk = main_release_ids[i:i+chunk_size]
+        print(f"Getting chunk {chunk}")
+        results = asyncio.run(get_wantlist_release_statistics_async(release_ids=chunk))
+        print("Appending to wantlist_release_statistics")
+        wantlist_release_statistics.append(results)
+
     print("main_release_ids", main_release_ids)
     print("wantlist_release_statistics", wantlist_release_statistics)
 
