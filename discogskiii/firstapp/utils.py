@@ -141,8 +141,8 @@ async def get_release_statistics_async(release_ids):
 
 async def get_wantlist_release_statistics_async(release_ids):
     ''' REQUIRES AUTHENTICATION
-        given a list of release_ids, return a list of dics with the
-        num_have and num_want numbers. '''
+        given a list of release_ids, return a list of tuples. each tuple represents an originall pressing.
+        the first item is the community 'have' count, the second item is the community 'want' count. '''
     
     # initialize results list
     release_wantlist_statistic_results = []
@@ -152,7 +152,7 @@ async def get_wantlist_release_statistics_async(release_ids):
         tasks = []
         for release_id in release_ids:
             # create and append tasks (API request)
-            tasks.append(session.get(f"{API_BASE_URL}/releases/{release_id}/stats",
+            tasks.append(session.get(f"{API_BASE_URL}/releases/{release_id}",
                          headers=AUTHENTICATION_HEADER,
                          ssl=False))
         
@@ -164,6 +164,7 @@ async def get_wantlist_release_statistics_async(release_ids):
             result = await response.json()
             release_wantlist_statistic_results.append(result)
 
+        release_wantlist_statistic_results = [(d["community"]["have"], d["community"]["want"]) for d in release_wantlist_statistic_results]
         # return list of release wantlist statistics
         return release_wantlist_statistic_results
 

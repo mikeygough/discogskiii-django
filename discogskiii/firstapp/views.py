@@ -249,6 +249,7 @@ def artist_release_statistics(request, artist):
     # get statistics
     # PROBABLY GOING TO NEED TO CHUNK THIS AS WELL... 
     wantlist_release_statistics = asyncio.run(get_wantlist_release_statistics_async(release_ids=main_release_ids))
+    print("main_release_ids", main_release_ids)
     print("wantlist_release_statistics", wantlist_release_statistics)
 
     return render(request, "firstapp/artist_release_statistics.html", {
