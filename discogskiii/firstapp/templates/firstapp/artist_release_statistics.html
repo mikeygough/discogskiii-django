@@ -11,4 +11,50 @@
   </div>
 </div>
 
+<div class="overflow-x-auto">
+  <div class="min-w-full">
+    <table class="min-w-full divide-y divide-gray-200">
+      <thead>
+        <tr class="bg-gradient-to-r bg-gray-200 text-gray-800">
+          <th class="px-6 py-3 text-left text-lg font-medium uppercase tracking-wider">
+            Album Title
+          </th>
+          <th id="table-year" class="px-6 py-3 text-center text-lg font-medium uppercase tracking-wider">
+            Year
+          </th>
+          <th id="table-album-cover" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider"></th>
+          <th id="table-community-have" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
+            Community "Have"
+          </th>
+          <th id="table-community-want" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
+            Community "Want"
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for release, wantlist_stat in zipped_data %}
+        <tr class="odd:bg-gray-100 even:bg-white">
+          <td class="px-6 py-4 whitespace-wrap">
+            <a href="{{base_url|add:release.uri}}" class="text-left text-base font-medium" target="_blank"
+              rel="noopener noreferrer">{{ release.title }}</a>
+          </td>
+          <td id="table-year" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+            {{ release.year }}
+          </td>
+          <td id="table-album-cover" class="px-6 py-4 whitespace-nowrap">
+            <img src="{{ release.thumb }}" alt="Album Cover" class="h-20 w-20 rounded-full mx-auto object-contain" />
+          </td>
+          <td id="table-community-have" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+            {{ wantlist_stat.0 }}
+          </td>
+          <td id="table-community-want" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+            {{ wantlist_stat.1 }}
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  <div>
+
 {% endblock %}

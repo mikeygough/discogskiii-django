@@ -155,15 +155,12 @@ def artist_releases(request, artist):
     # get master ids
     master_ids = list(page_obj_list.values_list("master_id", flat=True))
     
-    # get main_release ids
-    # this is actually a list of tuples with both master_id and main_id
-    # i should rename it
-    main_release_ids = asyncio.run(get_master_main_release_ids_async(master_ids=master_ids))
+    # get master and main_release ids
+    master_main_release_ids = asyncio.run(get_master_main_release_ids_async(master_ids=master_ids))
     # each tuple represents an original pressing.
     # the first item is the master_id, the second item is the main_id (original pressing id)
-    print("main_release_ids", main_release_ids)
 
-    for id in main_release_ids:
+    for id in master_main_release_ids:
         if not MainRelease.objects.filter(main_id=id[1]).exists():
             print(f"Does Not Exist! Caching {id[1]}!")
             mr = MasterRelease.objects.get(master_id=id[0])
@@ -174,7 +171,7 @@ def artist_releases(request, artist):
         else:
             print("Exists!")
 
-    main_release_ids = [x[1] for x in main_release_ids]
+    main_release_ids = [x[1] for x in master_main_release_ids]
     # get release_statistics
     release_stats = asyncio.run(get_release_statistics_async(release_ids=main_release_ids))
 
@@ -198,12 +195,10 @@ def artist_releases(request, artist):
 # artist release statistics
 def artist_release_statistics(request, artist):
     # get artist releases (From DB)
-    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
+    # SHORTER LIST FOR TESTING (10)
+    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")[:10]
     # get master_ids (From DB)
     master_ids = list(artist_releases.values_list("master_id", flat=True))
-    
-    # SHORTER LIST FOR TESTING
-    master_ids = master_ids[:10].copy()
 
     # get master_release and main_release ids
     # calculate optimal chunk size given list length and api limits...
@@ -215,7 +210,6 @@ def artist_release_statistics(request, artist):
     # loop through in chunks
     for i in range(0, len(master_ids), chunk_size):
         chunk = master_ids[i:i+chunk_size]
-        # !! this function should really be renamed to get_master_main_release_ids_async !!
         # get results from chunk
         results = asyncio.run(get_master_main_release_ids_async(master_ids=chunk))
         # append
@@ -225,17 +219,13 @@ def artist_release_statistics(request, artist):
 
         # print("Sleeping for 5 seconds")
         # time.sleep(5)
-        # print(main_release_ids)
-
-    # now master_main_release_ids is a list of tuples:
-        # each tuple represents an original pressing
-        # the first item in the tuple is the master_id
-        # the second item in the tuple is the main_id
     
-    # clean
+    # master_main_release_ids is a list of tuples, each tuple represents an original pressing
     # Before Itertools [[(84360, 517197)], [(283549, 3922959)],...]
     master_main_release_ids = list(itertools.chain.from_iterable(master_main_release_ids))
     # After Itertools [(84360, 517197), (283549, 3922959),...]
+    # the first item in the tuple is the master_id
+    # the second item in the tuple is the main_id
 
     # !!! SHOULD DO SOME SORT OF CACHING HERE? OR JUST MOVE THE CACHING OF MAIN_RELEASE_ID ENTIRELY
     # !!! OUT OF THE ARTIST_RELEASE_STATISTICS AND ARTIST_RELEASE VIEWS... TBD
@@ -258,12 +248,28 @@ def artist_release_statistics(request, artist):
         # append
         wantlist_release_statistics.append(results)
 
+        # DISABLE SLEEP FOR TESTING
+
+        # print("Sleeping for 5 seconds")
+        # time.sleep(5)
+        
+    # wantlist_release_statistics is a list of tuples, each tuple represents an original pressing's wantlist statistics
+    # Before Itertools [[(123, 1257)], [(48, 1289)],...]
+    wantlist_release_statistics = list(itertools.chain.from_iterable(wantlist_release_statistics))
+    # After Itertools [(123, 1257), (48, 1289),...]
+    # the first item in the tuple is the community 'have'
+    # the second item in the tuple is the community 'want'
+
     print("master_main_release_ids", master_main_release_ids)
     print("main_release_ids", main_release_ids)
     print("wantlist_release_statistics", wantlist_release_statistics)
 
+    # zip artist_releases data and release_stats for django templating support
+    zipped_data = zip(artist_releases, wantlist_release_statistics)
+
     return render(request, "firstapp/artist_release_statistics.html", {
         "artist": artist,
+        "zipped_data": zipped_data
     })
 
 
