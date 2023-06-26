@@ -8,7 +8,7 @@ class User(AbstractUser):
 
 class MasterRelease(models.Model):
     ''' represents the master pressing '''
-    artist = models.CharField(max_length=240) 
+    artist = models.CharField(max_length=240)
     master_id = models.CharField(max_length=15)
     title = models.CharField(max_length=240)
     uri = models.CharField(max_length=500)
@@ -22,11 +22,16 @@ class MasterRelease(models.Model):
 
 class MainRelease(models.Model):
     ''' represents the main release (original pressing) '''
-    master = models.ForeignKey(MasterRelease, on_delete=models.CASCADE)
+    artist = models.CharField(max_length=240)
+    title = models.CharField(max_length=240)
+    uri = models.CharField(max_length=500)
     main_id = models.CharField(max_length=15)
+    num_for_sale = models.IntegerField()
+    lowest_price = models.CharField(max_length=10)
+    master = models.ForeignKey(MasterRelease, on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"{self.main_id} is the original pressing of..."
+        return f"{self.main_id} is the original pressing of {self.title}"
     
 
 class SavedMarkets(models.Model):

@@ -16,14 +16,18 @@ from firstapp.models import User, MasterRelease, MainRelease, SavedMarkets
 
 # statically declare supported markets
 artist_markets = [
-    "Sun Ra",
-    "John Coltrane",
-    "Miles Davis",
-    "Alice Coltrane",
-    "Lee Morgan",
-    "Coleman Hawkins",
-    "Art Blakey"
+    "Alice Coltrane"
 ]
+
+# artist_markets = [
+#     "Sun Ra",
+#     "John Coltrane",
+#     "Miles Davis",
+#     "Alice Coltrane",
+#     "Lee Morgan",
+#     "Coleman Hawkins",
+#     "Art Blakey"
+# ]
 
 # index
 def index(request):
