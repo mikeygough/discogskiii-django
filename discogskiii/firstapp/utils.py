@@ -141,7 +141,9 @@ async def get_main_release_data_async(release_ids):
 
             list_of_dicts.append(extracted_data)
             
-        
+        # drop records with master_id: None which is an anomoly case that does occur
+        list_of_dicts = [d for d in list_of_dicts if d.get("master_id") != None]
+
         # format, replace keys that have '.' with '_'
         list_of_dicts = [
             {key.replace(".", "_"): value for key, value in dictionary.items()}

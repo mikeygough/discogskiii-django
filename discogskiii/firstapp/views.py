@@ -1,6 +1,7 @@
 # imports
 from django.contrib.auth import authenticate, login, logout
 from django.db import IntegrityError
+from django.db.models import Count
 from django.shortcuts import render
 from django.core.paginator import Paginator
 from django.http import HttpResponseRedirect
@@ -11,23 +12,20 @@ import time
 import math
 import itertools
 
+
 # import models
 from firstapp.models import User, MasterRelease, MainRelease, SavedMarkets
 
 # statically declare supported markets
 artist_markets = [
-    "Alice Coltrane"
+    "Sun Ra",
+    "John Coltrane",
+    "Miles Davis",
+    "Alice Coltrane",
+    "Lee Morgan",
+    "Coleman Hawkins",
+    "Art Blakey"
 ]
-
-# artist_markets = [
-#     "Sun Ra",
-#     "John Coltrane",
-#     "Miles Davis",
-#     "Alice Coltrane",
-#     "Lee Morgan",
-#     "Coleman Hawkins",
-#     "Art Blakey"
-# ]
 
 # index
 def index(request):
@@ -145,6 +143,20 @@ def saved_markets(request):
 
 # all releases by an arist
 def artist_releases(request, artist):
+    # Identify duplicate master_id values
+    duplicate_master_ids = MasterRelease.objects.values('master_id').annotate(count=Count('master_id')).filter(count__gt=1)
+
+    # Loop through the duplicate master_ids
+    for duplicate in duplicate_master_ids:
+        # Get all instances with the duplicate master_id
+        duplicates = MasterRelease.objects.filter(master_id=duplicate['master_id'])
+
+        # Check if duplicates exist
+        if duplicates.exists():
+            # Keep the first instance and delete the rest
+            master_release_to_keep = duplicates.first()
+            duplicates.exclude(id=master_release_to_keep.id).delete()
+
     # cached, load from database
     artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
     # get master_ids (From DB)
@@ -171,8 +183,8 @@ def artist_releases(request, artist):
             # append
             master_main_release_ids.append(results)
             print(f"{len(master_ids) - (len(master_main_release_ids)*chunk_size)} Remaining")
-            print("Sleeping for 2.5 seconds")
-            time.sleep(2.5)
+            print("Sleeping for 3 seconds")
+            time.sleep(3)
         
         # format
         # the first item in the tuple is the master_id, the second item in the tuple is the main_id
@@ -195,8 +207,8 @@ def artist_releases(request, artist):
             # append
             main_release_data.append(results)
             print(f"{len(main_release_ids) - (len(main_release_data)*chunk_size)} Remaining")
-            print("Sleeping for 2.5 seconds")
-            time.sleep(2.5)
+            print("Sleeping for 3 seconds")
+            time.sleep(3)
 
         # format
         # dictionary object with key, value pairs containing data on the main release object
@@ -211,34 +223,37 @@ def artist_releases(request, artist):
             # https://www.discogs.com/master/606598-Alice-Coltrane-Turiyasangitananda-Divine-Songs
             # and
             # https://www.discogs.com/master/622821-Alice-Coltrane-Turiyasangitananda-Divine-Songs
-            print(f"Caching {main_release['title']}")
-            print("Main_release", main_release)
-            mr = MasterRelease.objects.get(master_id=main_release["master_id"])
-            # add MainRelease
             
-            # calculate demand score
-            try:
-                main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
-            except:
+            if MasterRelease.objects.filter(master_id=main_release["master_id"]).exists():
+                print(f"Caching {main_release['title']}")
+                print("Main_release", main_release)
+                mr = MasterRelease.objects.get(master_id=main_release["master_id"])
+                # add MainRelease
+                
+                # calculate demand score
+                try:
+                    main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
+                except:
+                    main_release['community_demand_score'] = None
+                # format currency
+                try:
+                    main_release['lowest_price'] = format_currency(main_release['lowest_price'])
+                except:
+                    pass
+                # create
+                MainRelease.objects.create(main_id=main_release["id"],
+                                            uri=main_release["uri"],
+                                            community_have=main_release["community_have"],
+                                            community_want=main_release["community_want"],
+                                            community_demand_score=main_release["community_demand_score"],
+                                            num_for_sale=main_release["num_for_sale"],
+                                            lowest_price=main_release["lowest_price"],
+                                            title=main_release["title"],
+                                            released=main_release["released"],
+                                            thumb=main_release["thumb"],
+                                            master=mr)
+            else:
                 pass
-            # format currency
-            try:
-                main_release['lowest_price'] = format_currency(main_release['lowest_price'])
-            except:
-                pass
-            # create
-            MainRelease.objects.create(main_id=main_release["id"],
-                                        uri=main_release["uri"],
-                                        community_have=main_release["community_have"],
-                                        community_want=main_release["community_want"],
-                                        community_demand_score=main_release["community_demand_score"],
-                                        num_for_sale=main_release["num_for_sale"],
-                                        lowest_price=main_release["lowest_price"],
-                                        title=main_release["title"],
-                                        released=main_release["released"],
-                                        thumb=main_release["thumb"],
-                                        master=mr)
-        
         
         print("Done Fetching & Caching Main Release Data!")
         print("Database Initialized, Enjoy!")
