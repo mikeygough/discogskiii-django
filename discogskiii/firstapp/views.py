@@ -147,7 +147,100 @@ def saved_markets(request):
 # all releases by an arist
 def artist_releases(request, artist):
     # cached, load from database
-    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
+    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")[:3]
+    # get master_ids (From DB)
+    master_ids = list(artist_releases.values_list("master_id", flat=True))
+
+    # check if all MasterRelease objects exist in MainRelease
+    if artist_releases.exists() and artist_releases.all().count() != MainRelease.objects.filter(master__in=artist_releases).count():
+        print("Some MasterRelease objects are missing in MainRelease")
+        print("Fetching from Discogs API. Note that this could take several minutes...")
+        
+        # 1, get master_release and main_release ids
+            # calculate optimal chunk size given list length and api limits...
+            # Optimal Chunk Size = Total Number of Items / Maximum Requests per Minute
+            # set chunk size
+        chunk_size = math.ceil(len(master_ids) / 60)
+        # initialize list
+        master_main_release_ids = []
+        # loop through in chunks
+        print("Getting Main Release IDS")
+        for i in range(0, len(master_ids), chunk_size):
+            chunk = master_ids[i:i+chunk_size]
+            # get results from chunk
+            results = asyncio.run(get_master_main_release_ids_async(master_ids=chunk))
+            # append
+            master_main_release_ids.append(results)
+            print(f"{len(master_ids) - (len(master_main_release_ids)*chunk_size)} Remaining")
+            print("Sleeping for 2.5 seconds")
+            time.sleep(2.5)
+        
+        # format
+        # the first item in the tuple is the master_id, the second item in the tuple is the main_id
+        master_main_release_ids = list(itertools.chain.from_iterable(master_main_release_ids))
+
+        # grab just main_release_ids
+        main_release_ids = [x[1] for x in master_main_release_ids]
+
+        # 2, get main release data
+            # set chunk size
+        chunk_size = math.ceil(len(main_release_ids) / 60)
+        # initialize list
+        main_release_data = []
+        # loop through in chunks
+        for i in range(0, len(main_release_ids), chunk_size):
+            chunk = main_release_ids[i:i+chunk_size]
+            # get results from chunk
+            results = asyncio.run(get_main_release_data_async(release_ids=chunk))
+            # append
+            main_release_data.append(results)
+            print(f"{len(main_release_ids) - (len(main_release_data)*chunk_size)} Remaining")
+            print("Sleeping for 2.5 seconds")
+            time.sleep(2.5)
+
+        # format
+        # dictionary object with key, value pairs containing data on the main release object
+        main_release_data = list(itertools.chain.from_iterable(main_release_data))
+
+        # 3, write data to database
+        for main_release in main_release_data:
+            print(f"Caching {main_release['title']}")
+            # add MainRelease
+            mr = MasterRelease.objects.get(master_id=main_release["master_id"])
+            MainRelease.objects.create(main_id=main_release["id"],
+                                         uri=main_release["uri"],
+                                         community_have=main_release["community_have"],
+                                         community_want=main_release["community_want"],
+                                         num_for_sale=main_release["num_for_sale"],
+                                         lowest_price=main_release["lowest_price"],
+                                         title=main_release["title"],
+                                         released=main_release["released"],
+                                         thumb=main_release["thumb"],
+                                         master=mr)
+        
+        print("Done Fetching & Caching Main Release Data!")
+        print("Database Initialized, Enjoy!")
+    else:
+        print("Main Release Data Already Cached!, Enjoy!")
+
+    # get main_release_data from database
+    main_release_data = MainRelease.objects.filter(master__in=artist_releases)
+    print("Main Release Data:")
+    print(main_release_data)
+    
+    
+    # for main_release in main_release_data:
+    #     # calculate demand score
+    #     try:
+    #         main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
+    #     except:
+    #         pass
+    #     # format currency
+    #     try:
+    #         main_release['lowest_price'] = format_currency(main_release['lowest_price'])
+    #     except:
+    #         pass
+    
     # pagination
     # instantiate Paginator, 10 records
     paginator = Paginator(artist_releases, 10)

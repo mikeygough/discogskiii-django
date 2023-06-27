@@ -139,16 +139,15 @@ async def get_main_release_data_async(release_ids):
                 # Add the extracted key-value pair to the extracted_data dictionary
                 extracted_data[key] = value
 
-            # Print the extracted data for the current item
-            print(extracted_data)
             list_of_dicts.append(extracted_data)
-            # return list of release statistics
+            
         
-        # replace keys that have '.' with '_'
+        # format, replace keys that have '.' with '_'
         list_of_dicts = [
             {key.replace(".", "_"): value for key, value in dictionary.items()}
             for dictionary in list_of_dicts]
-
+        
+        # return list of release statistics
         return list_of_dicts
 
 
