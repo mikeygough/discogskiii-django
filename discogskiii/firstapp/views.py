@@ -207,10 +207,22 @@ def artist_releases(request, artist):
             print(f"Caching {main_release['title']}")
             # add MainRelease
             mr = MasterRelease.objects.get(master_id=main_release["master_id"])
+            # calculate demand score
+            try:
+                main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
+            except:
+                pass
+            # format currency
+            try:
+                main_release['lowest_price'] = format_currency(main_release['lowest_price'])
+            except:
+                pass
+            # create
             MainRelease.objects.create(main_id=main_release["id"],
                                          uri=main_release["uri"],
                                          community_have=main_release["community_have"],
                                          community_want=main_release["community_want"],
+                                         community_demand_score=main_release["community_demand_score"],
                                          num_for_sale=main_release["num_for_sale"],
                                          lowest_price=main_release["lowest_price"],
                                          title=main_release["title"],
@@ -228,70 +240,19 @@ def artist_releases(request, artist):
     print("Main Release Data:")
     print(main_release_data)
     
-    
-    # for main_release in main_release_data:
-    #     # calculate demand score
-    #     try:
-    #         main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
-    #     except:
-    #         pass
-    #     # format currency
-    #     try:
-    #         main_release['lowest_price'] = format_currency(main_release['lowest_price'])
-    #     except:
-    #         pass
-    
     # pagination
     # instantiate Paginator, 10 records
-    paginator = Paginator(artist_releases, 10)
+    paginator = Paginator(main_release_data, 10)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
-    # get page objects as list
-    page_obj_list = page_obj.object_list
     
-    # get master ids
-    master_ids = list(page_obj_list.values_list("master_id", flat=True))
-    
-    # get master and main_release ids
-    master_main_release_ids = asyncio.run(get_master_main_release_ids_async(master_ids=master_ids))
-    # each tuple represents an original pressing.
-    # the first item is the master_id, the second item is the main_id (original pressing id)
-
-    # ! now i need to rewrite this logic...
-    # i think i'm going to just go for it and run all the data collection
-    # requests upon this artist_releases page load.
-    # it will slow everything down the first time,
-    # but then I can cache results and have every subsequent action work more quickly.
-
-    for id in master_main_release_ids:
-        if not MainRelease.objects.filter(main_id=id[1]).exists():
-            print(f"Does Not Exist! Caching {id[1]}!")
-            mr = MasterRelease.objects.get(master_id=id[0])
-            print(mr)
-            # add to cache
-            print("Does not exist!")
-            MainRelease.objects.create(master=mr, main_id=id[1])
-        else:
-            print("Exists!")
-
-    main_release_ids = [x[1] for x in master_main_release_ids]
-    # get release_statistics
-    release_stats = asyncio.run(get_release_statistics_async(release_ids=main_release_ids))
-
-    # print("master_ids", master_ids)
-    # print("release_ids", main_release_ids)
-    # print("release_stats", release_stats)
-
-    # zip artist_releases data and release_stats for django templating support
-    zipped_data = zip(page_obj_list, release_stats)
-
     return render(request, "firstapp/artist_releases.html", {
         "artist": artist,
         "artist_releases": artist_releases,
         "base_url": SITE_BASE_URL,
         "page_obj": page_obj,
         "paginator": paginator,
-        "zipped_data": zipped_data
+        "main_release_data": main_release_data
     })
 
 

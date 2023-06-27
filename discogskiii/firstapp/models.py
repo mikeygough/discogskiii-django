@@ -26,6 +26,7 @@ class MainRelease(models.Model):
     uri = models.CharField(max_length=500)
     community_have = models.IntegerField()
     community_want = models.IntegerField()
+    community_demand_score = models.CharField(max_length=15)
     num_for_sale = models.IntegerField()
     lowest_price = models.CharField(max_length=15)
     title = models.CharField(max_length=240)
