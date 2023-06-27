@@ -200,7 +200,7 @@ def artist_releases(request, artist):
 def artist_release_statistics(request, artist):
     # get artist releases (From DB)
     # SHORTER LIST FOR TESTING (10)
-    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")[:3]
+    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
     # artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
     # get master_ids (From DB)
     master_ids = list(artist_releases.values_list("master_id", flat=True))
@@ -258,9 +258,15 @@ def artist_release_statistics(request, artist):
 
     for main_release in data:
         # calculate demand score
-        main_release['community_demand_score'] = int(main_release['community_want'] / main_release['community_have'])
+        try:
+            main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
+        except:
+            pass
         # format currency
-        main_release['lowest_price'] = format_currency(main_release['lowest_price'])
+        try:
+            main_release['lowest_price'] = format_currency(main_release['lowest_price'])
+        except:
+            pass
 
     print("Data", data)
 
