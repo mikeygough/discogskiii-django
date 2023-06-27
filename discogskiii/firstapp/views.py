@@ -259,8 +259,7 @@ def artist_releases(request, artist):
         "artist_releases": artist_releases,
         "base_url": SITE_BASE_URL,
         "page_obj": page_obj,
-        "paginator": paginator,
-        "main_release_data": main_release_data
+        "paginator": paginator
     })
 
 
