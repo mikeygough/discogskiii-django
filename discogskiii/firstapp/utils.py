@@ -143,6 +143,12 @@ async def get_main_release_data_async(release_ids):
             print(extracted_data)
             list_of_dicts.append(extracted_data)
             # return list of release statistics
+        
+        # replace keys that have '.' with '_'
+        list_of_dicts = [
+            {key.replace(".", "_"): value for key, value in dictionary.items()}
+            for dictionary in list_of_dicts]
+
         return list_of_dicts
 
 
