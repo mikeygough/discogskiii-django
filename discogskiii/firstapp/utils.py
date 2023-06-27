@@ -324,18 +324,22 @@ def get_artist_releases(artist):
 
         # store artist, master_id, title, uri, year and thumbnail
         for result in response_json["results"]:
-            try:
-                info = {
-                "artist": f"{artist}",
-                "master_id": result["master_id"],
-                "title": result["title"],
-                "uri": result["uri"],
-                "year": result["year"],
-                "thumb": result["thumb"],
-                }
-                vinyls.append(info)
-            except: # if error just skip this release
-                pass
+            if "Unofficial Release" not in result["format"]:
+                try:
+                    info = {
+                    "artist": f"{artist}",
+                    "master_id": result["master_id"],
+                    "title": result["title"],
+                    "uri": result["uri"],
+                    "year": result["year"],
+                    "thumb": result["thumb"],
+                    }
+                    print(f"Caching {result['title']}")
+                    vinyls.append(info)
+                except: # if error just skip this release
+                    pass
+            else:
+                print(f"Skipping {result['title']}, Unofficial Release")
     
     # remove duplicate dictionaries
     # convert each dictionary to a frozenset and create a set

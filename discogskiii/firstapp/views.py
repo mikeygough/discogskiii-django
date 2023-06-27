@@ -48,7 +48,6 @@ def index(request):
             print(f"Getting Artist {artist}")
             artist_releases = get_artist_releases(artist)
             for release in artist_releases:
-                print(artist, release["title"])
                 # add MasterRelease
                 MasterRelease.objects.create(artist=release["artist"],
                                              master_id=release["master_id"],
@@ -164,7 +163,7 @@ def artist_releases(request, artist):
         # initialize list
         master_main_release_ids = []
         # loop through in chunks
-        print("Getting Main Release IDS")
+        print("Getting Main Release IDs")
         for i in range(0, len(master_ids), chunk_size):
             chunk = master_ids[i:i+chunk_size]
             # get results from chunk
@@ -188,6 +187,7 @@ def artist_releases(request, artist):
         # initialize list
         main_release_data = []
         # loop through in chunks
+        print("Getting Main Release Data")
         for i in range(0, len(main_release_ids), chunk_size):
             chunk = main_release_ids[i:i+chunk_size]
             # get results from chunk
@@ -211,35 +211,34 @@ def artist_releases(request, artist):
             # https://www.discogs.com/master/606598-Alice-Coltrane-Turiyasangitananda-Divine-Songs
             # and
             # https://www.discogs.com/master/622821-Alice-Coltrane-Turiyasangitananda-Divine-Songs
+            print(f"Caching {main_release['title']}")
+            print("Main_release", main_release)
+            mr = MasterRelease.objects.get(master_id=main_release["master_id"])
+            # add MainRelease
+            
+            # calculate demand score
             try:
-                mr = MasterRelease.objects.get(master_id=main_release["master_id"])
-                print(f"Caching {main_release['title']}")
-                # add MainRelease
-                print("Main_release", main_release)
-                # calculate demand score
-                try:
-                    main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
-                except:
-                    pass
-                # format currency
-                try:
-                    main_release['lowest_price'] = format_currency(main_release['lowest_price'])
-                except:
-                    pass
-                # create
-                MainRelease.objects.create(main_id=main_release["id"],
-                                            uri=main_release["uri"],
-                                            community_have=main_release["community_have"],
-                                            community_want=main_release["community_want"],
-                                            community_demand_score=main_release["community_demand_score"],
-                                            num_for_sale=main_release["num_for_sale"],
-                                            lowest_price=main_release["lowest_price"],
-                                            title=main_release["title"],
-                                            released=main_release["released"],
-                                            thumb=main_release["thumb"],
-                                            master=mr)
-            except MasterRelease.DoesNotExist:
+                main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
+            except:
                 pass
+            # format currency
+            try:
+                main_release['lowest_price'] = format_currency(main_release['lowest_price'])
+            except:
+                pass
+            # create
+            MainRelease.objects.create(main_id=main_release["id"],
+                                        uri=main_release["uri"],
+                                        community_have=main_release["community_have"],
+                                        community_want=main_release["community_want"],
+                                        community_demand_score=main_release["community_demand_score"],
+                                        num_for_sale=main_release["num_for_sale"],
+                                        lowest_price=main_release["lowest_price"],
+                                        title=main_release["title"],
+                                        released=main_release["released"],
+                                        thumb=main_release["thumb"],
+                                        master=mr)
+        
         
         print("Done Fetching & Caching Main Release Data!")
         print("Database Initialized, Enjoy!")
