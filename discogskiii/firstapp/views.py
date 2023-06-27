@@ -147,7 +147,7 @@ def saved_markets(request):
 # all releases by an arist
 def artist_releases(request, artist):
     # cached, load from database
-    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")[:3]
+    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
     # get master_ids (From DB)
     master_ids = list(artist_releases.values_list("master_id", flat=True))
 
@@ -204,31 +204,42 @@ def artist_releases(request, artist):
 
         # 3, write data to database
         for main_release in main_release_data:
-            print(f"Caching {main_release['title']}")
-            # add MainRelease
-            mr = MasterRelease.objects.get(master_id=main_release["master_id"])
-            # calculate demand score
+            # check if exists. if doesn't pass
+            # at this point I know of at least one record that gives me issues between my get_artist_release function
+            # and my get_main_release_data_async function
+            # discogs api returns different data for
+            # https://www.discogs.com/master/606598-Alice-Coltrane-Turiyasangitananda-Divine-Songs
+            # and
+            # https://www.discogs.com/master/622821-Alice-Coltrane-Turiyasangitananda-Divine-Songs
             try:
-                main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
-            except:
+                mr = MasterRelease.objects.get(master_id=main_release["master_id"])
+                print(f"Caching {main_release['title']}")
+                # add MainRelease
+                print("Main_release", main_release)
+                # calculate demand score
+                try:
+                    main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
+                except:
+                    pass
+                # format currency
+                try:
+                    main_release['lowest_price'] = format_currency(main_release['lowest_price'])
+                except:
+                    pass
+                # create
+                MainRelease.objects.create(main_id=main_release["id"],
+                                            uri=main_release["uri"],
+                                            community_have=main_release["community_have"],
+                                            community_want=main_release["community_want"],
+                                            community_demand_score=main_release["community_demand_score"],
+                                            num_for_sale=main_release["num_for_sale"],
+                                            lowest_price=main_release["lowest_price"],
+                                            title=main_release["title"],
+                                            released=main_release["released"],
+                                            thumb=main_release["thumb"],
+                                            master=mr)
+            except MasterRelease.DoesNotExist:
                 pass
-            # format currency
-            try:
-                main_release['lowest_price'] = format_currency(main_release['lowest_price'])
-            except:
-                pass
-            # create
-            MainRelease.objects.create(main_id=main_release["id"],
-                                         uri=main_release["uri"],
-                                         community_have=main_release["community_have"],
-                                         community_want=main_release["community_want"],
-                                         community_demand_score=main_release["community_demand_score"],
-                                         num_for_sale=main_release["num_for_sale"],
-                                         lowest_price=main_release["lowest_price"],
-                                         title=main_release["title"],
-                                         released=main_release["released"],
-                                         thumb=main_release["thumb"],
-                                         master=mr)
         
         print("Done Fetching & Caching Main Release Data!")
         print("Database Initialized, Enjoy!")
@@ -237,8 +248,6 @@ def artist_releases(request, artist):
 
     # get main_release_data from database
     main_release_data = MainRelease.objects.filter(master__in=artist_releases)
-    print("Main Release Data:")
-    print(main_release_data)
     
     # pagination
     # instantiate Paginator, 10 records
@@ -258,81 +267,17 @@ def artist_releases(request, artist):
 
 # artist release statistics
 def artist_release_statistics(request, artist):
-    # get artist releases (From DB)
-    # SHORTER LIST FOR TESTING (10)
+    # cached, load from database
     artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
-    # artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
-    # get master_ids (From DB)
-    master_ids = list(artist_releases.values_list("master_id", flat=True))
-
-    # get master_release and main_release ids
-    # calculate optimal chunk size given list length and api limits...
-        # Optimal Chunk Size = Total Number of Items / Maximum Requests per Minute
-    # set chunk size
-    chunk_size = math.ceil(len(master_ids) / 60)
-    # initialize list
-    master_main_release_ids = []
-    # loop through in chunks
-    print("Getting Main Release IDS")
-    for i in range(0, len(master_ids), chunk_size):
-        chunk = master_ids[i:i+chunk_size]
-        # get results from chunk
-        results = asyncio.run(get_master_main_release_ids_async(master_ids=chunk))
-        # append
-        master_main_release_ids.append(results)
-        
-        # DISABLE SLEEP FOR TESTING
-        print(f"{len(master_ids) - (len(master_main_release_ids)*chunk_size)} Remaining")
-        print("Sleeping for 2.5 seconds")
-        time.sleep(2.5)
     
-    # master_main_release_ids is a list of tuples, each tuple represents an original pressing
-    # Before Itertools [[(84360, 517197)], [(283549, 3922959)],...]
-    master_main_release_ids = list(itertools.chain.from_iterable(master_main_release_ids))
-    # After Itertools [(84360, 517197), (283549, 3922959),...]
-    # the first item in the tuple is the master_id
-    # the second item in the tuple is the main_id
-
-    # !!! SHOULD DO SOME SORT OF CACHING HERE? OR JUST MOVE THE CACHING OF MAIN_RELEASE_ID ENTIRELY
-    # !!! OUT OF THE ARTIST_RELEASE_STATISTICS AND ARTIST_RELEASE VIEWS... TBD
+    print("Main Release Data Already Cached!, Enjoy!")
     
-    # grab main_release_ids
-    main_release_ids = [x[1] for x in master_main_release_ids]
-
-    # TESTING
-    chunk_size = math.ceil(len(main_release_ids) / 60)
-    # initialize list
-    data = []
-    for i in range(0, len(main_release_ids), chunk_size):
-        chunk = main_release_ids[i:i+chunk_size]
-        # get results from chunk
-        results = asyncio.run(get_main_release_data_async(release_ids=chunk))
-        # append
-        data.append(results)
-        
-        # DISABLE SLEEP FOR TESTING
-        print("Sleeping for 2.5 seconds")
-        time.sleep(2.5)
-
-    data = list(itertools.chain.from_iterable(data))
-
-    for main_release in data:
-        # calculate demand score
-        try:
-            main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
-        except:
-            pass
-        # format currency
-        try:
-            main_release['lowest_price'] = format_currency(main_release['lowest_price'])
-        except:
-            pass
-
-    print("Data", data)
+    # get main_release_data from database
+    main_release_data = MainRelease.objects.filter(master__in=artist_releases)
 
     return render(request, "firstapp/artist_release_statistics.html", {
         "artist": artist,
-        "data": data
+        "main_release_data": main_release_data
     })
 
 
