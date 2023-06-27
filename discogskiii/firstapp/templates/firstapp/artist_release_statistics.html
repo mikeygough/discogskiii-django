@@ -29,6 +29,15 @@
           <th id="table-community-want" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
             Community "Want"
           </th>
+          <th id="table-community-demand_score" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
+            Community "Demand Score"
+          </th>
+          <th id="table-num-for-sale" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
+            Number for Sale
+          </th>
+          <th id="table-lowest-price" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
+            Lowest Price
+          </th>
         </tr>
       </thead>
       <tbody>
@@ -49,6 +58,15 @@
           </td>
           <td id="table-community-want" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
             {{ release.community_want }}
+          </td>
+          <td id="table-community-demand-score" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+            {{ release.community_demand_score }}
+          </td>
+          <td id="table-num-for-sale" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+            {{ release.num_for_sale }}
+          </td>
+          <td id="table-lowest-price" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+            {{ release.lowest_price }}
           </td>
         </tr>
         {% endfor %}
