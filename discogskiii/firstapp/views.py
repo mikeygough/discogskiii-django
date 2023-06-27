@@ -164,6 +164,12 @@ def artist_releases(request, artist):
     # each tuple represents an original pressing.
     # the first item is the master_id, the second item is the main_id (original pressing id)
 
+    # ! now i need to rewrite this logic...
+    # i think i'm going to just go for it and run all the data collection
+    # requests upon this artist_releases page load.
+    # it will slow everything down the first time,
+    # but then I can cache results and have every subsequent action work more quickly.
+
     for id in master_main_release_ids:
         if not MainRelease.objects.filter(main_id=id[1]).exists():
             print(f"Does Not Exist! Caching {id[1]}!")

@@ -144,6 +144,9 @@ While I have yet to develop an exact model, primary factors influencing secondar
 
       * _Poor (P), Fair (F)_: Generally worth 0-5% of the Near Mint price. The record is cracked, badly warped, and won't play through without skipping or repeating.
 
+
+I may have discovered an additional factor for determining the value of original pressings. Discogs provides community metrics for each release. Two such metrics are community_have and community_want. Using these we can construct a community "demand score", community_want / community_have. Just eye-balling the data for Alice Coltrane, for example, there appears to be a positive relationship between demand score and lowest_selling price. This could be interesting data to place on a statistics page.
+
 <br>
 
 ---
