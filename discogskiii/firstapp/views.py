@@ -210,6 +210,15 @@ def artist_releases(request, artist):
             print("Sleeping for 3 seconds")
             time.sleep(3)
 
+        # ! I think I know how to stop getting errors here. Let me be clear about the problem I'm facing...
+        # Step 1, I am running a search by artist and saving MasterReleases.
+        # Step 2 I am looping through each MasterRelease hitting the masterrelease discogs API and getting the main release ID.
+        # Step 3 I am hitting the Release endpoint to get data on that main release, and also storing the master_release_id from that request
+        # The issue is that the master_release_id i'm saving in step 1 and 2 is not always the same with the master_release ID
+        # I'm getting from the release endpoint in step 3.
+        # What if instead of resaving the master_release in step 3, I just plug in the master_id from Step 1/2 when I save the MainRelease object in step 3?
+        # This would create a more stable relationship between MasterRelease and MainRelease database records.
+        
         # format
         # dictionary object with key, value pairs containing data on the main release object
         main_release_data = list(itertools.chain.from_iterable(main_release_data))
