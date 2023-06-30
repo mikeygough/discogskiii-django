@@ -163,52 +163,39 @@ def artist_releases(request, artist):
     # get master_ids
     master_ids = list(artist_releases.values_list("master_id", flat=True))
 
-    print("Artist release count", artist_releases.all().count())
-    print("Main Release count", MainRelease.objects.filter(master__in=artist_releases).count())
-
-    print("Master Release Count", MasterRelease.objects.filter(artist=artist).count())
-    print("Main Release Count", MainRelease.objects.filter(master__in=artist_releases).count())
-
-
-
-    # check if all MasterRelease objects exist in MainRelease
+    # check if all MasterRelease objects exist in MainRelease (results aren't cached)
     if artist_releases.exists() and artist_releases.all().count() != MainRelease.objects.filter(master__in=artist_releases).count():
         print("Some MasterRelease objects are missing in MainRelease")
         print("Fetching from Discogs API. Note that this could take several minutes...")
         
-        # 1, get master_release and main_release ids
-            # calculate optimal chunk size given list length and api limits...
-            # Optimal Chunk Size = Total Number of Items / Maximum Requests per Minute
-            # set chunk size
+        # 1, get master_release and main_release ids by chunking async requests
+        # Optimal Chunk Size = Total Number of Items / Maximum Requests per Minute
         chunk_size = math.ceil(len(master_ids) / 60)
         # initialize list
         master_main_release_ids = []
         # loop through in chunks
-        print("Getting Main Release IDs")
+        print("Getting Master & Main Release IDs")
         for i in range(0, len(master_ids), chunk_size):
             chunk = master_ids[i:i+chunk_size]
             # get results from chunk
             results = asyncio.run(get_master_main_release_ids_async(master_ids=chunk))
             # append
             master_main_release_ids.append(results)
-            print(f"{len(master_ids) - (len(master_main_release_ids)*chunk_size)} Remaining")
+            print(f"{len(master_ids) - (len(master_main_release_ids)*chunk_size)} Master & Main Release IDs Remaining")
+            # sleep to not trigger request limit
             print("Sleeping for 3 seconds")
             time.sleep(3)
         
         # format (flatten list of lists to just be list of dicts)
         master_main_release_ids = list(itertools.chain.from_iterable(master_main_release_ids))
-        print("master_main_release_ids after iterable", master_main_release_ids)
 
         # grab just main_release_ids
         main_release_ids = [x["main_release"] for x in master_main_release_ids]
 
-        # same length for now (should always be the same length right?)
-        print("len of master_ids", len(master_ids))
-        print("len of master_main_release_ids", len(master_main_release_ids))
-
+        # 2, get main_release data by chunking async requests
         # initialize list
         main_release_data = []
-        # loop through in chunks
+        # loop through in chunks (same chunk size as above)
         print("Getting Main Release Data")
         for i in range(0, len(master_main_release_ids), chunk_size):
             chunk = main_release_ids[i:i+chunk_size]
@@ -216,50 +203,25 @@ def artist_releases(request, artist):
             results = asyncio.run(get_main_release_data_async(release_ids=chunk))
             # append
             main_release_data.append(results)
-            print(f"{len(master_main_release_ids) - (len(main_release_data)*chunk_size)} Remaining")
+            print(f"{len(master_main_release_ids) - (len(main_release_data)*chunk_size)} Main Release Datum Remaining")
+            # sleep to not trigger request limit
             print("Sleeping for 3 seconds")
             time.sleep(3)
 
-        # ! I think I know how to stop getting errors here. Let me be clear about the problem I'm facing...
-        # Step 1, I am running a search by artist and saving MasterReleases.
-        # Step 2 I am looping through each MasterRelease hitting the masterrelease discogs API and getting the main release ID.
-        # Step 3 I am hitting the Release endpoint to get data on that main release, and also storing the master_release_id from that request
-        # The issue is that the master_release_id i'm saving in step 1 and 2 is not always the same with the master_release ID
-        # I'm getting from the release endpoint in step 3.
-        # What if instead of resaving the master_release in step 3, I just plug in the master_id from Step 1/2 when I save the MainRelease object in step 3?
-        # This would create a more stable relationship between MasterRelease and MainRelease database records.
-        
-        # format
-        # dictionary object with key, value pairs containing data on the main release object
+        # format format (flatten list of lists to just be list of dicts)
         main_release_data = list(itertools.chain.from_iterable(main_release_data))
-
-        print("master_main_release_ids", master_main_release_ids)
-        print("main_release_data", main_release_data)
-
+        # match master ids and main release data by linking main_release id
         for release in main_release_data:
             release_id = release["id"]
             matching_ids = [item["id"] for item in master_main_release_ids if item["main_release"] == release_id]
             if matching_ids:
                 release["master_id"] = matching_ids[0]
 
-        print(main_release_data)
-
-        # 3, write data to database
-        for main_release in main_release_data:
-            # check if exists. if doesn't pass
-            # at this point I know of at least one record that gives me issues between my get_artist_release function
-            # and my get_main_release_data_async function
-            # discogs api returns different data for
-            # https://www.discogs.com/master/606598-Alice-Coltrane-Turiyasangitananda-Divine-Songs
-            # and
-            # https://www.discogs.com/master/622821-Alice-Coltrane-Turiyasangitananda-Divine-Songs
-            
+        # 3, add to cache
+        for main_release in main_release_data:    
             if MasterRelease.objects.filter(master_id=main_release["master_id"]).exists():
                 print(f"Caching {main_release['title']}")
-                print("Main_release", main_release)
                 mr = MasterRelease.objects.get(master_id=main_release["master_id"])
-                # add MainRelease
-                
                 # calculate demand score
                 try:
                     main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
