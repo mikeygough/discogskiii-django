@@ -91,6 +91,13 @@ async def get_main_release_data_async(release_ids):
         a new MainRelease model: artist, title, uri, main_id, num_for_sale, lowest_price, master. 
         and ideally [community][want] and [community][have]'''
 
+    # I think this is where I need to make changes...
+    # Instead of passing in a list of just the release_ids,
+    # I can pass in the dictionary of master_id and release_id.
+    # Then loop through each dictionary, making sure to maintain the relationship between
+    # the results of the API request and the master_id.
+    # The downside of this implementation is that it limits the function
+    # to only being able to be run on results from get_master_main_release_ids_async
     # initialize results list
     main_release_results = []
 
