@@ -37,7 +37,6 @@ class MainRelease(models.Model):
     # should price really be a charfield?
     lowest_price = models.CharField(max_length=15, null=True)
     title = models.CharField(max_length=240)
-    # think about changing this to models.DateField() since we order by it
     released = models.DateField()
     # is there maybe a URL field?
     thumb = models.CharField(max_length=500)

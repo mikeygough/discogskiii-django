@@ -19,18 +19,14 @@ from firstapp.models import User, MasterRelease, MainRelease, SavedMarkets
 
 # statically declare supported markets
 artist_markets = [
-    "Alice Coltrane"
+    "Sun Ra",
+    "John Coltrane",
+    "Miles Davis",
+    "Alice Coltrane",
+    "Lee Morgan",
+    "Coleman Hawkins",
+    "Art Blakey"
 ]
-
-# artist_markets = [
-#     "Sun Ra",
-#     "John Coltrane",
-#     "Miles Davis",
-#     "Alice Coltrane",
-#     "Lee Morgan",
-#     "Coleman Hawkins",
-#     "Art Blakey"
-# ]
 
 # index
 def index(request):
@@ -302,29 +298,16 @@ def artist_release_statistics(request, artist):
 
 # view original pressings of release available for sale
 def release_market(request, artist, release_id):
-
-    # master represents the album as an entity. fetch from db
-    master_release = MasterRelease.objects.get(master_id=release_id)
-    master_release_id = master_release.master_id
-    
     # get main_release_id (original pressing)
-    # if cached, load from db
-    # this is a redundant cache check, should have already been cached on the artist_releases page load
-    if MainRelease.objects.filter(master=master_release).exists():
-        print(f"Exists!")
-        main_release = MainRelease.objects.get(master=master_release)
-        main_release_id = main_release.main_id
-    else:
-        # request data from discogs
-        print(f"Does Not Exist! Caching {master_release}")
-        main_release_id = get_main_release_id(master_release_id)
-        # add to cache
-        main_release = MainRelease(master=master_release, main_id=main_release_id)
-        main_release.save()
-    
+    main_release = MainRelease.objects.get(main_id=release_id)
+    main_release_id = main_release.main_id
+    # get master_release
+    master_release = main_release.master
+    master_release_id = master_release.master_id
+    # get listing ids
     # marketplace_listing_ids represent the original pressings available for sale
     # we obtain this by webscraping discogs each time because markets change
-    marketplace_listing_ids = get_listing_ids(main_release_id)
+    marketplace_listing_ids = get_listing_ids(release_id)
     
     marketplace_listings = asyncio.run(get_marketplace_listings_async(marketplace_listing_ids=marketplace_listing_ids))
     
