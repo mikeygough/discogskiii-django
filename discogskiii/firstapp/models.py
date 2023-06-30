@@ -41,6 +41,7 @@ class MainRelease(models.Model):
     released = models.CharField(max_length=10)
     # is there maybe a URL field?
     thumb = models.CharField(max_length=500)
+    # should this be a one-to-one relationship instead of the current many-to-one relationship?
     master = models.ForeignKey(MasterRelease, on_delete=models.CASCADE)
 
     def __str__(self):
