@@ -11,6 +11,7 @@ from firstapp.utils import *
 import time
 import math
 import itertools
+import dateparser
 
 
 # import models
@@ -18,14 +19,18 @@ from firstapp.models import User, MasterRelease, MainRelease, SavedMarkets
 
 # statically declare supported markets
 artist_markets = [
-    "Sun Ra",
-    "John Coltrane",
-    "Miles Davis",
-    "Alice Coltrane",
-    "Lee Morgan",
-    "Coleman Hawkins",
-    "Art Blakey"
+    "Alice Coltrane"
 ]
+
+# artist_markets = [
+#     "Sun Ra",
+#     "John Coltrane",
+#     "Miles Davis",
+#     "Alice Coltrane",
+#     "Lee Morgan",
+#     "Coleman Hawkins",
+#     "Art Blakey"
+# ]
 
 # index
 def index(request):
@@ -232,6 +237,15 @@ def artist_releases(request, artist):
                     main_release['lowest_price'] = format_currency(main_release['lowest_price'])
                 except:
                     pass
+                
+                print(f"released, {main_release['released']}")
+                
+                # format data
+                try:
+                    main_release['released'] = dateparser.parse(main_release['released'][:4])
+                except:
+                    pass
+                
                 # create
                 MainRelease.objects.create(main_id=main_release["id"],
                                             uri=main_release["uri"],

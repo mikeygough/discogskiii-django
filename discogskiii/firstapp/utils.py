@@ -88,17 +88,10 @@ async def get_master_main_release_ids_async(master_ids):
 
 async def get_main_release_data_async(release_ids):
     ''' REQUIRES AUTHENTICATION
-        given a list of release_ids, return a list of ____ with all the data needed to construct
-        a new MainRelease model: artist, title, uri, main_id, num_for_sale, lowest_price, master. 
-        and ideally [community][want] and [community][have]'''
+        given a list of release_ids, return a list of dicts with all the data needed to construct
+        a new MainRelease model: artist, title, uri, main_id, num_for_sale, lowest_price, 
+        [community][want] and [community][have]. '''
 
-    # I think this is where I need to make changes...
-    # Instead of passing in a list of just the release_ids,
-    # I can pass in the dictionary of master_id and release_id.
-    # Then loop through each dictionary, making sure to maintain the relationship between
-    # the results of the API request and the master_id.
-    # The downside of this implementation is that it limits the function
-    # to only being able to be run on results from get_master_main_release_ids_async
     # initialize results list
     main_release_results = []
 
@@ -148,9 +141,6 @@ async def get_main_release_data_async(release_ids):
                 extracted_data[key] = value
 
             list_of_dicts.append(extracted_data)
-            
-        # drop records with master_id: None which is an anomoly case that does occur
-        # list_of_dicts = [d for d in list_of_dicts if d.get("master_id") != None]
 
         # format, replace keys that have '.' with '_'
         list_of_dicts = [

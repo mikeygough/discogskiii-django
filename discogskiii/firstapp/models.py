@@ -38,7 +38,7 @@ class MainRelease(models.Model):
     lowest_price = models.CharField(max_length=15, null=True)
     title = models.CharField(max_length=240)
     # think about changing this to models.DateField() since we order by it
-    released = models.CharField(max_length=10)
+    released = models.DateField()
     # is there maybe a URL field?
     thumb = models.CharField(max_length=500)
     # should this be a one-to-one relationship instead of the current many-to-one relationship?
