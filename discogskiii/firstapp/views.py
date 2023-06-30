@@ -59,6 +59,21 @@ def index(request):
      
         print("Done Fetching Artist Releases!")
     
+    # Identify and remove duplicate master_id values
+    duplicate_master_ids = MasterRelease.objects.values('master_id').annotate(count=Count('master_id')).filter(count__gt=1)
+
+    print("Removing Duplicate Master Ids", duplicate_master_ids)
+    # Loop through the duplicate master_ids
+    for duplicate in duplicate_master_ids:
+        # Get all instances with the duplicate master_id
+        duplicates = MasterRelease.objects.filter(master_id=duplicate['master_id'])
+
+        # Check if duplicates exist
+        if duplicates.exists():
+            # Keep the first instance and delete the rest
+            master_release_to_keep = duplicates.first()
+            duplicates.exclude(id=master_release_to_keep.id).delete()
+    
     print("Database Initialized, Enjoy!")
 
     if not request.user.is_authenticated:
@@ -143,24 +158,18 @@ def saved_markets(request):
 
 # all releases by an arist
 def artist_releases(request, artist):
-    # Identify duplicate master_id values
-    duplicate_master_ids = MasterRelease.objects.values('master_id').annotate(count=Count('master_id')).filter(count__gt=1)
-
-    # Loop through the duplicate master_ids
-    for duplicate in duplicate_master_ids:
-        # Get all instances with the duplicate master_id
-        duplicates = MasterRelease.objects.filter(master_id=duplicate['master_id'])
-
-        # Check if duplicates exist
-        if duplicates.exists():
-            # Keep the first instance and delete the rest
-            master_release_to_keep = duplicates.first()
-            duplicates.exclude(id=master_release_to_keep.id).delete()
-
     # cached, load from database
     artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
-    # get master_ids (From DB)
+    # get master_ids
     master_ids = list(artist_releases.values_list("master_id", flat=True))
+
+    print("Artist release count", artist_releases.all().count())
+    print("Main Release count", MainRelease.objects.filter(master__in=artist_releases).count())
+
+    print("Master Release Count", MasterRelease.objects.filter(artist=artist).count())
+    print("Main Release Count", MainRelease.objects.filter(master__in=artist_releases).count())
+
+
 
     # check if all MasterRelease objects exist in MainRelease
     if artist_releases.exists() and artist_releases.all().count() != MainRelease.objects.filter(master__in=artist_releases).count():
@@ -186,27 +195,28 @@ def artist_releases(request, artist):
             print("Sleeping for 3 seconds")
             time.sleep(3)
         
-        # format
-        # the first item in the tuple is the master_id, the second item in the tuple is the main_id
+        # format (flatten list of lists to just be list of dicts)
         master_main_release_ids = list(itertools.chain.from_iterable(master_main_release_ids))
+        print("master_main_release_ids after iterable", master_main_release_ids)
 
         # grab just main_release_ids
-        main_release_ids = [x[1] for x in master_main_release_ids]
+        main_release_ids = [x["main_release"] for x in master_main_release_ids]
 
-        # 2, get main release data
-            # set chunk size
-        chunk_size = math.ceil(len(main_release_ids) / 60)
+        # same length for now (should always be the same length right?)
+        print("len of master_ids", len(master_ids))
+        print("len of master_main_release_ids", len(master_main_release_ids))
+
         # initialize list
         main_release_data = []
         # loop through in chunks
         print("Getting Main Release Data")
-        for i in range(0, len(main_release_ids), chunk_size):
+        for i in range(0, len(master_main_release_ids), chunk_size):
             chunk = main_release_ids[i:i+chunk_size]
             # get results from chunk
             results = asyncio.run(get_main_release_data_async(release_ids=chunk))
             # append
             main_release_data.append(results)
-            print(f"{len(main_release_ids) - (len(main_release_data)*chunk_size)} Remaining")
+            print(f"{len(master_main_release_ids) - (len(main_release_data)*chunk_size)} Remaining")
             print("Sleeping for 3 seconds")
             time.sleep(3)
 
@@ -222,6 +232,17 @@ def artist_releases(request, artist):
         # format
         # dictionary object with key, value pairs containing data on the main release object
         main_release_data = list(itertools.chain.from_iterable(main_release_data))
+
+        print("master_main_release_ids", master_main_release_ids)
+        print("main_release_data", main_release_data)
+
+        for release in main_release_data:
+            release_id = release["id"]
+            matching_ids = [item["id"] for item in master_main_release_ids if item["main_release"] == release_id]
+            if matching_ids:
+                release["master_id"] = matching_ids[0]
+
+        print(main_release_data)
 
         # 3, write data to database
         for main_release in main_release_data:
@@ -262,7 +283,7 @@ def artist_releases(request, artist):
                                             thumb=main_release["thumb"],
                                             master=mr)
             else:
-                pass
+                print(f"Unable to Cache {main_release}")
         
         print("Done Fetching & Caching Main Release Data!")
         print("Database Initialized, Enjoy!")

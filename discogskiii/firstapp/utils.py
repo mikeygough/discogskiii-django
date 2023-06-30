@@ -54,7 +54,7 @@ def get_main_release_id(master_id):
 
 async def get_master_main_release_ids_async(master_ids):
     ''' REQUIRES AUTHENTICATION
-        given a list of master_ids, return list of tuples. each tuple represents an original pressing.
+        given a list of master_ids, return list of dictionaries. each dictionary represents an original pressing.
         the first item is the master_id, the second item is the main_id (original pressing id) '''
 
     # initialize results list
@@ -77,14 +77,12 @@ async def get_master_main_release_ids_async(master_ids):
             result = await response.json()
             main_release_id_results.append(result)
 
-                # this one only grabs the main_release_ids
-        # main_release_id_results = [d["main_release"] for d in main_release_id_results]
-                # this one grabs the main_release_id and the master_id
-        # rather than return a list of tuples, I'm better off returning a list of dictionaries with keys for master_release_id and main_release_id
-        # plus any additional information I might want to store about the master.
-        # unfortunately there isn't much useful information about the master.
-        main_release_id_results = [(d["id"], d["main_release"]) for d in main_release_id_results]
-        # return list of main_release ids
+        # loop through response dict and grab certain keys/values
+        keys_to_keep = ["id", "main_release"]
+
+        main_release_id_results = [{key: dictionary[key] for key in keys_to_keep} for dictionary in main_release_id_results]
+
+        # return list of dictionaries for each object with master_id and main_id
         return main_release_id_results
 
 
@@ -123,7 +121,7 @@ async def get_main_release_data_async(release_ids):
 
         # loop through response dict and grab certain keys/values (some are nested)
         keys_to_keep = ["id", "uri", "community.have", "community.want",
-                        "num_for_sale", "lowest_price", "master_id", "title", "released", "thumb"]
+                        "num_for_sale", "lowest_price", "title", "released", "thumb"]
         
         list_of_dicts = []
         # loop through the list of dictionaries
@@ -152,7 +150,7 @@ async def get_main_release_data_async(release_ids):
             list_of_dicts.append(extracted_data)
             
         # drop records with master_id: None which is an anomoly case that does occur
-        list_of_dicts = [d for d in list_of_dicts if d.get("master_id") != None]
+        # list_of_dicts = [d for d in list_of_dicts if d.get("master_id") != None]
 
         # format, replace keys that have '.' with '_'
         list_of_dicts = [
