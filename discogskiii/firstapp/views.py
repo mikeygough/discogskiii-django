@@ -253,7 +253,7 @@ def artist_releases(request, artist):
         print("Main Release Data Already Cached!, Enjoy!")
 
     # get main_release_data from database
-    main_release_data = MainRelease.objects.filter(master__in=artist_releases)
+    main_release_data = MainRelease.objects.filter(master__in=artist_releases).order_by("released")
     
     # pagination
     # instantiate Paginator, 10 records
