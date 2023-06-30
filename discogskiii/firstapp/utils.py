@@ -80,6 +80,9 @@ async def get_master_main_release_ids_async(master_ids):
                 # this one only grabs the main_release_ids
         # main_release_id_results = [d["main_release"] for d in main_release_id_results]
                 # this one grabs the main_release_id and the master_id
+        # rather than return a list of tuples, I'm better off returning a list of dictionaries with keys for master_release_id and main_release_id
+        # plus any additional information I might want to store about the master.
+        # unfortunately there isn't much useful information about the master.
         main_release_id_results = [(d["id"], d["main_release"]) for d in main_release_id_results]
         # return list of main_release ids
         return main_release_id_results
