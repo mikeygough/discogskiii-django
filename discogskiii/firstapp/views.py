@@ -283,16 +283,28 @@ def artist_releases(request, artist):
 # artist release statistics
 def artist_release_statistics(request, artist):
     # cached, load from database
-    artist_releases = MasterRelease.objects.filter(artist=artist).order_by("year")
-    
+    artist_releases = MasterRelease.objects.filter(artist=artist)
+    main_release_data = MainRelease.objects.filter(master__in=artist_releases)
     print("Main Release Data Already Cached!, Enjoy!")
     
-    # get main_release_data from database
-    main_release_data = MainRelease.objects.filter(master__in=artist_releases)
+    # get sort parameter
+    sort_by = request.GET.get('sort_by')
+    sort_direction = request.GET.get('sort_direction', 'asc')
+
+    if sort_by:
+        # get main_release_data from database
+        if sort_direction == 'asc':
+            main_release_data = main_release_data.order_by(sort_by)
+        elif sort_direction == 'desc':
+            main_release_data = main_release_data.order_by(f'-{sort_by}')
+
+    print(sort_direction)
 
     return render(request, "firstapp/artist_release_statistics.html", {
         "artist": artist,
-        "main_release_data": main_release_data
+        "main_release_data": main_release_data,
+        "current_sort_by": sort_by,
+        "current_sort_direction": sort_direction
     })
 
 

@@ -7,6 +7,7 @@
     </h1>
     <p class="text-left sm:text-center ml-6 sm:ml-0">
       <span class="text-2xl font-bold italic">{{ artist }} Release Statistics</span>
+      <span><p>{{ current_sort_direction }}</p></span>
      </p>
   </div>
 </div>
@@ -17,26 +18,82 @@
       <thead>
         <tr class="bg-gradient-to-r bg-gray-200 text-gray-800">
           <th class="px-6 py-3 text-left text-lg font-medium uppercase tracking-wider">
-            Album Title
+            <a href="?sort_by=title{% if current_sort_by == 'title' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Album Title
+              {% if current_sort_by == 'title' %}
+                {% if current_sort_direction == 'asc' %}
+                  &#9650;  <!-- ascending arrow -->
+                {% else %}
+                  &#9660;  <!-- descending arrow -->
+                {% endif %}
+              {% endif %}
+            </a>
           </th>
           <th id="table-year" class="px-6 py-3 text-center text-lg font-medium uppercase tracking-wider">
-            Year
+            <a href="?sort_by=released{% if current_sort_by == 'released' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Released
+              {% if current_sort_by == 'released' %}
+                {% if current_sort_direction == 'asc' %}
+                  &#9650;
+                {% else %}
+                  &#9660;
+                {% endif %}
+              {% endif %}
+            </a>
           </th>
           <th id="table-album-cover" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider"></th>
           <th id="table-community-have" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
-            Community "Have"
+            <a href="?sort_by=community_have{% if current_sort_by == 'community_have' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Community "Have"
+              {% if current_sort_by == 'community_have' %}
+                {% if current_sort_direction == 'asc' %}
+                  &#9650;
+                {% else %}
+                  &#9660;
+                {% endif %}
+              {% endif %}
+            </a>
           </th>
           <th id="table-community-want" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
-            Community "Want"
+            <a href="?sort_by=community_want{% if current_sort_by == 'community_want' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Community "Want"
+              {% if current_sort_by == 'community_want' %}
+                {% if current_sort_direction == 'asc' %}
+                  &#9650;
+                {% else %}
+                  &#9660;
+                {% endif %}
+              {% endif %}
+            </a>
           </th>
           <th id="table-community-demand_score" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
-            Community "Demand Score"
+            <a href="?sort_by=community_demand_score{% if current_sort_by == 'community_demand_score' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Community "Demand Score"
+              {% if current_sort_by == 'community_demand_score' %}
+                {% if current_sort_direction == 'asc' %}
+                  &#9650;
+                {% else %}
+                  &#9660;
+                {% endif %}
+              {% endif %}
+            </a>
           </th>
           <th id="table-num-for-sale" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
-            Number for Sale
+            <a href="?sort_by=num_for_sale{% if current_sort_by == 'num_for_sale' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Number for Sale
+              {% if current_sort_by == 'num_for_sale' %}
+                {% if current_sort_direction == 'asc' %}
+                  &#9650;
+                {% else %}
+                  &#9660;
+                {% endif %}
+              {% endif %}
+            </a>
           </th>
           <th id="table-lowest-price" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
-            Lowest Price
+            <a href="?sort_by=lowest_price{% if current_sort_by == 'lowest_price' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Lowest Price
+              {% if current_sort_by == 'lowest_price' %}
+                {% if current_sort_direction == 'asc' %}
+                  &#9650;
+                {% else %}
+                  &#9660;
+                {% endif %}
+              {% endif %}
+            </a>
           </th>
         </tr>
       </thead>
