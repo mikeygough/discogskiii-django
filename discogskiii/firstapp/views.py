@@ -77,6 +77,7 @@ def index(request):
     
     print("Database Initialized, Enjoy!")
 
+    # hm... is this causing the page to load twice? it does all the work, checks if logged in, then tries to redirect?
     if not request.user.is_authenticated:
         return HttpResponseRedirect(reverse("firstapp:login"))
 
@@ -229,14 +230,11 @@ def artist_releases(request, artist):
                 except:
                     main_release['community_demand_score'] = None
                 # format currency
-                try:
-                    main_release['lowest_price'] = format_currency(main_release['lowest_price'])
-                except:
-                    pass
-                
-                print(f"released, {main_release['released']}")
-                
-                # format data
+                # try:
+                #     main_release['lowest_price'] = format_currency(main_release['lowest_price'])
+                # except:
+                #     pass
+                # format date
                 try:
                     main_release['released'] = dateparser.parse(main_release['released'][:4])
                 except:

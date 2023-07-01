@@ -34,8 +34,7 @@ class MainRelease(models.Model):
     community_want = models.IntegerField(default=0)
     community_demand_score = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True)
     num_for_sale = models.IntegerField(null=True, default=0)
-    # should price really be a charfield?
-    lowest_price = models.CharField(max_length=15, null=True)
+    lowest_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True)
     title = models.CharField(max_length=240)
     released = models.DateField()
     # is there maybe a URL field?
