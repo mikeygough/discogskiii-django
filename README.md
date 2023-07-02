@@ -58,10 +58,10 @@ Features I would like to include in the project:
 * __DONE__ - Artist Releases Dashboard
 * __DONE__ - User Watchlist
 
-    * Add remove Market button to the Saved Markets page
     * Add row removal animation when user removes market from saved markets
     
 * __DONE__ - Tailwind CSS Styling
+* __DONE__ - Artist Release Sorting
 * __Subscribe to Market__ - I see this as a kind of challenge feature because I'm really not sure how to build it. I'd like a user to be able to subscribe to a market and receive updates when that market changes. I.E. a new offer is placed in the market. I think that [Django has their own email service](https://docs.djangoproject.com/en/4.2/topics/email/).
 * __Market Statistics__ - See new listings, order books with the highest price, lowest price, most orders, etc.
 Thinking through the implementation of this feature... How am I going to get all the data I'll need? It's probably too many requests to try and get all release statistics for every release by an artist... Even if I were to cache them all, it would probably take too long to spin up. What are my other options? I guess the stats I can reliable get are ones available via the API (as opposed to scraping). These include:
@@ -73,7 +73,6 @@ Thinking through the implementation of this feature... How am I going to get all
     
     I have an idea to make this better... Rather than slowing everything down by trying to get the sale information for every record, I don't have to! First I can just make a request to check if there are any for sale... Then of those available for sale I can see the listing information... How many Sun Ra original pressings might be available at any given time? My guess is not too many... That's why they're original pressings and rare!
 
-* __Order Book Sorting__ - Enable sorting by price or condition through the table headers.
 * __Multiple Device Optimations__ - App should render and function flawlessly on all device types.
 * __React Components__ - Implement at least one React component! But I might kick this down the road since it may be more beneficial to finish my React course before I start slinging around sloppy code.
 
@@ -87,11 +86,11 @@ Thinking through the implementation of this feature... How am I going to get all
 ### Design
 For the first version of this design I'm imagining a home screen with labels for each of the available artist markets. These are statically defined by me and just include the artist. For example, statically defined artist markets could be ["Sun Ra", "John Coltrane", "Miles Davis", "Alice Coltrane"]. These are completely arbitrary and just exist to help me flesh out a more scalable design. -- I'm having trouble reworking this concept now that it's mapped in my mind. Thus, it is the current implementation and has been since inception.
 
-When a use clicks on an artist market, they're taken to a page that displays all of that artists records, sorted chronologically. Currently, this is a small performance bottleneck since on each page load I'm requesting all of this data from Discogs servers. For an artist like Miles Davis who has hundreds of records, this results in a multi-second page load. -- This bottleneck has been (partially) addressed. Now I'm doing the entire db initialization feature on the /index page load. Thus, it takes several minutes to request all the data if a user is running the app for the first time. But, it results in quicker page loads of the /artist-releases route. Additionally, I've implemented pagination and caching to help reduce the request count. Still, if a user clicks around too quickly on the site then they may run into an error with the request limit being breached (the Discogs API only permits 60 requests for rolling 60 second window for authenticated users). This is because the a single pageload of an /artist-releases page makes 20 requests (10 to get information on 10 master releases [title, release date, album cover, etc.] + 10 to get information on the main release [number for sale]).
+When a use clicks on an artist market, they're taken to a page that displays all of that artists records, sorted chronologically. Currently, this is a small performance bottleneck since on each page load I'm requesting all of this data from Discogs servers. For an artist like Miles Davis who has hundreds of records, this results in a multi-second page load. -- This bottleneck has been (partially) addressed. Now I'm doing the entire db initialization feature on the /index page load. Thus, it takes several minutes to request all the data if a user is running the app for the first time. But, it results in quicker subsequent page loads of the /artist-releases route.
 
-Since it's very rare for these artist (all of whom are now deceased) to release new records, I'm going to create a Django model for each artist. That model will store all of the records they've produced along with the information I need to load the page. It will be much faster to load the page this way, and since these arists aren't launching new records I should be safe to only have to fetch this once from Discogs. Just in case, I can run a quick check once a month or something and compare my DB with Discogs looking at page numbers or some other metric. Miles Davis, for example had a 'new' release in 2023. -- I've implemented caching as best I can... But I'm still running into bottle necks and intend on spending more time with this over the coming days.
+Since it's very rare for these artist (all of whom are now deceased) to release new records, I've to created a Django model for each artist. That model stores all of the records they've produced along with the information I need to load the page. It will be much faster to load the page this way, and since these arists aren't launching new records I should be safe to only have to fetch this once from Discogs. Just in case, I can run a quick check once a month or something and compare my DB with Discogs looking at page numbers or some other metric. Miles Davis, for example had a 'new' release in 2023. -- I've implemented caching as best I can.
 
-Clicking into a market will then reveal the orderbook, more accurately the number and prices of original pressings available for sale.
+Clicking into a market will then reveal the orderbook, more specifically the number and prices of original pressings available for sale.
 
 <br>
 
