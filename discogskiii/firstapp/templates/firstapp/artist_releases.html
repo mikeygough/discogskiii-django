@@ -124,7 +124,11 @@
             {{ release.num_for_sale }}
           </td>
           <td id="table-lowest-price" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
-            {{ release.lowest_price }}
+            {% if release.lowest_price != None %}
+              ${{ release.lowest_price }}
+            {% else %}
+              {{ release.lowest_price }}
+            {% endif %}
           </td>
           <td id="table-view-markets" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
             <a href="{% url 'firstapp:release_market' artist release.main_id %}"
