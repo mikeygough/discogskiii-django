@@ -267,7 +267,7 @@ def artist_releases(request, artist):
 
     print(sort_direction)
 
-    return render(request, "firstapp/artist_releasess.html", {
+    return render(request, "firstapp/artist_releases.html", {
         "artist": artist,
         "main_release_data": main_release_data,
         "current_sort_by": sort_by,

@@ -27,7 +27,7 @@
               {% endif %}
             </a>
           </th>
-          <th id="table-year" class="px-6 py-3 text-center text-lg font-medium uppercase tracking-wider">
+          <th id="table-released" class="px-6 py-3 text-center text-lg font-medium uppercase tracking-wider">
             <a href="?sort_by=released{% if current_sort_by == 'released' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Released
               {% if current_sort_by == 'released' %}
                 {% if current_sort_direction == 'asc' %}
@@ -105,8 +105,8 @@
             <a href="{{base_url|add:release.uri}}" class="text-left text-base font-medium" target="_blank"
               rel="noopener noreferrer">{{ release.title }}</a>
           </td>
-          <td id="table-year" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
-            {{ release.released }}
+          <td id="table-released" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+            {{ release.released.year }}
           </td>
           <td id="table-album-cover" class="px-6 py-4 whitespace-nowrap">
             <img src="{{ release.thumb }}" alt="Album Cover" class="h-20 w-20 rounded-full mx-auto object-contain" />

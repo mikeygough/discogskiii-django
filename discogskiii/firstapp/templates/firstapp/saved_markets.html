@@ -16,8 +16,8 @@
             <th class="px-6 py-3 text-left text-lg font-medium uppercase tracking-wider">
               Album Title
             </th>
-            <th id="table-year" class="px-6 py-3 text-center text-lg font-medium uppercase tracking-wider">
-              Year
+            <th id="table-released" class="px-6 py-3 text-center text-lg font-medium uppercase tracking-wider">
+              Released
             </th>
             <th id="table-album-cover" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider"></th>
             <th id="table-view-markets" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider"></th>
@@ -30,8 +30,8 @@
               <a href="{{base_url|add:market.market.uri}}" class="text-left text-base font-medium" target="_blank"
                 rel="noopener noreferrer">{{ market.market.master.title }}</a>
             </td>
-            <td id="table-year" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
-              {{ market.market.released }}
+            <td id="table-released" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+              {{ market.market.released.year }}
             </td>
             <td id="table-album-cover" class="px-6 py-4 whitespace-nowrap">
               <img src="{{ market.market.thumb }}" alt="Album Cover" class="h-20 w-20 rounded-full mx-auto object-contain" />
