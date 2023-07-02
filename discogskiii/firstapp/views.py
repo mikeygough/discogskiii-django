@@ -143,18 +143,9 @@ def saved_markets(request):
 
     # get saved markets
     saved_markets = SavedMarkets.objects.filter(user=request.user)
-    print("saved_markets", saved_markets)
-    # get main releases
-    main_releases_reference = list(saved_markets.values_list("market", flat=True))
-    print("main_releases_reference", main_releases_reference)
-    master_release_ids = list(MainRelease.objects.filter(pk__in=main_releases_reference).values_list("master", flat=True))
-    print(master_release_ids)
-    artist_releases = MasterRelease.objects.filter(pk__in=master_release_ids)
-    print(artist_releases)
 
     return render(request, "firstapp/saved_markets.html", {
-        "saved_markets": saved_markets,
-        "artist_releases": artist_releases
+        "saved_markets": saved_markets
     })
 
 
@@ -276,7 +267,7 @@ def artist_releases(request, artist):
 
     print(sort_direction)
 
-    return render(request, "firstapp/artist_releases.html", {
+    return render(request, "firstapp/artist_releasess.html", {
         "artist": artist,
         "main_release_data": main_release_data,
         "current_sort_by": sort_by,
@@ -284,7 +275,7 @@ def artist_releases(request, artist):
     })
 
 
-# artist release statistics
+# artist release statistics - IN DEVELOPMENT
 def artist_release_statistics(request, artist):
     # cached, load from database
     artist_releases = MasterRelease.objects.filter(artist=artist)
@@ -305,34 +296,6 @@ def release_market(request, artist, release_id):
     # get master_release
     master_release = main_release.master
     master_release_id = master_release.master_id
-    # get listing ids
-    # marketplace_listing_ids represent the original pressings available for sale
-    # we obtain this by webscraping discogs each time because markets change
-    marketplace_listing_ids = get_listing_ids(release_id)
-    
-    marketplace_listings = asyncio.run(get_marketplace_listings_async(marketplace_listing_ids=marketplace_listing_ids))
-    
-    # sort by price
-    try:
-        marketplace_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)
-    except:
-        pass
-
-    # clean up
-    for listing in marketplace_listings:
-        # currency
-        try:
-            listing["price"]["value"] = format_currency(listing["price"]["value"])
-        except KeyError:
-            pass
-        # date
-        try:
-            listing["posted"] = format_date(listing["posted"])
-        except KeyError:
-            pass
-    
-    saved = SavedMarkets.objects.filter(user=request.user,
-                                        market=main_release).exists()
 
     if request.method == "POST":
         saved_response = request.POST["savebtn"]
@@ -347,19 +310,42 @@ def release_market(request, artist, release_id):
                                         market=main_release)
             saved = True
         
-        return render(request, "firstapp/release_market.html", {
-        "artist": artist,
-        "master_release": master_release,
-        "master_release_id": master_release_id,
-        "main_release_id": main_release_id,
-        "marketplace_listings": marketplace_listings,
-        "saved": saved
-        })
+        return HttpResponseRedirect(reverse("firstapp:release_market", args=(artist, release_id,)))
     else:
+        # get listing ids
+        # marketplace_listing_ids represent the original pressings available for sale
+        # we obtain this by webscraping discogs each time because markets change
+        marketplace_listing_ids = get_listing_ids(release_id)
+        
+        marketplace_listings = asyncio.run(get_marketplace_listings_async(marketplace_listing_ids=marketplace_listing_ids))
+        
+        # sort by price
+        try:
+            marketplace_listings = sorted(marketplace_listings, key=lambda d: d["price"]["value"], reverse=True)
+        except:
+            pass
+
+        # clean up
+        for listing in marketplace_listings:
+            # currency
+            try:
+                listing["price"]["value"] = format_currency(listing["price"]["value"])
+            except KeyError:
+                pass
+            # date
+            try:
+                listing["posted"] = format_date(listing["posted"])
+            except KeyError:
+                pass
+        
+        saved = SavedMarkets.objects.filter(user=request.user,
+                                            market=main_release).exists()
+        
         return render(request, "firstapp/release_market.html", {
             "artist": artist,
             "master_release": master_release,
             "master_release_id": master_release_id,
+            "main_release": main_release,
             "main_release_id": main_release_id,
             "marketplace_listings": marketplace_listings,
             "saved": saved
