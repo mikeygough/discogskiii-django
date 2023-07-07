@@ -13,14 +13,14 @@
       <table class="min-w-full divide-y divide-gray-200">
         <thead>
           <tr class="bg-gradient-to-r bg-gray-200 text-gray-800">
-            <th class="px-6 py-3 text-left text-lg font-medium uppercase tracking-wider">
+            <th class="px-6 py-3 text-left text-xs font-medium uppercase whitespace-nowrap">
               Album Title
             </th>
-            <th id="table-released" class="px-6 py-3 text-center text-lg font-medium uppercase tracking-wider">
+            <th id="table-released" class="px-6 py-3 text-center text-xs font-medium uppercase hidden md:table-cell whitespace-nowrap">
               Released
             </th>
-            <th id="table-album-cover" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider"></th>
-            <th id="table-view-markets" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider"></th>
+            <th id="table-album-cover" class="px-6 py-3 text-center text-xs font-medium uppercase hidden xl:table-cell whitespace-nowrap"></th>
+            <th id="table-view-markets" class="px-6 py-3 text-center text-xs font-medium uppercase whitespace-nowrap"></th>
           </tr>
         </thead>
         <tbody>
@@ -30,13 +30,13 @@
               <a href="{{base_url|add:market.market.uri}}" class="text-left text-base font-medium" target="_blank"
                 rel="noopener noreferrer">{{ market.market.master.title }}</a>
             </td>
-            <td id="table-released" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+            <td id="table-released" class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium hidden md:table-cell">
               {{ market.market.released.year }}
             </td>
-            <td id="table-album-cover" class="px-6 py-4 whitespace-nowrap">
+            <td id="table-album-cover" class="px-6 py-4 whitespace-nowrap hidden xl:table-cell">
               <img src="{{ market.market.thumb }}" alt="Album Cover" class="h-20 w-20 rounded-full mx-auto object-contain" />
             </td>
-            <td id="table-view-markets" class="px-6 py-4 whitespace-nowrap">
+            <td id="table-view-markets" class="px-6 py-4 whitespace-nowrap text-sm text-center font-medium">
               <a href="{% url 'firstapp:release_market' market.market.master.artist market.market.main_id %}"
                 class="inline-block px-4 py-2 bg-gradient-to-r from-yellow-400 to-yellow-600 text-gray-800 font-bold rounded-lg hover:text-white">View
                 Markets</a>
