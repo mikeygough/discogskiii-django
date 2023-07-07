@@ -27,7 +27,7 @@
               {% endif %}
             </a>
           </th>
-          <th id="table-released" class="px-6 py-3 text-center text-lg font-medium uppercase tracking-wider">
+          <th id="table-released" class="px-6 py-3 text-center text-lg font-medium uppercase tracking-wider hidden md:table-cell">
             <a href="?sort_by=released{% if current_sort_by == 'released' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Released
               {% if current_sort_by == 'released' %}
                 {% if current_sort_direction == 'asc' %}
@@ -38,8 +38,8 @@
               {% endif %}
             </a>
           </th>
-          <th id="table-album-cover" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider"></th>
-          <th id="table-community-have" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
+          <th id="table-album-cover" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider hidden xl:table-cell"></th>
+          <th id="table-community-have" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider hidden lg:table-cell">
             <a href="?sort_by=community_have{% if current_sort_by == 'community_have' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Community "Have"
               {% if current_sort_by == 'community_have' %}
                 {% if current_sort_direction == 'asc' %}
@@ -50,7 +50,7 @@
               {% endif %}
             </a>
           </th>
-          <th id="table-community-want" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
+          <th id="table-community-want" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider hidden lg:table-cell">
             <a href="?sort_by=community_want{% if current_sort_by == 'community_want' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Community "Want"
               {% if current_sort_by == 'community_want' %}
                 {% if current_sort_direction == 'asc' %}
@@ -61,7 +61,7 @@
               {% endif %}
             </a>
           </th>
-          <th id="table-community-demand_score" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider">
+          <th id="table-community-demand_score" class="px-6 py-3 text-center text-xs font-medium uppercase tracking-wider hidden md:table-cell">
             <a href="?sort_by=community_demand_score{% if current_sort_by == 'community_demand_score' %}{% if current_sort_direction == 'asc' %}&sort_direction=desc{% else %}&sort_direction=asc{% endif %}{% endif %}">Community "Demand Score"
               {% if current_sort_by == 'community_demand_score' %}
                 {% if current_sort_direction == 'asc' %}
@@ -105,19 +105,19 @@
             <a href="{{base_url|add:release.uri}}" class="text-left text-base font-medium" target="_blank"
               rel="noopener noreferrer">{{ release.title }}</a>
           </td>
-          <td id="table-released" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+          <td id="table-released" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium hidden md:table-cell">
             {{ release.released.year }}
           </td>
-          <td id="table-album-cover" class="px-6 py-4 whitespace-nowrap">
+          <td id="table-album-cover" class="px-6 py-4 whitespace-nowrap hidden xl:table-cell">
             <img src="{{ release.thumb }}" alt="Album Cover" class="h-20 w-20 rounded-full mx-auto object-contain" />
           </td>
-          <td id="table-community-have" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+          <td id="table-community-have" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium hidden lg:table-cell">
             {{ release.community_have }}
           </td>
-          <td id="table-community-want" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+          <td id="table-community-want" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium hidden lg:table-cell">
             {{ release.community_want }}
           </td>
-          <td id="table-community-demand-score" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
+          <td id="table-community-demand-score" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium hidden md:table-cell">
             {{ release.community_demand_score }}
           </td>
           <td id="table-num-for-sale" class="px-6 py-4 whitespace-nowrap text-base text-center font-medium">
