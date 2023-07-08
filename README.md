@@ -62,6 +62,7 @@ Features I would like to include in the project:
     
 * __DONE__ - Tailwind CSS Styling
 * __DONE__ - Artist Release Sorting
+* __DONE__ - Multiple Device Optimations
 * __Subscribe to Market__ - I see this as a kind of challenge feature because I'm really not sure how to build it. I'd like a user to be able to subscribe to a market and receive updates when that market changes. I.E. a new offer is placed in the market. I think that [Django has their own email service](https://docs.djangoproject.com/en/4.2/topics/email/).
 * __Market Statistics__ - See new listings, order books with the highest price, lowest price, most orders, etc.
 Thinking through the implementation of this feature... How am I going to get all the data I'll need? It's probably too many requests to try and get all release statistics for every release by an artist... Even if I were to cache them all, it would probably take too long to spin up. What are my other options? I guess the stats I can reliable get are ones available via the API (as opposed to scraping). These include:
@@ -73,7 +74,6 @@ Thinking through the implementation of this feature... How am I going to get all
     
     I have an idea to make this better... Rather than slowing everything down by trying to get the sale information for every record, I don't have to! First I can just make a request to check if there are any for sale... Then of those available for sale I can see the listing information... How many Sun Ra original pressings might be available at any given time? My guess is not too many... That's why they're original pressings and rare!
 
-* __Multiple Device Optimations__ - App should render and function flawlessly on all device types.
 * __React Components__ - Implement at least one React component! But I might kick this down the road since it may be more beneficial to finish my React course before I start slinging around sloppy code.
 
 
@@ -255,6 +255,18 @@ AUTH_USER_MODEL = "APP_NAME.User"
 Add HTML:
 
 Create PROJECT_NAME/APP_NAME/templates/APP_NAME/index.html
+
+<br>
+
+---
+
+<br>
+
+### Helpful Django Documentation
+
+[Models](https://docs.djangoproject.com/en/4.2/topics/db/models/)
+
+[Queries](https://docs.djangoproject.com/en/4.2/topics/db/queries/)
 
 <br>
 
