@@ -8,17 +8,12 @@ class User(AbstractUser):
 
 class MasterRelease(models.Model):
     ''' represents the master pressing '''
-    # for all of these charfields, I should really be more thoughtful about max_length.
-    # to more efficiently design my database I should consider reviewing all data and seeing what max lengths are then adjust
-    # the fields accordingly.
     artist = models.CharField(max_length=240)
     master_id = models.CharField(max_length=15)
     title = models.CharField(max_length=240)
-    # is there maybe a URL field?
     uri = models.CharField(max_length=500)
     # think about changing this to models.DateField() since we order by it
     year = models.CharField(max_length=10)
-    # is there maybe a URL field?
     thumb = models.CharField(max_length=500)
 
     def __str__(self):
@@ -28,7 +23,6 @@ class MasterRelease(models.Model):
 class MainRelease(models.Model):
     ''' represents the main release (original pressing) '''
     main_id = models.CharField(max_length=15)
-    # is there maybe a URL field?
     uri = models.CharField(max_length=500)
     community_have = models.IntegerField(default=0)
     community_want = models.IntegerField(default=0)
@@ -37,9 +31,9 @@ class MainRelease(models.Model):
     lowest_price = models.DecimalField(max_digits=10, decimal_places=2, default=0, null=True)
     title = models.CharField(max_length=240)
     released = models.DateField()
-    # is there maybe a URL field?
     thumb = models.CharField(max_length=500)
-    # should this be a one-to-one relationship instead of the current many-to-one relationship?
+    # should this be a one-to-one relationship instead of the current foreignkey relationship?
+    # django's documentation suggests that foreign keys be the related model name in lowercase, masterrelease
     master = models.ForeignKey(MasterRelease, on_delete=models.CASCADE)
 
     def __str__(self):

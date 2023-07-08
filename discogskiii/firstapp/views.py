@@ -220,12 +220,6 @@ def artist_releases(request, artist):
                     main_release['community_demand_score'] = round(main_release['community_want'] / main_release['community_have'], 2)
                 except:
                     main_release['community_demand_score'] = None
-                # format currency
-                # try:
-                #     main_release['lowest_price'] = format_currency(main_release['lowest_price'])
-                # except:
-                #     pass
-                # format date
                 try:
                     main_release['released'] = dateparser.parse(main_release['released'][:4])
                 except:
@@ -280,19 +274,6 @@ def artist_releases(request, artist):
         "main_release_data": main_release_data,
         "current_sort_by": sort_by,
         "current_sort_direction": sort_direction
-    })
-
-
-# artist release statistics - IN DEVELOPMENT
-def artist_release_statistics(request, artist):
-    # cached, load from database
-    artist_releases = MasterRelease.objects.filter(artist=artist)
-    main_release_data = MainRelease.objects.filter(master__in=artist_releases)
-    print("Main Release Data Already Cached!, Enjoy!")
-    
-    return render(request, "firstapp/artist_release_statistics.html", {
-        "artist": artist,
-        "main_release_data": main_release_data
     })
 
 
@@ -360,3 +341,14 @@ def release_market(request, artist, release_id):
         })
 
 
+# artist release statistics - IN DEVELOPMENT
+def artist_release_statistics(request, artist):
+    # cached, load from database
+    artist_releases = MasterRelease.objects.filter(artist=artist)
+    main_release_data = MainRelease.objects.filter(master__in=artist_releases)
+    print("Main Release Data Already Cached!, Enjoy!")
+    
+    return render(request, "firstapp/artist_release_statistics.html", {
+        "artist": artist,
+        "main_release_data": main_release_data
+    })
