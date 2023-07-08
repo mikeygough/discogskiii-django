@@ -285,6 +285,8 @@ def release_market(request, artist, release_id):
     # get master_release
     master_release = main_release.master
     master_release_id = master_release.master_id
+    # store original pressings market site
+    market_site = f"{SITE_BASE_URL}/sell/release/{release_id}"
 
     if request.method == "POST":
         saved_response = request.POST["savebtn"]
@@ -337,7 +339,8 @@ def release_market(request, artist, release_id):
             "main_release": main_release,
             "main_release_id": main_release_id,
             "marketplace_listings": marketplace_listings,
-            "saved": saved
+            "saved": saved,
+            "market_site": market_site
         })
 
 
