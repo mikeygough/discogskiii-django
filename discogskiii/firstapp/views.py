@@ -176,8 +176,8 @@ def artist_releases(request, artist):
             master_main_release_ids.append(results)
             print(f"{len(master_ids) - (len(master_main_release_ids)*chunk_size)} Master & Main Release IDs Remaining")
             # sleep to not trigger request limit
-            print("Sleeping for 3 seconds")
-            time.sleep(3)
+            print("Sleeping for 5 seconds")
+            time.sleep(5)
         
         # format (flatten list of lists to just be list of dicts)
         master_main_release_ids = list(itertools.chain.from_iterable(master_main_release_ids))
@@ -198,8 +198,8 @@ def artist_releases(request, artist):
             main_release_data.append(results)
             print(f"{len(master_main_release_ids) - (len(main_release_data)*chunk_size)} Main Release Datum Remaining")
             # sleep to not trigger request limit
-            print("Sleeping for 3 seconds")
-            time.sleep(3)
+            print("Sleeping for 5 seconds")
+            time.sleep(5)
 
         # format format (flatten list of lists to just be list of dicts)
         main_release_data = list(itertools.chain.from_iterable(main_release_data))
