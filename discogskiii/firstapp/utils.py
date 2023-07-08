@@ -11,9 +11,6 @@ from datetime import datetime
 import asyncio
 import aiohttp
 
-# import models
-from firstapp.models import MasterRelease
-
 
 def search_artist_database(artist, page=1, per_page=100):
     ''' REQUIRES AUTHENTICATION
@@ -235,11 +232,7 @@ async def get_wantlist_release_statistics_async(release_ids):
 def get_listing_ids(release_id):
     ''' given a release_id, returns a list of listings of that release_id for sale.
         listings are records which are available for sale.
-        helpful for obtaining original pressings which are listed for sale.
-        
-        BEWARE this is only capable of returning the first page of results (25 listings) '''
-
-    # **** ----- would like to improve performance here ----- **** #
+        helpful for obtaining original pressings which are listed for sale. '''
     
     # create UserAgent
     ua = UserAgent()
@@ -319,9 +312,6 @@ def get_artist_releases(artist):
         # get data
         response_json = search_artist_database(artist, page=page, per_page=100)
 
-        # **** ----- I WONDER IF IT'D BE FASTER JUST TO STORE THE ENTIRE RESPONSE, RATHER THAN GRAB ATTRIBUTES ----- **** #
-        # **** ----- I'D JUST NEED TO REMEMBER TO CREATE A DICT FOR EACH RESPONSE, OR REMOVE THE OUTER RESULTS DICT/LIST THING ----- **** #
-
         # store artist, master_id, title, uri, year and thumbnail
         for result in response_json["results"]:
             if "Unofficial Release" not in result["format"]:
@@ -348,9 +338,8 @@ def get_artist_releases(artist):
     # convert the unique frozensets back to dictionaries
     unique_vinyls = [dict(t) for t in unique_set]
 
-    # **** ----- I MIGHT BE BETTER OFF SORTING FROM THE DB REQUEST ----- **** #
     # sort
-    sorted_unique_vinyls = sorted(vinyls, key=lambda x: x['year'])
+    sorted_unique_vinyls = sorted(unique_vinyls, key=lambda x: x['year'])
 
     # return a list of sorted, unique dictionaries where
     # each dict represents an artist's master release

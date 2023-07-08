@@ -244,7 +244,7 @@ def artist_releases(request, artist):
         print("Database Initialized, Enjoy!")
     else:
         print("Main Release Data Already Cached!, Enjoy!")
-
+        
         # I think that I need to run some checks here...
         # Right now it's possible that release markets change (for example, a new listing is added
         # at a new lower price) and my table won't properly reflect this since the cache check passes
