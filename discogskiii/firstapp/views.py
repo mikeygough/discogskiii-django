@@ -144,9 +144,15 @@ def saved_markets(request):
     # get saved markets
     saved_markets = SavedMarkets.objects.filter(user=request.user)
 
-    return render(request, "firstapp/saved_markets.html", {
-        "saved_markets": saved_markets
-    })
+    if request.method == "POST":
+        market_id = request.POST.get('market_id')
+        # remove saved market from database
+        SavedMarkets.objects.get(id=market_id).delete()
+        return HttpResponseRedirect(reverse("firstapp:saved_markets"))
+    else:
+        return render(request, "firstapp/saved_markets.html", {
+            "saved_markets": saved_markets
+        })
 
 
 # all releases by an arist
@@ -245,17 +251,17 @@ def artist_releases(request, artist):
     else:
         print("Main Release Data Already Cached!, Enjoy!")
 
-        # I think that I need to run some checks here...
+    # get main_release_data from database
+    main_release_data = MainRelease.objects.filter(master__in=artist_releases)
+
+    # I think that I need to run some checks here...
         # Right now it's possible that release markets change (for example, a new listing is added
         # at a new lower price) and my table won't properly reflect this since the cache check passes
         # and my app will just load everything from the Database.
         # I guess what I can do is check is the num_for_sale count differs.
         # Really I'd love to know if the page was updated (record sold, added, or price changed)
         # But I don't think this data is currently available via any Discogs API response.
-
-    # get main_release_data from database
-    main_release_data = MainRelease.objects.filter(master__in=artist_releases)
-
+    
     # check for stale data by comparing values
     # count = 0
     # update_count = 0
