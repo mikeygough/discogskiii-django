@@ -1,6 +1,19 @@
 # discogskiii-django
 Discogskiii is a web app and order book for vinyl records available for sale on [Discogs](https://www.discogs.com/)!
 
+### Distinctiveness and Complexity
+Discogskiii is distinct and complex given its usage of the Discogs API, asynchronous functions, tailwind CSS styling, and features. 
+
+The application relies heavily on a third-party API and leverages clever asynchronous functions and caching to ensure a speedy, reliable user experience. On boot, the application makes hundres of API requests to initialize its database. That data is then cached and updated as the user navigates the site. Additionally data is subsequently requested from the API when necessary or scraped from the site when needed information is not provided by the official API. To beautify the user experience, Discogskiii is styled with the class-based Tailwind CSS framework.
+
+Discogskiii extends the useful of its source site by allowing users to view all original pressings of a given artist and immediately access the markets of those original pressings. This saves serious collectors time by having to sift through an artist's release catalogue or constantly refresh the Discogs market page. Additionally, it allows savy collectors to catch market anomolies or listers to determine a fair price. An ability to "Save Market"s ensures users even faster access to the markets they are most interested in.
+
+<br>
+
+---
+
+<br>
+
 ### High-Level Overview
 [Discogs](https://www.discogs.com/) is a music database and marketplace.
 
