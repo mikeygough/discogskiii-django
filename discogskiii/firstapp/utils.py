@@ -83,6 +83,18 @@ async def get_master_main_release_ids_async(master_ids):
         return main_release_id_results
 
 
+def get_main_release_data(release_id):
+    ''' REQUIRES AUTHENTICATION
+        given a release_id, return a dictionary with all the data needed to construct a new MainRelease model:
+        artist, title, uri, main_id, num_for_sale, lowest_price, [community][want] and [community][have]. '''
+    
+    # get data as json
+    response_json = json.loads(requests.get(f"{API_BASE_URL}/releases/{release_id}",
+                         headers=AUTHENTICATION_HEADER).text)
+    
+    return response_json
+
+
 async def get_main_release_data_async(release_ids):
     ''' REQUIRES AUTHENTICATION
         given a list of release_ids, return a list of dicts with all the data needed to construct
@@ -198,36 +210,6 @@ async def get_release_statistics_async(release_ids):
         # return list of release statistics
         return release_statistic_results
     
-
-async def get_wantlist_release_statistics_async(release_ids):
-    ''' REQUIRES AUTHENTICATION
-        given a list of release_ids, return a list of tuples. each tuple represents an originall pressing.
-        the first item is the community 'have' count, the second item is the community 'want' count. '''
-    
-    # initialize results list
-    release_wantlist_statistic_results = []
-
-    async with aiohttp.ClientSession() as session:
-        # initialize list of tasks
-        tasks = []
-        for release_id in release_ids:
-            # create and append tasks (API request)
-            tasks.append(session.get(f"{API_BASE_URL}/releases/{release_id}",
-                         headers=AUTHENTICATION_HEADER,
-                         ssl=False))
-        
-        # request
-        responses = await asyncio.gather(*tasks)
-
-        # append results
-        for response in responses:
-            result = await response.json()
-            release_wantlist_statistic_results.append(result)
-
-        release_wantlist_statistic_results = [(d["community"]["have"], d["community"]["want"]) for d in release_wantlist_statistic_results]
-        # return list of release wantlist statistics
-        return release_wantlist_statistic_results
-
 
 def get_listing_ids(release_id):
     ''' given a release_id, returns a list of listings of that release_id for sale.

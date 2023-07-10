@@ -244,7 +244,7 @@ def artist_releases(request, artist):
         print("Database Initialized, Enjoy!")
     else:
         print("Main Release Data Already Cached!, Enjoy!")
-        
+
         # I think that I need to run some checks here...
         # Right now it's possible that release markets change (for example, a new listing is added
         # at a new lower price) and my table won't properly reflect this since the cache check passes
@@ -256,6 +256,43 @@ def artist_releases(request, artist):
     # get main_release_data from database
     main_release_data = MainRelease.objects.filter(master__in=artist_releases)
 
+    # check for stale data by comparing values
+    # count = 0
+    # update_count = 0
+    # for release in main_release_data:
+    #     if count % 5 == 0 and count != 0:
+    #         print("sleeping for 5")
+    #         time.sleep(5)
+    #     print(f"Checking for stale data {release.title}")
+    #     new_data = get_main_release_data(release.main_id)
+
+    #     print(f"DB Num for Sale {release.num_for_sale}")
+    #     print(f"DB Num for Sale Type {type(release.num_for_sale)}")
+    #     print(f"DB Lowest Price {release.lowest_price}")
+    #     print(f"DB Lowest Price Type {type(release.lowest_price)}")
+
+    #     print(f"Response Num for Sale {new_data['num_for_sale']}")
+    #     print(f"Response Num for Sale Type {type(new_data['num_for_sale'])}")
+    #     print(f"Response Lowest Price {new_data['lowest_price']}")
+    #     print(f"Response Lowest Price Tyepe {type(new_data['lowest_price'])}")
+
+    #     # check for Nonetypes, do type conversion if not
+    #     if (new_data["num_for_sale"] is None or release.num_for_sale is None or
+    #         float(new_data["num_for_sale"]) == float(release.num_for_sale)) and \
+    #         (new_data["lowest_price"] is None or release.lowest_price is None or
+    #         float(new_data["lowest_price"]) == float(release.lowest_price)):
+    #         print("Data not stale!")
+    #     else:
+    #         print("Data is stale, should be updated")
+    #         print(f"Updating {release.title}")
+    #         record = MainRelease.objects.get(main_id=release.main_id)
+    #         record.num_for_sale=new_data["num_for_sale"]
+    #         record.lowest_price=new_data["lowest_price"]
+    #         record.save()
+    #         update_count += 1
+    #     count += 1
+
+    # print(f"Updated {update_count} records")
     # get sort parameter
     sort_by = request.GET.get('sort_by')
     sort_direction = request.GET.get('sort_direction', 'asc')
@@ -266,8 +303,6 @@ def artist_releases(request, artist):
             main_release_data = main_release_data.order_by(sort_by)
         elif sort_direction == 'desc':
             main_release_data = main_release_data.order_by(f'-{sort_by}')
-
-    print(sort_direction)
 
     return render(request, "firstapp/artist_releases.html", {
         "artist": artist,
