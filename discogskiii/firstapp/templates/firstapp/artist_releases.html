@@ -6,12 +6,13 @@
       {{ artist }}
     </h1>
     <p class="text-left sm:text-center ml-6 sm:ml-0">
-      <p class="text-left sm:text-center ml-6 sm:ml-0">
-        <span class="text-xl" style="font-family: 'Pacifico', cursive;">
-         Original Pressings
-        </span>
-      </p>
+      <span class="text-xl" style="font-family: 'Pacifico', cursive;">
+        Original Pressings
+      </span>
     </p>
+    <p class="text-left sm:text-center ml-6 sm:ml-0 mt-2">
+      <a href="{% url 'firstapp:artist_release_statistics' artist %}" class="inline-block px-4 py-2 text-gray-800 font-bold rounded-lg hover:text-white">View Statistics</a>
+    <p>
   </div>
 </div>
 
