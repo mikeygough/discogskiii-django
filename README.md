@@ -8,6 +8,37 @@ The application relies heavily on a third-party API and leverages clever asynchr
 
 Discogskiii extends the useful of its source site by allowing users to view all original pressings of a given artist and immediately access the markets of those original pressings. This saves serious collectors time by having to sift through an artist's release catalogue or constantly refresh the Discogs market page. Additionally, it allows savy collectors to catch market anomolies or listers to determine a fair price. An ability to "Save Market"s ensures users even faster access to the markets they are most interested in.
 
+#### How to Run Discogskiii
+To run Discogskiii, you'll need an account with Discogs and API access. Then, fork this project and create utils.py file. Add the following to the file with your respective consumer_key and consumer_secret.
+
+CONSUMER_KEY = ''
+CONSUMER_SECRET = ''
+SITE_BASE_URL = "https://www.discogs.com"
+API_BASE_URL = "https://api.discogs.com"
+AUTHENTICATION_HEADER = {
+    "Authorization": f"Discogs key={CONSUMER_KEY}, secret={CONSUMER_SECRET}",
+}
+
+Run your Django migrations, then start the app and you're good to go! 
+
+By default, the app ships with only a few artist_markets. This can be configured by the user by adjusting line 21 in views.py. Simply add the artists you would like to make available. By default, supported markets are:
+
+artist_markets = [
+    "Sun Ra",
+    "John Coltrane",
+    "Miles Davis",
+    "Alice Coltrane",
+    "Lee Morgan",
+    "Coleman Hawkins",
+    "Art Blakey"
+]
+
+Adjust this list how you like then rerun the server. Please note, the design of this application is to do all the heavy lifting (API request) at app initialization. While this application is fast, Discogs has a request limiter which greatly slows things down. App start-up could take several minutes to initialize the database with all master releases for however many artists are in the artist_markets list. This long-load only occurs once, when the app is run for the first time.
+
+After data is fetched, a user can click on an artist from the homepage. This will load their artist_releases page which shows all their vinyl releases along with community and market statistics. This page-load will also take several minutes to run as Discogskiii requests pertinent information for every record. Again, this long-load only occurs once, when a user visits an artist for the first time.
+
+After those two initialize steps are complete the application is good to go.
+
 <br>
 
 ---
