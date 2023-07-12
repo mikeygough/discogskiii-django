@@ -12,9 +12,13 @@ Discogskiii extends the useful of its source site by allowing users to view all 
 To run Discogskiii, you'll need an account with Discogs and API access. Then, fork this project and create utils.py file. Add the following to the file with your respective consumer_key and consumer_secret.
 
 CONSUMER_KEY = ''
+
 CONSUMER_SECRET = ''
+
 SITE_BASE_URL = "https://www.discogs.com"
+
 API_BASE_URL = "https://api.discogs.com"
+
 AUTHENTICATION_HEADER = {
     "Authorization": f"Discogs key={CONSUMER_KEY}, secret={CONSUMER_SECRET}",
 }
