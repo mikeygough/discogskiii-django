@@ -19,6 +19,11 @@
 
   var data = {{ json_data | safe }};
 
+  // Filter out data points with NaN lowest_price
+  data = data.filter(function(d) {
+    return d.lowest_price !== null;
+  });
+
   // Set the dimensions and margins for the scatterplot
   var margin = { top: 20, right: 20, bottom: 30, left: 40 },
       width = 600 - margin.left - margin.right,
