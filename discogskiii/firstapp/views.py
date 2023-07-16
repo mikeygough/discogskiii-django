@@ -8,10 +8,15 @@ from django.http import HttpResponseRedirect
 from django.urls import reverse
 from firstapp.config import *
 from firstapp.utils import *
+import json
 import time
 import math
 import itertools
 import dateparser
+
+from django.core.serializers import serialize
+from decimal import Decimal
+from datetime import date
 
 
 # import models
@@ -384,15 +389,33 @@ def release_market(request, artist, release_id):
             "market_site": market_site
         })
 
+# Custom serializer for Decimal and date types
+class CustomJSONEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, Decimal):
+            return str(obj)  # Convert Decimal to string
+        elif isinstance(obj, date):
+            return obj.isoformat()  # Convert date to ISO format
+        return super().default(obj)
+
 
 # artist release statistics - IN DEVELOPMENT
 def artist_release_statistics(request, artist):
     # cached, load from database
     artist_releases = MasterRelease.objects.filter(artist=artist)
-    main_release_data = MainRelease.objects.filter(master__in=artist_releases)
+    main_release_data = list(MainRelease.objects.filter(master__in=artist_releases).values("released", "lowest_price"))
+
+    print(main_release_data)
+
+    # list(MasterRelease.objects.values_list("artist", flat=True).distinct())
     print("Main Release Data Already Cached!, Enjoy!")
+
+    json_data = json.dumps(main_release_data, cls=CustomJSONEncoder)
+
+    print(json_data)
     
     return render(request, "firstapp/artist_release_statistics.html", {
         "artist": artist,
-        "main_release_data": main_release_data
+        "main_release_data": main_release_data,
+        "json_data": json_data
     })

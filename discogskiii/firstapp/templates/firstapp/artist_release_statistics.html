@@ -1,5 +1,7 @@
 {% extends "firstapp/layout.html" %} {% block body %}
 
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
 <div class="bg-gradient-to-b from-yellow-400 to-yellow-600 text-gray-700 py-6">
   <div class="container mx-auto px-4">
     <h1 class="text-3xl font-bold text-left sm:text-center ml-6 sm:ml-0">
@@ -11,47 +13,76 @@
   </div>
 </div>
 
-<div id="container"></div>
-<script type="module">
+<div id="scatterplot-container"></div>
 
-import * as d3 from "https://cdn.jsdelivr.net/npm/d3@7/+esm";
+<script>
 
-// Declare the chart dimensions and margins.
-const width = 640;
-const height = 400;
-const marginTop = 20;
-const marginRight = 20;
-const marginBottom = 30;
-const marginLeft = 40;
+  var data = {{ json_data | safe }};
 
-// Declare the x (horizontal position) scale.
-const x = d3.scaleUtc()
-    .domain([new Date("2023-01-01"), new Date("2024-01-01")])
-    .range([marginLeft, width - marginRight]);
+  // Set the dimensions and margins for the scatterplot
+  var margin = { top: 20, right: 20, bottom: 30, left: 40 },
+      width = 600 - margin.left - margin.right,
+      height = 400 - margin.top - margin.bottom;
 
-// Declare the y (vertical position) scale.
-const y = d3.scaleLinear()
-    .domain([0, 100])
-    .range([height - marginBottom, marginTop]);
+  // Append the SVG element to the scatterplot container
+  var svg = d3.select("#scatterplot-container")
+      .append("svg")
+      .attr("width", width + margin.left + margin.right)
+      .attr("height", height + margin.top + margin.bottom)
+      .append("g")
+      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-// Create the SVG container.
-const svg = d3.create("svg")
-    .attr("width", width)
-    .attr("height", height);
+  // Set the x and y scales
+  var xScale = d3.scaleTime()
+      .domain(d3.extent(data, function(d) { return new Date(d.released); }))
+      .range([0, width]);
 
-// Add the x-axis.
-svg.append("g")
-    .attr("transform", `translate(0,${height - marginBottom})`)
-    .call(d3.axisBottom(x));
+  var yScale = d3.scaleLinear()
+      .domain([0, d3.max(data, function(d) { return d.lowest_price; })])
+      .range([height, 0]);
 
-// Add the y-axis.
-svg.append("g")
-    .attr("transform", `translate(${marginLeft},0)`)
-    .call(d3.axisLeft(y));
+  // Add x-axis
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(xScale));
 
-// Append the SVG element.
-container.append(svg.node());
+  // Add y-axis
+  svg.append("g")
+      .call(d3.axisLeft(yScale));
+
+  // Add dots to represent data points
+  svg.selectAll("circle")
+      .data(data)
+      .enter()
+      .append("circle")
+      .attr("cx", function(d) { return xScale(new Date(d.released)); })
+      .attr("cy", function(d) { return yScale(d.lowest_price); })
+      .attr("r", 5);
+
+  // Add labels to the dots
+  svg.selectAll("text")
+      .data(data)
+      .enter()
+      .append("text")
+      .text(function(d) { return d.lowest_price; })
+      .attr("x", function(d) { return xScale(new Date(d.released)); })
+      .attr("y", function(d) { return yScale(d.lowest_price) - 10; })
+      .attr("text-anchor", "middle");
+
+  // Add axis labels
+  svg.append("text")
+      .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 10) + ")")
+      .style("text-anchor", "middle")
+      .text("Released");
+
+  svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x", 0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Lowest Price");
 
 </script>
 
-{% endblock %}
+  {% endblock %}
