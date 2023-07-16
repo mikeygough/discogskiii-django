@@ -1,5 +1,14 @@
 {% extends "firstapp/layout.html" %} {% block body %}
 
+<style>
+  #tooltip {
+    position: absolute;
+    background-color: white;
+    padding: 10px;
+    border: 1px solid black;
+  }
+</style>
+
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <div class="bg-gradient-to-b from-yellow-400 to-yellow-600 text-gray-700 py-6">
@@ -13,7 +22,7 @@
   </div>
 </div>
 
-<div id="scatterplot-container"></div>
+<div id="scatterplot-container" class="container mx-auto>"</div>
 
 <script>
 
@@ -26,13 +35,13 @@
 
   // Set the dimensions and margins for the scatterplot
   var margin = { top: 20, right: 20, bottom: 30, left: 40 },
-      width = 600 - margin.left - margin.right,
+      width = window.innerWidth - margin.left - margin.right, // Use window.innerWidth for full width
       height = 400 - margin.top - margin.bottom;
 
   // Append the SVG element to the scatterplot container
   var svg = d3.select("#scatterplot-container")
       .append("svg")
-      .attr("width", width + margin.left + margin.right)
+      .attr("width", "100%")
       .attr("height", height + margin.top + margin.bottom)
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
@@ -43,7 +52,7 @@
       .range([0, width]);
 
   var yScale = d3.scaleLinear()
-      .domain([0, d3.max(data, function(d) { return d.lowest_price; })])
+      .domain([0, d3.max(data, function(d) { return +d.lowest_price; })]) // Convert to number with '+'
       .range([height, 0]);
 
   // Add x-axis
@@ -57,22 +66,30 @@
 
   // Add dots to represent data points
   svg.selectAll("circle")
-      .data(data)
-      .enter()
-      .append("circle")
-      .attr("cx", function(d) { return xScale(new Date(d.released)); })
-      .attr("cy", function(d) { return yScale(d.lowest_price); })
-      .attr("r", 5);
+    .data(data)
+    .enter()
+    .append("circle")
+    .attr("cx", function(d) { return xScale(new Date(d.released)); })
+    .attr("cy", function(d) { return yScale(+d.lowest_price); }) // Convert to number with '+'
+    .attr("r", 5)
+    .on("mouseover", function() {
+      // Display information about the record on hover
+      var hoveredData = d3.select(this).datum();
+      var x = xScale(new Date(hoveredData.released));
+      var y = yScale(+hoveredData.lowest_price);
 
-  // Add labels to the dots
-  svg.selectAll("text")
-      .data(data)
-      .enter()
-      .append("text")
-      .text(function(d) { return d.lowest_price; })
-      .attr("x", function(d) { return xScale(new Date(d.released)); })
-      .attr("y", function(d) { return yScale(d.lowest_price) - 10; })
-      .attr("text-anchor", "middle");
+      // Add a tooltip with the x and y value
+      d3.select("#scatterplot-container")
+        .append("div")
+        .attr("id", "tooltip")
+        .style("left", x + "px")
+        .style("top", y + "px")
+        .html("X: " + hoveredData.released + "<br/>Y: " + hoveredData.lowest_price);
+    })
+    .on("mouseout", function() {
+      // Remove the tooltip when the mouse is not hovering over a point
+      d3.select("#tooltip").remove();
+    });
 
   // Add axis labels
   svg.append("text")
