@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<div id="scatterplot-container" class="container mx-auto"></div>
+<div id="scatterplot-container" class="flex justify-center"></div>
 
 <script>
 
@@ -41,8 +41,8 @@
   // set circle radius
   const radius = 5;
 
-  const width = window.innerWidth;
-  const height = window.innerHeight;
+  const width = window.innerWidth*0.90;
+  const height = window.innerHeight*0.90;
 
   // Append the SVG element to the scatterplot container
   var svg = d3.select("#scatterplot-container")
