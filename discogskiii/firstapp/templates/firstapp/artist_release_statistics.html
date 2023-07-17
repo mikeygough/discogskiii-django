@@ -1,14 +1,5 @@
 {% extends "firstapp/layout.html" %} {% block body %}
 
-<style>
-  #tooltip {
-    position: absolute;
-    background-color: white;
-    padding: 10px;
-    border: 1px solid black;
-  }
-</style>
-
 <script src="https://d3js.org/d3.v7.min.js"></script>
 
 <div class="bg-gradient-to-b from-yellow-400 to-yellow-600 text-gray-700 py-6">
@@ -22,11 +13,13 @@
   </div>
 </div>
 
-<div id="scatterplot-container" class="container mx-auto>"</div>
+<div id="scatterplot-container" class="container mx-auto"></div>
 
 <script>
 
   var data = {{ json_data | safe }};
+  console.log("data");
+  console.log(data);
 
   // Filter out data points with NaN lowest_price
   data = data.filter(function(d) {
@@ -39,7 +32,7 @@
       height = 400 - margin.top - margin.bottom;
 
   // set x and y
-  const xValue = (d) => Date(d.released);
+  const xValue = (d) => new Date(d.released);
   const yValue = (d) => +d.lowest_price;
 
   // set circle radius
@@ -54,11 +47,11 @@
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
   const x = d3.scaleTime()
-    .domain(extent(data, xValue))
+    .domain(d3.extent(data, xValue))
     .range([0, width]);
 
   const y = d3.scaleLinear()
-    .domain(extent(data, yValue))
+    .domain(d3.extent(data, yValue))
     .range([height, 0]);
 
   const marks = data.map(d => ({
@@ -89,7 +82,7 @@
 
   // Add dots to represent data points
   svg.selectAll("circle")
-    .data(marks
+    .data(marks)
     .join('circle')
     .attr("cx", (d) => d.x)
     .attr("cy", (d) => d.y)
