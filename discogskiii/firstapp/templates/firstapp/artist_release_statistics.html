@@ -27,9 +27,12 @@
   });
 
   // Set the dimensions and margins for the scatterplot
-  var margin = { top: 20, right: 20, bottom: 30, left: 40 },
-      width = window.innerWidth - margin.left - margin.right, // Use window.innerWidth for full width
-      height = 400 - margin.top - margin.bottom;
+  const margin = {
+    top: 20,
+    right: 20,
+    bottom: 50,
+    left: 50,
+  };
 
   // set x and y
   const xValue = (d) => new Date(d.released);
@@ -38,21 +41,22 @@
   // set circle radius
   const radius = 5;
 
+  const width = window.innerWidth;
+  const height = window.innerHeight;
+
   // Append the SVG element to the scatterplot container
   var svg = d3.select("#scatterplot-container")
       .append("svg")
-      .attr("width", "100%")
-      .attr("height", height + margin.top + margin.bottom)
-      .append("g")
-      .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+      .attr("width", width)
+      .attr("height", height)
 
   const x = d3.scaleTime()
     .domain(d3.extent(data, xValue))
-    .range([0, width]);
+    .range([margin.left, width - margin.right]);
 
   const y = d3.scaleLinear()
     .domain(d3.extent(data, yValue))
-    .range([height, 0]);
+    .range([height - margin.bottom, margin.top]);
 
   const marks = data.map(d => ({
     x: x(xValue(d)),
@@ -60,21 +64,17 @@
     title: `( ${xValue(d)}, ${yValue(d)} ) `,
   }));
 
+  // y axis
+  svg
+    .append("g")
+    .attr('transform', `translate(${margin.left}, 0)`)
+    .call(d3.axisLeft(y));
 
-  
-      // Set the x and y scales
-  // var xScale = d3.scaleTime()
-  //     .domain(d3.extent(data, function(d) { return new Date(d.released); }))
-  //     .range([0, width]);
-
-  // var yScale = d3.scaleLinear()
-  //     .domain([0, d3.max(data, function(d) { return +d.lowest_price; })]) // Convert to number with '+'
-  //     .range([height, 0]);
-
-  // Add x-axis
-  svg.append("g")
-      .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(x));
+  // x axis
+  svg 
+    .append('g')
+    .attr('transform', `translate(0, ${height - margin.bottom})`)
+    .call(d3.axisBottom(x));
 
   // Add y-axis
   svg.append("g")
