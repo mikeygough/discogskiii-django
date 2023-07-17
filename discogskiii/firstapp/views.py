@@ -403,11 +403,8 @@ class CustomJSONEncoder(json.JSONEncoder):
 def artist_release_statistics(request, artist):
     # cached, load from database
     artist_releases = MasterRelease.objects.filter(artist=artist)
-    main_release_data = list(MainRelease.objects.filter(master__in=artist_releases).values("released", "lowest_price"))
+    main_release_data = list(MainRelease.objects.filter(master__in=artist_releases).values("released", "lowest_price", "title"))
 
-    print(main_release_data)
-
-    # list(MasterRelease.objects.values_list("artist", flat=True).distinct())
     print("Main Release Data Already Cached!, Enjoy!")
 
     json_data = json.dumps(main_release_data, cls=CustomJSONEncoder)

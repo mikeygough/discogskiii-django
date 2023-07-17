@@ -34,15 +34,16 @@
     left: 50,
   };
 
-  // set x and y
+  // set x, y, and z
   const xValue = (d) => new Date(d.released);
   const yValue = (d) => +d.lowest_price;
+  const zValue = (d) => d.title;
 
   // set circle radius
   const radius = 5;
 
   const width = window.innerWidth*0.90;
-  const height = window.innerHeight*0.90;
+  const height = window.innerHeight*0.60;
 
   // Append the SVG element to the scatterplot container
   var svg = d3.select("#scatterplot-container")
@@ -61,7 +62,7 @@
   const marks = data.map(d => ({
     x: x(xValue(d)),
     y: y(yValue(d)),
-    title: `( ${xValue(d)}, ${yValue(d)} ) `,
+    title: `(${zValue(d)} - ${xValue(d)}, ${yValue(d)} )`,
   }));
 
   // y axis
