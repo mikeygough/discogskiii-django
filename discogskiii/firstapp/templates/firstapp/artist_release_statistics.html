@@ -38,6 +38,13 @@
       width = window.innerWidth - margin.left - margin.right, // Use window.innerWidth for full width
       height = 400 - margin.top - margin.bottom;
 
+  // set x and y
+  const xValue = (d) => Date(d.released);
+  const yValue = (d) => +d.lowest_price;
+
+  // set circle radius
+  const radius = 5;
+
   // Append the SVG element to the scatterplot container
   var svg = d3.select("#scatterplot-container")
       .append("svg")
@@ -46,50 +53,49 @@
       .append("g")
       .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
-  // Set the x and y scales
-  var xScale = d3.scaleTime()
-      .domain(d3.extent(data, function(d) { return new Date(d.released); }))
-      .range([0, width]);
+  const x = d3.scaleTime()
+    .domain(extent(data, xValue))
+    .range([0, width]);
 
-  var yScale = d3.scaleLinear()
-      .domain([0, d3.max(data, function(d) { return +d.lowest_price; })]) // Convert to number with '+'
-      .range([height, 0]);
+  const y = d3.scaleLinear()
+    .domain(extent(data, yValue))
+    .range([height, 0]);
+
+  const marks = data.map(d => ({
+    x: x(xValue(d)),
+    y: y(yValue(d)),
+    title: `( ${xValue(d)}, ${yValue(d)} ) `,
+  }));
+
+
+  
+      // Set the x and y scales
+  // var xScale = d3.scaleTime()
+  //     .domain(d3.extent(data, function(d) { return new Date(d.released); }))
+  //     .range([0, width]);
+
+  // var yScale = d3.scaleLinear()
+  //     .domain([0, d3.max(data, function(d) { return +d.lowest_price; })]) // Convert to number with '+'
+  //     .range([height, 0]);
 
   // Add x-axis
   svg.append("g")
       .attr("transform", "translate(0," + height + ")")
-      .call(d3.axisBottom(xScale));
+      .call(d3.axisBottom(x));
 
   // Add y-axis
   svg.append("g")
-      .call(d3.axisLeft(yScale));
+      .call(d3.axisLeft(y));
 
   // Add dots to represent data points
   svg.selectAll("circle")
-    .data(data)
-    .enter()
-    .append("circle")
-    .attr("cx", function(d) { return xScale(new Date(d.released)); })
-    .attr("cy", function(d) { return yScale(+d.lowest_price); }) // Convert to number with '+'
-    .attr("r", 5)
-    .on("mouseover", function() {
-      // Display information about the record on hover
-      var hoveredData = d3.select(this).datum();
-      var x = xScale(new Date(hoveredData.released));
-      var y = yScale(+hoveredData.lowest_price);
-
-      // Add a tooltip with the x and y value
-      d3.select("#scatterplot-container")
-        .append("div")
-        .attr("id", "tooltip")
-        .style("left", x + "px")
-        .style("top", y + "px")
-        .html("X: " + hoveredData.released + "<br/>Y: " + hoveredData.lowest_price);
-    })
-    .on("mouseout", function() {
-      // Remove the tooltip when the mouse is not hovering over a point
-      d3.select("#tooltip").remove();
-    });
+    .data(marks
+    .join('circle')
+    .attr("cx", (d) => d.x)
+    .attr("cy", (d) => d.y)
+    .attr("r", radius)
+    .append('title')
+    .text((d) => d.title);
 
   // Add axis labels
   svg.append("text")
