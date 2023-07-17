@@ -62,7 +62,7 @@
   const marks = data.map(d => ({
     x: x(xValue(d)),
     y: y(yValue(d)),
-    title: `Title: ${zValue(d)} \nReleased: ${xValue(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}\nLowest Selling Price: $${yValue(d)}`,
+    title: `Title: ${zValue(d)} \nReleased: ${xValue(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}\nLowest Selling Price: ${yValue(d).toLocaleString("en-US", { style: "currency", currency: "USD" })}`,
   }));
 
   // y axis
