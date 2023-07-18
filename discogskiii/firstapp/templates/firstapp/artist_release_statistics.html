@@ -38,6 +38,8 @@
     left: 50,
   };
 
+  // SCATTER PLOT
+
   // set x, y, and z
   const xValue = (d) => new Date(d.released);
   const yValue = (d) => +d.lowest_price;
@@ -105,8 +107,7 @@
       .style("text-anchor", "middle")
       .text("Lowest Price");
 
-
-  //  histogram
+  // HISTOGRAM
 
   // bin
   const bins = d3.bin()
@@ -133,7 +134,6 @@
   // Add a rect for each bin.
   svg
   .append("g")
-  .attr("fill", "steelblue")
   .selectAll()
   .data(bins)
   .join("rect")
