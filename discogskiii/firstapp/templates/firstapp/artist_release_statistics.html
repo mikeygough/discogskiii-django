@@ -17,15 +17,13 @@
 {{ json_data|json_script:"scatter-data" }}
 
 <div id="scatterplot-container" class="flex justify-center"></div>
+<div id="histogram-container" class="flex justify-center"></div>
 
 <script>
 
   // weird but working way to correctly format the data
   var data = JSON.parse(document.getElementById('scatter-data').textContent);
   var data = JSON.parse(data)
-
-  console.log(data)
-  console.log(Array.isArray(data))
 
   // Filter out data points with NaN lowest_price
   data = data.filter(function(d) {
@@ -57,11 +55,11 @@
       .attr("width", width)
       .attr("height", height)
 
-  const x = d3.scaleTime()
+  var x = d3.scaleTime()
     .domain(d3.extent(data, xValue))
     .range([margin.left, width - margin.right]);
 
-  const y = d3.scaleLinear()
+  var y = d3.scaleLinear()
     .domain(d3.extent(data, yValue))
     .range([height - margin.bottom, margin.top]);
 
@@ -106,6 +104,68 @@
       .attr("dy", "1em")
       .style("text-anchor", "middle")
       .text("Lowest Price");
+
+
+  //  histogram
+
+  // bin
+  const bins = d3.bin()
+  .thresholds(100)
+  .value((d) => +d.lowest_price)
+  (data);
+
+  // x scale
+  var x = d3.scaleLinear()
+  .domain([bins[0].x0, bins[bins.length - 1].x1])
+  .range([margin.left, width - margin.right]);
+
+  // y scale
+  var y = d3.scaleLinear()
+  .domain([0, d3.max(bins, (d) => d.length)])
+  .range([height - margin.bottom, margin.top]);
+
+  // Append the SVG element to the scatterplot container
+  var svg = d3.select("#histogram-container")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+
+  // Add a rect for each bin.
+  svg
+  .append("g")
+  .attr("fill", "steelblue")
+  .selectAll()
+  .data(bins)
+  .join("rect")
+  .attr("x", (d) => x(d.x0) + 1)
+  .attr("width", (d) => x(d.x1) - x(d.x0) - 1)
+  .attr("y", (d) => y(d.length))
+  .attr("height", (d) => y(0) - y(d.length));
+
+  // Add the x-axis and label.
+  svg.append("g")
+  .attr('transform', `translate(0, ${height - margin.bottom})`)
+    .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
+    .call((g) => g.append("text")
+        .attr("x", width)
+        .attr("y", margin.bottom - 4)
+        .attr("fill", "currentColor")
+        .attr("text-anchor", "end")
+        .text("Selling Price"));
+
+  // Add the y-axis and label, and remove the domain line.
+  svg.append("g")
+  .attr('transform', `translate(${margin.left}, 0)`)
+      .call(d3.axisLeft(y).ticks(height / 40))
+      .call((g) => g.select(".domain").remove())
+      .call((g) => g.append("text")
+          .attr("x", -margin.left)
+          .attr("y", 10)
+          .attr("fill", "currentColor")
+          .attr("text-anchor", "start")
+          .text("Number of Records"));
+    
+    
 
 </script>
 
