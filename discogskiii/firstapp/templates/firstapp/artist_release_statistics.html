@@ -83,10 +83,6 @@
     .attr('transform', `translate(0, ${height - margin.bottom})`)
     .call(d3.axisBottom(x));
 
-  // Add y-axis
-  svg.append("g")
-      .call(d3.axisLeft(y));
-
   // Add dots to represent data points
   svg.selectAll("circle")
     .data(marks)
