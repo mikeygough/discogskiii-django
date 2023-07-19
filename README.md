@@ -108,15 +108,7 @@ Features I would like to include in the project:
 * __DONE__ - Tailwind CSS Styling
 * __DONE__ - Artist Release Sorting
 * __DONE__ - Multiple Device Optimations
-* __To-Do__ - Market Statistics Page
-        
-    For a while now I've wanted to learn how to make dynamic plots with Javascript, like those you see for a political election on NewYorkTimes. Turns out a lot of that is built with a JS library called [D3](https://d3js.org/). This is the perfect project opportunity to learn D3! I plan on building on a Market Statistics page for each artist which consist of statistical plots describing their data. 
-
-    Sample plot ideas:
-
-    * Scatter plot, x-axis is year album released, y-axis is minimum selling price. By hovering over a point, the user gets a preview of the record and can click into their markets.
-    * Distribution of prices for an artists' original pressings.
-    * Scatter plot with regression line comparing community demand score with minimum selling price.
+* __DONE__ - Market Statistics Page with D3
 
 <br>
 
