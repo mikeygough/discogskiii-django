@@ -8,6 +8,8 @@ The application relies heavily on a third-party API and leverages clever asynchr
 
 Discogskiii extends the useful of its source site by allowing users to view all original pressings of a given artist and immediately access the markets of those original pressings. This saves serious collectors time by having to sift through an artist's release catalogue or constantly refresh the Discogs market page. Additionally, it allows savy collectors to catch market anomolies or listers to determine a fair price. An ability to "Save Market"s ensures users even faster access to the markets they are most interested in.
 
+Along with fetching market data and displaying it in a table-format, each artist also has their own statistics page. Using the JavaScript D3 plotting library this page displays a time-series scatter plot of prices along with a histogram of each original pressings' lowest selling price.
+
 #### How to Run Discogskiii
 To run Discogskiii, you'll need an account with Discogs and API access. Then, fork this project and create utils.py file. Add the following to the file with your respective consumer_key and consumer_secret.
 
@@ -22,6 +24,14 @@ API_BASE_URL = "https://api.discogs.com"
 AUTHENTICATION_HEADER = {
     "Authorization": f"Discogs key={CONSUMER_KEY}, secret={CONSUMER_SECRET}",
 }
+
+In the terminal, activate the virtual environment
+
+'source env/bin/activate'
+
+Then,
+
+'pip install -r requirements.txt'
 
 Run your Django migrations, then start the app and you're good to go! 
 
