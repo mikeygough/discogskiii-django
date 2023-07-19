@@ -1,5 +1,7 @@
 {% extends "firstapp/layout.html" %} {% block body %}
 
+<script src="https://d3js.org/d3.v7.min.js"></script>
+
 <div class="bg-gradient-to-b from-yellow-400 to-yellow-600 text-gray-700 py-6">
   <div class="container mx-auto px-4">
     <h1 class="text-3xl font-bold text-left sm:text-center ml-6 sm:ml-0">
@@ -11,4 +13,160 @@
   </div>
 </div>
 
-{% endblock %}
+<!-- avoid unsafe javascript -->
+{{ json_data|json_script:"scatter-data" }}
+
+<div id="scatterplot-container" class="flex justify-center"></div>
+<div id="histogram-container" class="flex justify-center"></div>
+
+<script>
+
+  // weird but working way to correctly format the data
+  var data = JSON.parse(document.getElementById('scatter-data').textContent);
+  var data = JSON.parse(data)
+
+  // Filter out data points with NaN lowest_price
+  data = data.filter(function(d) {
+    return d.lowest_price !== null;
+  });
+
+  // Set the dimensions and margins for the scatterplot
+  const margin = {
+    top: 20,
+    right: 20,
+    bottom: 50,
+    left: 50,
+  };
+
+  // SCATTER PLOT
+
+  // set x, y, and z
+  const xValue = (d) => new Date(d.released);
+  const yValue = (d) => +d.lowest_price;
+  const zValue = (d) => d.title;
+
+  // set circle radius
+  const radius = 5;
+
+  const width = window.innerWidth*0.90;
+  const height = window.innerHeight*0.60;
+
+  // Append the SVG element to the scatterplot container
+  var svg = d3.select("#scatterplot-container")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+
+  var x = d3.scaleTime()
+    .domain(d3.extent(data, xValue))
+    .range([margin.left, width - margin.right]);
+
+  var y = d3.scaleLinear()
+    .domain(d3.extent(data, yValue))
+    .range([height - margin.bottom, margin.top]);
+
+  const marks = data.map(d => ({
+    x: x(xValue(d)),
+    y: y(yValue(d)),
+    title: `Title: ${zValue(d)} \nReleased: ${xValue(d).toLocaleDateString("en-US", { month: "long", day: "numeric", year: "numeric" })}\nLowest Selling Price: ${yValue(d).toLocaleString("en-US", { style: "currency", currency: "USD" })}`,
+  }));
+
+  // y axis
+  svg
+    .append("g")
+    .attr('transform', `translate(${margin.left}, 0)`)
+    .call(d3.axisLeft(y));
+
+  // x axis
+  svg 
+    .append('g')
+    .attr('transform', `translate(0, ${height - margin.bottom})`)
+    .call(d3.axisBottom(x));
+
+  // Add dots to represent data points
+  svg.selectAll("circle")
+    .data(marks)
+    .join('circle')
+    .attr("cx", (d) => d.x)
+    .attr("cy", (d) => d.y)
+    .attr("r", radius)
+    .append('title')
+    .text((d) => d.title);
+
+  // Add axis labels
+  svg.append("text")
+      .attr("transform", "translate(" + (width / 2) + " ," + (height + margin.top + 10) + ")")
+      .style("text-anchor", "middle")
+      .text("Released");
+
+  svg.append("text")
+      .attr("transform", "rotate(-90)")
+      .attr("y", 0 - margin.left)
+      .attr("x", 0 - (height / 2))
+      .attr("dy", "1em")
+      .style("text-anchor", "middle")
+      .text("Lowest Price");
+
+  // HISTOGRAM
+
+  // bin
+  const bins = d3.bin()
+  .thresholds(100)
+  .value((d) => +d.lowest_price)
+  (data);
+
+  // x scale
+  var x = d3.scaleLinear()
+  .domain([bins[0].x0, bins[bins.length - 1].x1])
+  .range([margin.left, width - margin.right]);
+
+  // y scale
+  var y = d3.scaleLinear()
+  .domain([0, d3.max(bins, (d) => d.length)])
+  .range([height - margin.bottom, margin.top]);
+
+  // Append the SVG element to the scatterplot container
+  var svg = d3.select("#histogram-container")
+      .append("svg")
+      .attr("width", width)
+      .attr("height", height)
+
+  // Add a rect for each bin.
+  svg
+  .append("g")
+  .selectAll()
+  .data(bins)
+  .join("rect")
+  .attr("x", (d) => x(d.x0) + 1)
+  .attr("width", (d) => x(d.x1) - x(d.x0) - 1)
+  .attr("y", (d) => y(d.length))
+  .attr("height", (d) => y(0) - y(d.length));
+
+  // Add the x-axis and label.
+  svg.append("g")
+  .attr('transform', `translate(0, ${height - margin.bottom})`)
+    .call(d3.axisBottom(x).ticks(width / 80).tickSizeOuter(0))
+    .call((g) => g.append("text")
+        .attr("x", width)
+        .attr("y", margin.bottom - 4)
+        .attr("fill", "currentColor")
+        .attr("text-anchor", "end")
+        .text("Selling Price"));
+
+  // Add the y-axis and label, and remove the domain line.
+  svg.append("g")
+  .attr('transform', `translate(${margin.left}, 0)`)
+      .call(d3.axisLeft(y).ticks(height / 40))
+      .call((g) => g.select(".domain").remove())
+      .call((g) => g.append("text")
+          .attr("x", -margin.left)
+          .attr("y", 10)
+          .attr("fill", "currentColor")
+          .attr("text-anchor", "start")
+          .text("Number of Records"));
+    
+    
+
+</script>
+
+  {% endblock %}
