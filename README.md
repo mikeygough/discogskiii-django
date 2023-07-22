@@ -1,3 +1,7 @@
+# Discogskiii - [cs50w final project](https://github.com/mikeygough/cs50w)
+#### Video Demo: https://www.youtube.com/watch?v=GhyMfVz0xMk
+
+
 # discogskiii-django
 Discogskiii is a web app and order book for vinyl records available for sale on [Discogs](https://www.discogs.com/)!
 
